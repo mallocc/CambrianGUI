@@ -32,6 +32,7 @@ namespace gui
 		{"wait", IDC_WAIT},
 		{"no", IDC_NO}
 	};
+
 }
 
 void GUI::draw()
@@ -413,16 +414,17 @@ GUI::GUI(int32_t w, int32_t h)
 	config = new Configuration(&filesys);
 	widgetManager = new WidgetManager(this, config);
 
-	widgetManager->registerWidget(STR_HLAYOUTWIDGET, [](GUI* a, nlohmann::json b) {return new HLayoutWidget(a, b); });
-	widgetManager->registerWidget(STR_VLAYOUTWIDGET, [](GUI* a, nlohmann::json b) {return new VLayoutWidget(a, b); });
-	widgetManager->registerWidget(STR_LABELWIDGET, [](GUI* a, nlohmann::json b) {return new LabelWidget(a, b); });
-	widgetManager->registerWidget(STR_DROPDOWNWIDGET, [](GUI* a, nlohmann::json b) {return new DropdownWidget(a, b); });
-	widgetManager->registerWidget(STR_DROPDOWNLISTWIDGET, [](GUI* a, nlohmann::json b) {return new DropdownListWidget(a, b); });
-	widgetManager->registerWidget(STR_TABMENUWIDGET, [](GUI* a, nlohmann::json b) {return new TabMenuWidget(a, b); });
+	widgetManager->registerWidget<HLayoutWidget>(STR_HLAYOUTWIDGET);
+	widgetManager->registerWidget<VLayoutWidget>(STR_VLAYOUTWIDGET);
+	widgetManager->registerWidget<LabelWidget>(STR_LABELWIDGET);
+	widgetManager->registerWidget<DropdownWidget>(STR_DROPDOWNWIDGET);
+	widgetManager->registerWidget<DropdownListWidget>(STR_DROPDOWNLISTWIDGET);
+	widgetManager->registerWidget<TabMenuWidget>(STR_TABMENUWIDGET);
 
 	registerTriggerCallback("show_credits", [&](GUI* g) { g->displayCredits = true; });
 	registerTriggerCallback("hide_credits", [&](GUI* g) { g->displayCredits = false; });
 	registerTriggerCallback("test", [&](GUI* g) { std::cout << "test" << std::endl; });
+
 }
 
 

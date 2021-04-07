@@ -92,4 +92,5 @@ namespace gui
 		std::map<std::string, TriggerCallback> triggerCallbacks;
 
 	};
+
 }

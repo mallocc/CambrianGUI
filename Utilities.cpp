@@ -142,7 +142,7 @@ bool checkJSON(nlohmann::json j, std::string fieldName)
 {
 	//std::cout << "Looking for " << fieldName << std::endl;
 	//std::cout << j.dump(4) << std::endl; 
-	return j.contains(fieldName);
+	return !j.empty() && j.contains(fieldName);
 }
 
 bool readJSONAsString(nlohmann::json j, std::string fieldName, std::string& field, bool debugPrint)

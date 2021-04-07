@@ -307,11 +307,6 @@ gui::Widget* gui::WidgetManager::getDropDownListWidget()
 	return dropDownListWidget;
 }
 
-void gui::WidgetManager::registerWidget(std::string classname, StringToWidgetFunction function)
-{
-	stringToWidgetFunctions[classname] = function;
-}
-
 void gui::WidgetManager::createFloatingLabelWidget()
 {
 	nlohmann::json& j = config->getConfig();
