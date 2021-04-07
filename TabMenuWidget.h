@@ -4,7 +4,7 @@
 
 namespace gui
 {
-	const std::string STR_TABMENUWIDGET = "tabmenu";
+	const std::string TABMENUWIDGET_CLASSNAME = "tabmenu";
 	struct TabMenuWidget : public LayoutWidget
 	{
 		LayoutWidget* tabPane = nullptr;

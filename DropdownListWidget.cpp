@@ -76,6 +76,6 @@ void gui::DropdownListWidget::onIntent(std::string intentChoice)
 
 gui::DropdownListWidget::DropdownListWidget(GUI* gui, nlohmann::json j) : VLayoutWidget(gui, j)
 {
-	setClassname(STR_DROPDOWNLISTWIDGET);
+	setClassname(DROPDOWNLISTWIDGET_CLASSNAME);
 	init(j);
 }

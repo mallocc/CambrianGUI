@@ -5,7 +5,7 @@
 
 namespace gui
 {
-	const std::string STR_LABELWIDGET = "label";
+	const std::string LABELWIDGET_CLASSNAME = "label";
 	struct LabelWidget : Widget
 	{
 		Font* displayFont = nullptr;

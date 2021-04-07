@@ -90,7 +90,7 @@ nlohmann::json gui::DropdownWidget::toJson()
 
 gui::DropdownWidget::DropdownWidget(GUI* gui, nlohmann::json j) : HLayoutWidget(gui, j)
 {
-	setClassname(STR_DROPDOWNWIDGET);
+	setClassname(DROPDOWNWIDGET_CLASSNAME);
 	onClick = [&](GUI* gui, MouseEventData mouseEventData)
 	{
 		this->openDropdown();

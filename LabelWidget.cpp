@@ -147,6 +147,6 @@ void gui::LabelWidget::revalidate()
 gui::LabelWidget::LabelWidget(GUI* gui, nlohmann::json j)
 	: Widget(gui), displayFont(gui->getFontManager()->defaultFont)
 {
-	setClassname(STR_LABELWIDGET);
+	setClassname(LABELWIDGET_CLASSNAME);
 	init(j);
 }

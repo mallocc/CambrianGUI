@@ -4,7 +4,7 @@
 
 namespace gui
 {
-	const std::string STR_DROPDOWNWIDGET = "dropdown";
+	const std::string DROPDOWNWIDGET_CLASSNAME = "dropdown";
 	struct DropdownWidget : HLayoutWidget
 	{
 		Widget* icon;

@@ -111,6 +111,6 @@ void gui::TabMenuWidget::onIntent(std::string intentChoice)
 
 gui::TabMenuWidget::TabMenuWidget(GUI* gui, nlohmann::json j) : LayoutWidget(gui, j)
 {
-	setClassname(STR_TABMENUWIDGET);
+	setClassname(TABMENUWIDGET_CLASSNAME);
 	init(j);
 }

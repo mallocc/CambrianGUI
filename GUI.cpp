@@ -414,12 +414,12 @@ GUI::GUI(int32_t w, int32_t h)
 	config = new Configuration(&filesys);
 	widgetManager = new WidgetManager(this, config);
 
-	widgetManager->registerWidget<HLayoutWidget>(STR_HLAYOUTWIDGET);
-	widgetManager->registerWidget<VLayoutWidget>(STR_VLAYOUTWIDGET);
-	widgetManager->registerWidget<LabelWidget>(STR_LABELWIDGET);
-	widgetManager->registerWidget<DropdownWidget>(STR_DROPDOWNWIDGET);
-	widgetManager->registerWidget<DropdownListWidget>(STR_DROPDOWNLISTWIDGET);
-	widgetManager->registerWidget<TabMenuWidget>(STR_TABMENUWIDGET);
+	widgetManager->registerWidget<HLayoutWidget>(HLAYOUTWIDGET_CLASSNAME);
+	widgetManager->registerWidget<VLayoutWidget>(VLAYOUTWIDGET_CLASSNAME);
+	widgetManager->registerWidget<LabelWidget>(LABELWIDGET_CLASSNAME);
+	widgetManager->registerWidget<DropdownWidget>(DROPDOWNWIDGET_CLASSNAME);
+	widgetManager->registerWidget<DropdownListWidget>(DROPDOWNLISTWIDGET_CLASSNAME);
+	widgetManager->registerWidget<TabMenuWidget>(TABMENUWIDGET_CLASSNAME);
 
 	registerTriggerCallback("show_credits", [&](GUI* g) { g->displayCredits = true; });
 	registerTriggerCallback("hide_credits", [&](GUI* g) { g->displayCredits = false; });

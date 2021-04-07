@@ -18,6 +18,7 @@
      	- Defining Event Callbacks
      	- Adding Configured Properties
      - Configuration
+       - All Default Field Definitions
        - Basic Structure
        - Inline Includes
        - Colors
@@ -140,10 +141,9 @@ const std::string MYWIDGET_CLASSNAME = "mywidget";
 
 struct MyWidget : Widget
 {
-	virtual void draw(float tx, float ty, bool editMode = false);
-	virtual bool init(nlohmann::json j, bool ignoreType = false);
-	MyWidget(GUI* gui, nlohmann::json j);
-	bool myFlag = false;
+    virtual void draw(float tx, float ty, bool editMode = false);
+    virtual bool init(nlohmann::json j, bool ignoreType = false);
+    MyWidget(GUI* gui, nlohmann::json j);
 };
 ```
 
@@ -152,73 +152,355 @@ Here is the basic code for the implemented functions:
 ```c++
 void MyWidget::draw(float tx, float ty, bool editMode)
 {
-	// Call parent draw function
-	Widget::draw(tx, ty, editMode);
-	// Update current origin to position of parent + this widgets relative position
-	tx += x; ty += y;
+    // Call parent draw function
+    Widget::draw(tx, ty, editMode);
+    // Update current origin to position of parent + this widgets relative position
+    tx += x; ty += y;
 
-	// draw other stuff
+    // draw other stuff
 }
 
 bool MyWidget::init(nlohmann::json j, bool ignoreType)
 {
-	bool success = false;
+    bool success = false;
 	
-	// Check we have initialised the widget properly
-	if (Widget::init(j))
-	{
-		// Does 'widget' match our classname 'mywidget' in configuration
-		if (doesTypeMatch(ignoreType))
-		{
-			success = true;
-		}
-	}
+    // Check we have initialised the widget properly
+    if (Widget::init(j))
+    {
+        // Does 'widget' match our classname 'mywidget' in configuration
+        if (doesTypeMatch(ignoreType))
+        {
+	        success = true;
+        }
+    }
 
-	return success;
+    return success;
 }
 
 MyWidget::MyWidget(GUI* gui, nlohmann::json j) : Widget(gui)
 {
-	// Set our new widget's classname for verifying our widget from configuration
-	setClassname(MYWIDGET_CLASSNAME);
-	// Call to init
-	init(j);
+    // Set our new widget's classname for verifying our widget from configuration
+    setClassname(MYWIDGET_CLASSNAME);
+    // Call to init
+    init(j);
 }
 ```
 
 #### Registering a Widget
 
-Once your widget has been created, you'll need to regiester it with your GUI implemention.
+Once your widget has been created, you'll need to regiester it with your GUI implemention. This binds the class with its configuration name.
 ```c++
 struct MyGUI : GUI
 {
-	MyGUI(int32_t w, int32_t h) : GUI(w, h)
-	{
-		getWidgetManager()->registerWidget(
-						MYWIDGET_CLASSNAME, 
-						[](GUI* a, nlohmann::json b) { return new MyWidget(a, b); });
-	}
+    MyGUI(int32_t w, int32_t h) : GUI(w, h)
+    {
+        getWidgetManager()->registerWidget<MyWidget>(MYWIDGET_CLASSNAME);
+    }
 };
 ```
 
 #### Defining Event Callbacks
 
+Supported event callbacks:
+
+```c++
+typedef std::function<void(gui::GUI*, MouseEventData)> callback_t;
+
+callback_t onClick;         // Left button down, rising edge
+callback_t onRightClick;    // Right button down, rising edge
+callback_t onRelease;       // Left button down, falling edge
+callback_t onDoubleClick;   // Left button click, twice within timeout
+callback_t onOver;          // Mouse has moved while in widget's bounds
+callback_t onDown;          // Left button is down
+callback_t onUp;            // Left button is up
+callback_t onLeave;         // Mouse has moved while leaving the widget's bounds
+callback_t onDrag;          // Left button down and moving and started in widget's bounds
+callback_t onMiddleClick;   // Middle button down, rising edge
+callback_t onToggledOn;     // If togglable, when button is toggled on
+callback_t onToggledOff;    // If togglable, when button is toggled off
+```
+
+How to redefine a `callback_t` using `MyWidget` example:
+
+```c++
+MyWidget::MyWidget(GUI* gui, nlohmann::json j) : Widget(gui)
+{
+    // Set our new widget's classname for verifying our widget from configuration
+    setClassname(MYWIDGET_CLASSNAME);
+
+    // Define callbacks
+    onClick = [&](gui::GUI* gui, MouseEventData mouseEventData) { 
+        std::cout << "click handled for " << this->widgetId << std::endl; 
+    };
+    onOver = [&](gui::GUI* gui, MouseEventData mouseEventData) { 
+        std::cout << "hover handled for  " << this->widgetId << std::endl; 
+    };
+
+    // Call to init
+    init(j);
+}
+```
+
+
 #### Adding Configured Properties
+
+How to link a member variable to configuration using `MyWidget` example:
+
+```c++
+bool MyWidget::init(nlohmann::json j, bool ignoreType)
+{
+    bool success = false;
+	
+    // Check we have initialised the widget properly
+    if (Widget::init(j))
+    {
+        // Does 'widget' match our classname 'mywidget' in configuration
+        if (doesTypeMatch(ignoreType))
+        {
+            addToManifestList(j,
+                {
+                    {
+                        "myFlag", // Identifier used in configuration as json field name
+                        {"false",      // Default value
+                        [&](std::string value) { this->myFlag = (value == "true"); }, // Custom setter for the member variable
+                        [&](std::string fieldName) { return nlohmann::json({{ fieldName, this->myFlag }}); }} // Convert member variable to JSON field
+                    },
+                }
+            );
+            success = true;
+        }
+    }
+
+    return success;
+}
+```
+
 
 ### Configuration
 
+#### All Default Field Definitions
+
+For widgets:
+```json
+"widget": <def widget>
+"class": <def class>
+"id": <string>
+"color": <def color> | <hex value>
+"opacity": <0.0-1.0>
+"transition-speed": <float>
+"x": <float>
+"y": <float>
+"w": <float>
+"h": <float>
+"text": <string>
+"visible": <bool>
+"clickable": <bool>
+"click-through": <bool>
+"centered": <bool>
+"background": <filename>
+"weight": <float>
+"on-over": <object>
+"on-leave": <object>
+"on-release": <object>
+"on-click": <object>
+"on-toggled-on": <object>
+"on-toggled-off": <object>
+"cursor": <def cursor>
+"toggled": <bool>
+"togglable": <bool>
+"toggle-on-click": <bool>
+"radio": <bool>
+```
+
 #### Basic Structure
+
+Main GUI configuration file should be named `guiconfig.json`, here is a basic configuration file:
+
+```json
+{
+    "name": "test",
+    "w": 350,
+    "h": 500,
+    "colors": [
+    ],
+    "fonts": [
+    ],
+    "classes": [
+    ],
+    "root-widget": {
+    }
+}
+```
+
+How to define a widget:
+
+```json
+"root-widget": {
+    "widget": "vlayout",
+    "children": [
+        {
+            "widget": "vlayout",
+            "id": "mainlayout",
+            "color": "#000000",
+            "children": [
+                {
+                    "widget": "label",
+                    "id": "title",
+                    "clickable": false,
+                    "text": "This is a test label"
+                }
+            ]
+        }
+    ]
+}
+```
 
 #### Inline Includes
 
+Configruation will support expanding of JSON inline from other files.
+
+Can be used similar to including C++ header files:
+```json
+...
+
+"include": [
+    "color.json",
+    "fonts.json",
+    "classes.json"
+],
+
+...
+```
+
+Can include a configuration file inside of a widget definition:
+
+```json
+...
+
+"children": [
+    {
+        "include": "mywidget.json"
+    }
+]
+
+...
+```
+
 #### Colors
 
+```json
+"colors": [
+    {
+        "red": "#ff0000"
+    },
+    {
+        "green": "#00ff00"
+    },
+    {
+        "blue": "#0000ff"
+    }
+]
+```
+
+Referencing a defined color:
+
+```json
+...
+
+"widget": "vlayout",
+"id": "mainlayout",
+"color": "red",
+"children": [
+
+...
+```
+
+
 #### Classes
+
+```json
+"classes": [
+    {
+        "class-name": "blue-label",
+        "widget": "label",
+        "text-color": "blue",
+        "revalidate-size": true,
+        "center": true,
+        "clickable": false,
+        "text": "This is default text"
+    }
+]
+```
+
+Referencing a defined class, where you may override fields:
+
+```json
+...
+
+"children": [
+    {
+        "class": "blue-label",
+        "id": "title",
+        "text": "This text is now overriden from the class"
+    }
+]
+
+...
+```
 
 #### Global Variables
 
 #### Local Variables
 
+You may assign placeholder information to be user in other fields:
+
+```json
+...
+
+"@my-placeholder@": "placeholder",
+"children": [
+    {
+        "class": "blue-label",
+        "id": "@my-placeholder@",
+        "@another-placeholder@": "cool",
+        "text": "This @another-placeholder@ text is now overriden from the class"
+    }
+]
+
+...
+```
+
 ### Other
 
 #### Registering Callback Triggers
+
+In the code:
+
+```c++
+MyGUI(int32_t w, int32_t h) : GUI(w, h)
+{
+...
+    
+    // Test trigger callback
+    registerTriggerCallback("test", // Configuration field id
+        [&](GUI* g) {   
+            // Callback logic
+            std::cout << "test" << std::endl; 
+        }
+    );
+
+...
+}
+```
+
+In configuration, this will invoke the 'test' trigger callback we defined when `onClick` event has been handled:
+
+```json
+...
+
+"on-click": {
+    "trigger": "test"
+}
+
+...
+```

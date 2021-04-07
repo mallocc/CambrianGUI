@@ -5,7 +5,7 @@
 
 namespace gui
 {
-	const std::string STR_DROPDOWNLISTWIDGET = "dropdownlist";
+	const std::string DROPDOWNLISTWIDGET_CLASSNAME = "dropdownlist";
 	struct DropdownListWidget : VLayoutWidget
 	{
 		std::map<std::string, LabelWidget*> data;

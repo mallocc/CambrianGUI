@@ -4,7 +4,7 @@
 
 gui::VLayoutWidget::VLayoutWidget(GUI* gui, nlohmann::json j) : LayoutWidget(gui, j) 
 {
-	setClassname(STR_VLAYOUTWIDGET);
+	setClassname(VLAYOUTWIDGET_CLASSNAME);
 	init(j);
 }
 

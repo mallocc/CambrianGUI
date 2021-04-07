@@ -4,7 +4,7 @@
 
 namespace gui
 {
-	const std::string STR_VLAYOUTWIDGET = "vlayout";
+	const std::string VLAYOUTWIDGET_CLASSNAME = "vlayout";
 	struct VLayoutWidget : LayoutWidget
 	{
 		VLayoutWidget(GUI* gui, nlohmann::json j);
