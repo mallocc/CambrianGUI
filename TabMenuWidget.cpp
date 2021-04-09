@@ -5,7 +5,7 @@
 
 bool gui::TabMenuWidget::init(nlohmann::json j, bool ignoreType)
 {
-	if (LayoutWidget::init(j, true))
+	if (ContainerWidget::init(j, true))
 	{
 		if (doesTypeMatch(ignoreType))
 		{
@@ -16,20 +16,20 @@ bool gui::TabMenuWidget::init(nlohmann::json j, bool ignoreType)
 						{"",
 						[&](std::string value) { tabLabelTemplate = nlohmann::json::parse(value); },
 						[&](std::string fieldName) { return nlohmann::json({{ fieldName, tabLabelTemplate.dump(4) }}); }}
-					},				
+					},
 				}
 			);
 
 			nlohmann::json mainLayoutJ;
 			mainLayoutJ["widget"] = "vlayout";
 			mainLayoutJ["align"] = "start";
-			LayoutWidget* mainLayout = dynamic_cast<LayoutWidget*>(gui->getWidgetManager()->createWidget(mainLayoutJ));
+			ContainerWidget* mainLayout = dynamic_cast<ContainerWidget*>(gui->getWidgetManager()->createWidget(mainLayoutJ));
 
 			nlohmann::json tabMenuJ;
 			tabMenuJ["widget"] = "hlayout";
 			tabMenuJ["align"] = "start";
 			tabMenuJ["size"] = "expand-height";
-			tabMenu = dynamic_cast<LayoutWidget*>(gui->getWidgetManager()->createWidget(tabMenuJ));
+			tabMenu = dynamic_cast<ContainerWidget*>(gui->getWidgetManager()->createWidget(tabMenuJ));
 
 			if (mainLayout != nullptr && tabMenu != nullptr)
 			{
@@ -38,7 +38,7 @@ bool gui::TabMenuWidget::init(nlohmann::json j, bool ignoreType)
 
 				nlohmann::json tabPaneJ;
 				tabPaneJ["widget"] = "hlayout";
-				tabPane = dynamic_cast<LayoutWidget*>(gui->getWidgetManager()->createWidget(tabPaneJ));
+				tabPane = dynamic_cast<ContainerWidget*>(gui->getWidgetManager()->createWidget(tabPaneJ));
 
 				if (tabPane != nullptr)
 				{
@@ -65,18 +65,18 @@ bool gui::TabMenuWidget::init(nlohmann::json j, bool ignoreType)
 							}
 							tabMenu->addChild(label);
 						}
-					}	
+					}
 
 					if (tabPane->children.size() > 0)
 					{
-						tabPane->children[0]->visible = true;				
+						tabPane->children[0]->visible = true;
 					}
 					if (tabMenu->children.size() > 0)
 					{
 						tabMenu->children[0]->toggleOn();
 					}
-				}	
-			}		
+				}
+			}
 		}
 	}
 
@@ -105,11 +105,11 @@ void gui::TabMenuWidget::onIntent(std::string intentChoice)
 					widget->toggleOn();
 				else
 					widget->toggleOff();
-			}						
+			}
 	}
 }
 
-gui::TabMenuWidget::TabMenuWidget(GUI* gui, nlohmann::json j) : LayoutWidget(gui, j)
+gui::TabMenuWidget::TabMenuWidget(GUI* gui, nlohmann::json j) : ContainerWidget(gui, j)
 {
 	setClassname(TABMENUWIDGET_CLASSNAME);
 	init(j);

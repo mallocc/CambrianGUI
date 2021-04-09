@@ -16,7 +16,6 @@ namespace gui
 	typedef std::function<void(gui::GUI*, MouseEventData)> callback_t;
 	typedef std::function<void(gui::GUI*, KeyEventData)> keycallback_t;
 
-
 	struct Widget
 	{
 		GUI* gui;
@@ -24,14 +23,14 @@ namespace gui
 		std::string classname = "widget";
 		float x = 0, y = 0;
 		float xOffset, yOffset = 0;
-		float targetX = 0, targetY = 0;
+		float xTarget = 0, yTarget = 0;
 		float w = 0, h = 0;
-		float targetW = 0, targetH = 0;
+		float wTarget = 0, hTarget = 0;
 		float weight = 0.0f;
 		bool  proportional = false;
 		bool  centered = false;
 		float rotation = 0.0f;
-		float targetRotation = 0.0f;
+		float rotationTarget = 0.0f;
 		Texture* background = nullptr;
 		Texture* backgroundTransition = background;
 		float backgroundTransitionValue = 0.0f;
@@ -80,8 +79,6 @@ namespace gui
 		nlohmann::json onReleaseExternalJson;
 		nlohmann::json onToggledOnExternalJson;
 		nlohmann::json onToggledOffExternalJson;
-
-
 
 		Color color = { 1, 1, 1 };
 		Color colorStart = { 1, 1, 1 };
@@ -149,6 +146,5 @@ namespace gui
 
 		bool doesTypeMatch(bool bypass = false, std::string typeQuery = "");
 		void setClassname(std::string newClassname);
-
 	};
 }

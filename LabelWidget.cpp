@@ -129,17 +129,17 @@ void gui::LabelWidget::revalidate()
 	{
 		auto font = displayFont;
 		auto metrics = font->textMetrics(text, 1.0f);
-		targetW = metrics.x + padding * (center + 1);
-		targetH = font->size + padding * (center + 1);
+		wTarget = metrics.x + padding * (center + 1);
+		hTarget = font->size + padding * (center + 1);
 	}
 	else
 	{
 		auto font = displayFont;
 		auto metrics = font->textMetrics(text, 1.0f);
 		if (w == 0)
-			targetW = metrics.x + padding * (center + 1);
+			wTarget = metrics.x + padding * (center + 1);
 		if (h == 0)
-			targetH = font->size + padding * (center + 1);
+			hTarget = font->size + padding * (center + 1);
 	}
 	Widget::revalidate();
 }

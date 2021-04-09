@@ -1,11 +1,11 @@
 #pragma once
 
-#include "LayoutWidget.h"
+#include "ContainerWidget.h"
 
 namespace gui
 {
 	const std::string VLAYOUTWIDGET_CLASSNAME = "vlayout";
-	struct VLayoutWidget : LayoutWidget
+	struct VLayoutWidget : ContainerWidget
 	{
 		VLayoutWidget(GUI* gui, nlohmann::json j);
 

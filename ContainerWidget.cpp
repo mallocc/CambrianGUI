@@ -1,18 +1,18 @@
-#include "LayoutWidget.h"
+#include "ContainerWidget.h"
 #include "GUI.h"
 #include "SwitchWidget.h"
 #include <GL/glew.h>
 
-using gui::LayoutWidget;
+using gui::ContainerWidget;
 using gui::Widget;
 
-LayoutWidget::LayoutWidget(GUI* gui, nlohmann::json j) : Widget(gui)
+ContainerWidget::ContainerWidget(GUI* gui, nlohmann::json j) : Widget(gui)
 {
 	setClassname(STR_LAYOUTWIDGET);
 	init(j);
 }
 
-int32_t gui::LayoutWidget::getChildIndex(Widget* child)
+int32_t gui::ContainerWidget::getChildIndex(Widget* child)
 {
 	std::vector<Widget*> children = getVisibleChildren();
 	int32_t index = -1;
@@ -27,7 +27,7 @@ int32_t gui::LayoutWidget::getChildIndex(Widget* child)
 	return index;
 }
 
-void gui::LayoutWidget::clearChildren()
+void gui::ContainerWidget::clearChildren()
 {
 	for (Widget* c : children)
 	{
@@ -39,7 +39,7 @@ void gui::LayoutWidget::clearChildren()
 	children.clear();
 }
 
-std::vector<Widget*> gui::LayoutWidget::getVisibleChildren()
+std::vector<Widget*> gui::ContainerWidget::getVisibleChildren()
 {
 	std::vector<Widget*> visibleChildren;
 	for (Widget* c : children)
@@ -48,7 +48,7 @@ std::vector<Widget*> gui::LayoutWidget::getVisibleChildren()
 	return visibleChildren;
 }
 
-void gui::LayoutWidget::addChild(Widget* widget)
+void gui::ContainerWidget::addChild(Widget* widget)
 {
 	if (widget != nullptr)
 	{
@@ -57,7 +57,7 @@ void gui::LayoutWidget::addChild(Widget* widget)
 	}
 }
 
-Widget* gui::LayoutWidget::onMouseEvent(MouseEventData mouseEventData, bool process, bool focus)
+Widget* gui::ContainerWidget::onMouseEvent(MouseEventData mouseEventData, bool process, bool focus)
 {
 	std::vector<Widget*> visibleChildren = getVisibleChildren();
 
@@ -92,7 +92,7 @@ Widget* gui::LayoutWidget::onMouseEvent(MouseEventData mouseEventData, bool proc
 	return lastLocalWidgetHandled;
 }
 
-bool gui::LayoutWidget::onLeaveEvent(MouseEventData mouseEventData, bool process)
+bool gui::ContainerWidget::onLeaveEvent(MouseEventData mouseEventData, bool process)
 {
 	Widget::onLeaveEvent(mouseEventData, process);
 	std::vector<Widget*> visibleChildren = getVisibleChildren();
@@ -103,7 +103,7 @@ bool gui::LayoutWidget::onLeaveEvent(MouseEventData mouseEventData, bool process
 	return true;
 }
 
-Widget* LayoutWidget::onKeyEvent(KeyEventData keyEventData)
+Widget* ContainerWidget::onKeyEvent(KeyEventData keyEventData)
 {
 	std::vector<Widget*> visibleChildren = getVisibleChildren();
 	Widget* widgetHandled = nullptr;
@@ -123,7 +123,7 @@ Widget* LayoutWidget::onKeyEvent(KeyEventData keyEventData)
 	return widgetHandled;
 }
 
-void LayoutWidget::draw(float tx, float ty, bool editMode)
+void ContainerWidget::draw(float tx, float ty, bool editMode)
 {
 	Widget::draw(tx, ty, false);
 	tx += x; ty += y;
@@ -157,7 +157,7 @@ void LayoutWidget::draw(float tx, float ty, bool editMode)
 	}
 }
 
-bool gui::LayoutWidget::init(nlohmann::json j, bool ignoreType)
+bool gui::ContainerWidget::init(nlohmann::json j, bool ignoreType)
 {
 	std::string tmp;
 
@@ -240,7 +240,7 @@ bool gui::LayoutWidget::init(nlohmann::json j, bool ignoreType)
 	return true;
 }
 
-nlohmann::json gui::LayoutWidget::toJson()
+nlohmann::json gui::ContainerWidget::toJson()
 {
 	nlohmann::json j = manifestToJson(manifestList);
 
@@ -252,9 +252,7 @@ nlohmann::json gui::LayoutWidget::toJson()
 	return j;
 }
 
-
-
-void gui::LayoutWidget::revalidate()
+void gui::ContainerWidget::revalidate()
 {
 	Widget::revalidate();
 
@@ -293,7 +291,7 @@ void gui::LayoutWidget::revalidate()
 	expand();
 }
 
-void gui::LayoutWidget::expand()
+void gui::ContainerWidget::expand()
 {
 	std::vector<Widget*> visibleChildren = getVisibleChildren();
 	switch (sizing)
@@ -360,7 +358,7 @@ void gui::LayoutWidget::expand()
 	}
 }
 
-void gui::LayoutWidget::onIntent(std::string intentChoice)
+void gui::ContainerWidget::onIntent(std::string intentChoice)
 {
 	for (Widget* widget : children)
 	{
@@ -375,5 +373,5 @@ void gui::LayoutWidget::onIntent(std::string intentChoice)
 			if (widget->radio)
 				if (widget->widgetId == intentChoice && !widget->toggled)
 					widget->toggleOn();
-	}		
+	}
 }

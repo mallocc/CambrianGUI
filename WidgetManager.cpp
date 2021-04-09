@@ -1,6 +1,6 @@
 #include "WidgetManager.h"
 #include "Configuration.h"
-#include "LayoutWidget.h"
+#include "ContainerWidget.h"
 #include "LabelWidget.h"
 #include "DropdownListWidget.h"
 
@@ -198,7 +198,7 @@ void gui::WidgetManager::bringForwards(Widget* widget)
 	{
 		if (widget->parent != nullptr)
 		{
-			LayoutWidget* layout = dynamic_cast<LayoutWidget*>(widget->parent);
+			ContainerWidget* layout = dynamic_cast<ContainerWidget*>(widget->parent);
 			if (layout != nullptr)
 			{
 				size_t position = 0U;
@@ -223,7 +223,7 @@ void gui::WidgetManager::bringToFront(Widget* widget)
 	{
 		if (widget->parent != nullptr)
 		{
-			LayoutWidget* layout = dynamic_cast<LayoutWidget*>(widget->parent);
+			ContainerWidget* layout = dynamic_cast<ContainerWidget*>(widget->parent);
 			if (layout != nullptr)
 			{
 				size_t position = 0UL;
@@ -248,7 +248,7 @@ void gui::WidgetManager::sendBackwards(Widget* widget)
 	{
 		if (widget->parent != nullptr)
 		{
-			LayoutWidget* layout = dynamic_cast<LayoutWidget*>(widget->parent);
+			ContainerWidget* layout = dynamic_cast<ContainerWidget*>(widget->parent);
 			if (layout != nullptr)
 			{
 				size_t position = 0UL;
@@ -273,7 +273,7 @@ void gui::WidgetManager::sendToBack(Widget* widget)
 	{
 		if (widget->parent != nullptr)
 		{
-			LayoutWidget* layout = dynamic_cast<LayoutWidget*>(widget->parent);
+			ContainerWidget* layout = dynamic_cast<ContainerWidget*>(widget->parent);
 			if (layout != nullptr)
 			{
 				size_t position = 0U;
@@ -317,7 +317,7 @@ void gui::WidgetManager::createFloatingLabelWidget()
 		{
 			floatingLabelWidget->revalidate();
 			floatingLabelWidget->visible = false;
-			LayoutWidget* widget = dynamic_cast<LayoutWidget*>(rootWidget);
+			ContainerWidget* widget = dynamic_cast<ContainerWidget*>(rootWidget);
 			if (widget)
 				widget->addChild(floatingLabelWidget);
 		}
@@ -334,7 +334,7 @@ void gui::WidgetManager::createDropDownListWidget()
 		{
 			dropDownListWidget->revalidate();
 			dropDownListWidget->visible = false;
-			LayoutWidget* widget = dynamic_cast<LayoutWidget*>(rootWidget);
+			ContainerWidget* widget = dynamic_cast<ContainerWidget*>(rootWidget);
 			if (widget)
 			{
 				widget->addChild(dropDownListWidget);
@@ -343,5 +343,3 @@ void gui::WidgetManager::createDropDownListWidget()
 		}
 	}
 }
-
-

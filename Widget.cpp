@@ -23,7 +23,7 @@ Widget* gui::Widget::onMouseEvent(MouseEventData mouseEventData, bool process, b
 		{
 			if (process)
 			{
-				onOver(gui, mouseEventData); 
+				onOver(gui, mouseEventData);
 			}
 
 			onMoveEvent(mouseEventData, process);
@@ -53,8 +53,8 @@ Widget* gui::Widget::onMouseEvent(MouseEventData mouseEventData, bool process, b
 					onClick(gui, mouseEventData);
 				}
 				handled = true;
-			} 
-			
+			}
+
 			if (onDragEvent(mouseEventData, process))
 			{
 				if (process)
@@ -81,7 +81,7 @@ Widget* gui::Widget::onMouseEvent(MouseEventData mouseEventData, bool process, b
 				}
 				handled = true;
 			}
-			
+
 			if (onUpEvent(mouseEventData, process))
 			{
 				if (process)
@@ -89,7 +89,6 @@ Widget* gui::Widget::onMouseEvent(MouseEventData mouseEventData, bool process, b
 					onUp(gui, mouseEventData);
 				}
 			}
-
 
 			if (onMiddleClickEvent(mouseEventData, process))
 			{
@@ -140,7 +139,6 @@ Widget* gui::Widget::onKeyEvent(KeyEventData keyEventData)
 
 void gui::Widget::draw(float tx, float ty, bool editMode)
 {
-
 	tx += x; ty += y;
 
 	if (shaderProperties.shader != "" && shaderProperties.texture != "")
@@ -190,7 +188,7 @@ void gui::Widget::draw(float tx, float ty, bool editMode)
 		glUseProgram(0);
 		glActiveTexture(GL_TEXTURE0);
 		glDisable(GL_TEXTURE_2D);
-	}	
+	}
 
 	if (background != nullptr)
 	{
@@ -209,13 +207,13 @@ void gui::Widget::draw(float tx, float ty, bool editMode)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glColor4f(color.r, color.g, color.b, opacity * 
+		glColor4f(color.r, color.g, color.b, opacity *
 			((background != backgroundTransition) ? backgroundTransitionValue : 1.0f));
 		glPushMatrix();
 		glTranslatef(tx, ty, 0);
 		glTranslatef(w / 2.0f, h / 2.0f, 0);
 		glRotatef(rotation, 0, 0, 1);
-		glTranslatef(-w/2.0f, -h/2.0f, 0);
+		glTranslatef(-w / 2.0f, -h / 2.0f, 0);
 		glScalef(w, h, 1);
 		glBegin(GL_QUADS);
 		{
@@ -237,53 +235,53 @@ void gui::Widget::draw(float tx, float ty, bool editMode)
 	}
 
 	if (background != backgroundTransition)
-	if (backgroundTransition != nullptr)
-	{
-		glEnable(GL_TEXTURE_2D);
-		glEnable(GL_BLEND);
-		if (blendMode == "screen")
+		if (backgroundTransition != nullptr)
 		{
-			glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
-		}
-		else
-		{
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		}
-		glBindTexture(GL_TEXTURE_2D, backgroundTransition->id);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glEnable(GL_TEXTURE_2D);
+			glEnable(GL_BLEND);
+			if (blendMode == "screen")
+			{
+				glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
+			}
+			else
+			{
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			}
+			glBindTexture(GL_TEXTURE_2D, backgroundTransition->id);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		glColor4f(color.r, color.g, color.b, opacity * (1.0f - backgroundTransitionValue));
-		glPushMatrix();
-		glTranslatef(tx, ty, 0);
-		glRotatef(rotation, 0, 0, 1);
-		glScalef(w, h, 1);
-		glBegin(GL_QUADS);
-		{
-			glTexCoord2f(0, 0);
-			glVertex2f(0, 0);
-			glTexCoord2f(1, 0);
-			glVertex2f(1, 0);
-			glTexCoord2f(1, 1);
-			glVertex2f(1, 1);
-			glTexCoord2f(0, 1);
-			glVertex2f(0, 1);
-		}
-		glEnd();
-		glPopMatrix();
+			glColor4f(color.r, color.g, color.b, opacity * (1.0f - backgroundTransitionValue));
+			glPushMatrix();
+			glTranslatef(tx, ty, 0);
+			glRotatef(rotation, 0, 0, 1);
+			glScalef(w, h, 1);
+			glBegin(GL_QUADS);
+			{
+				glTexCoord2f(0, 0);
+				glVertex2f(0, 0);
+				glTexCoord2f(1, 0);
+				glVertex2f(1, 0);
+				glTexCoord2f(1, 1);
+				glVertex2f(1, 1);
+				glTexCoord2f(0, 1);
+				glVertex2f(0, 1);
+			}
+			glEnd();
+			glPopMatrix();
 
-		glBindTexture(GL_TEXTURE_2D, NULL);
-		glDisable(GL_TEXTURE_2D);
-		glDisable(GL_BLEND);
-	}
+			glBindTexture(GL_TEXTURE_2D, NULL);
+			glDisable(GL_TEXTURE_2D);
+			glDisable(GL_BLEND);
+		}
 
 	if (editMode)// && gui->editedWidget == this)
 	{
 		glLineWidth(2);
 		if (over)
-		glColor3f(0, 1, 0);
+			glColor3f(0, 1, 0);
 		else
 			glColor3f(1, 0, 0);
 
@@ -334,18 +332,18 @@ void gui::Widget::revalidate()
 	{
 		if (background != nullptr)
 		{
-			targetW = background->width;
-			targetH = background->height;
+			wTarget = background->width;
+			hTarget = background->height;
 		}
 	}
 
-	rotation += (targetRotation - rotation) * transitionSpeed;
+	rotation += (rotationTarget - rotation) * transitionSpeed;
 	fmodFixed(rotation, 360.0f);
 
-	x += (targetX - x) * transitionSpeed;
-	y += (targetY - y) * transitionSpeed;
-	w += (targetW - w) * transitionSpeed;
-	h += (targetH - h) * transitionSpeed;
+	x += (xTarget - x) * transitionSpeed;
+	y += (yTarget - y) * transitionSpeed;
+	w += (wTarget - w) * transitionSpeed;
+	h += (hTarget - h) * transitionSpeed;
 
 	if (background != backgroundTransition)
 	{
@@ -375,7 +373,7 @@ bool gui::Widget::init(nlohmann::json j, bool ignoreType)
 					{"",
 					[&](std::string value) { type = value; },
 					[&](std::string fieldName) { return nlohmann::json({{fieldName, type }}); }}
-				},	
+				},
 				{
 					"shell-execute",
 					{"",
@@ -421,13 +419,13 @@ bool gui::Widget::init(nlohmann::json j, bool ignoreType)
 				{
 					"x",
 					{"0",
-					[&](std::string value) { targetX = std::atoi(value.c_str()); },
+					[&](std::string value) { xTarget = std::atoi(value.c_str()); },
 					[&](std::string fieldName) { return nlohmann::json({{ fieldName, x }}); }}
 				},
 				{
 					"y",
 					{"0",
-					[&](std::string value) { targetY = std::atoi(value.c_str()); },
+					[&](std::string value) { yTarget = std::atoi(value.c_str()); },
 					[&](std::string fieldName) { return nlohmann::json({{ fieldName, y }}); }}
 				},
 				{
@@ -445,19 +443,19 @@ bool gui::Widget::init(nlohmann::json j, bool ignoreType)
 				{
 					"w",
 					{"0",
-					[&](std::string value) { targetW = std::atoi(value.c_str()); },
+					[&](std::string value) { wTarget = std::atoi(value.c_str()); },
 					[&](std::string fieldName) { return nlohmann::json({{ fieldName, w }}); }}
 				},
 				{
 					"h",
 					{"0",
-					[&](std::string value) { targetH = std::atoi(value.c_str()); },
+					[&](std::string value) { hTarget = std::atoi(value.c_str()); },
 					[&](std::string fieldName) { return nlohmann::json({{ fieldName, h }}); }}
 				},
 				{
 					"rotation",
 					{"0",
-					[&](std::string value) { targetRotation = std::atoi(value.c_str()); },
+					[&](std::string value) { rotationTarget = std::atoi(value.c_str()); },
 					[&](std::string fieldName) { return nlohmann::json({{ fieldName, rotation }}); }}
 				},
 				{
@@ -537,13 +535,13 @@ bool gui::Widget::init(nlohmann::json j, bool ignoreType)
 					{"0",
 					[&](std::string value) { weight = std::atof(value.c_str()); },
 					[&](std::string fieldName) { return nlohmann::json({{ fieldName, weight }}); }}
-				}, 
+				},
 				{
 					"on-over",
 					{"{}",
 					[&](std::string value) { onOverJson = nlohmann::json::parse(value); },
 					[&](std::string fieldName) { return nlohmann::json({{ fieldName, onOverJson.dump(4) }}); }}
-				}, 
+				},
 				{
 					"on-leave",
 					{"{}",
@@ -555,7 +553,7 @@ bool gui::Widget::init(nlohmann::json j, bool ignoreType)
 					{"{}",
 					[&](std::string value) { onReleaseJson = nlohmann::json::parse(value); },
 					[&](std::string fieldName) { return nlohmann::json({{ fieldName, onReleaseJson.dump(4) }}); }}
-				}, 
+				},
 				{
 					"on-click",
 					{"{}",
@@ -638,33 +636,33 @@ bool gui::Widget::init(nlohmann::json j, bool ignoreType)
 		);
 
 		backgroundTransition = background;
-		x = targetX;
-		y = targetY;
-		w = targetW;
-		h = targetH;
-		rotation = targetRotation;
+		x = xTarget;
+		y = yTarget;
+		w = wTarget;
+		h = hTarget;
+		rotation = rotationTarget;
 		color = targetColor;
 
 		if (w == 0)
 		{
 			if (parent != nullptr)
 			{
-				targetW = parent->w;
+				wTarget = parent->w;
 			}
 			else
 			{
-				targetW = gui->w;
+				wTarget = gui->w;
 			}
 		}
 		if (h == 0)
 		{
 			if (parent != nullptr)
 			{
-				targetH = parent->h;
+				hTarget = parent->h;
 			}
 			else
 			{
-				targetH = gui->h;
+				hTarget = gui->h;
 			}
 		}
 
@@ -672,8 +670,8 @@ bool gui::Widget::init(nlohmann::json j, bool ignoreType)
 		{
 			if (background != nullptr)
 			{
-				targetW = background->width;
-				targetH = background->height;
+				wTarget = background->width;
+				hTarget = background->height;
 			}
 		}
 
@@ -708,7 +706,7 @@ void gui::Widget::addToManifestList(nlohmann::json j, std::map<std::string, Mani
 void gui::Widget::getAbsolutePosition(float& xPos, float& yPos)
 {
 	xPos += x;
-	yPos += y;		
+	yPos += y;
 	if (parent != nullptr)
 	{
 		parent->getAbsolutePosition(xPos, yPos);
@@ -835,7 +833,7 @@ bool gui::Widget::onReleaseEvent(MouseEventData mouseEventData, bool process)
 	if (!mouseEventData.leftDown && oldMouseEventData.leftDown && down)
 	{
 		if (process)
-		{			
+		{
 			loadManifest(onReleaseJson, manifestList, 0, true);
 
 			if (!toggleOnClick)
@@ -848,7 +846,7 @@ bool gui::Widget::onReleaseEvent(MouseEventData mouseEventData, bool process)
 					else
 					{
 						toggleOff();
-					}	
+					}
 					if (radio)
 						if (parent != nullptr)
 							parent->onIntent(widgetId);
@@ -870,7 +868,6 @@ bool gui::Widget::onOverEvent(MouseEventData mouseEventData, bool process)
 	if (mouseEventData.x > tx && mouseEventData.x < tx + w &&
 		mouseEventData.y > ty && mouseEventData.y < ty + h)
 	{
-
 		if (process)
 		{
 			if (!over && !toggled)
@@ -923,7 +920,7 @@ bool gui::Widget::onDownEvent(MouseEventData mouseEventData, bool process)
 }
 
 bool gui::Widget::onUpEvent(MouseEventData mouseEventData, bool process)
-{	
+{
 	// Handle up event
 	if (!mouseEventData.leftDown)
 	{
@@ -948,7 +945,6 @@ bool gui::Widget::onMiddleClickEvent(MouseEventData mouseEventData, bool process
 
 void gui::Widget::onIntent(std::string intentChoice)
 {
-
 }
 
 void gui::Widget::getContextPosition(float& tx, float& ty)
@@ -982,7 +978,7 @@ void gui::Widget::toggleOff(bool updatedRadio, bool force)
 		gui->fireTriggers(onToggledOffJson);
 		loadManifest(onToggledOffJson, manifestList, 0, true);
 		gui->getWidgetManager()->handleDynamicJson(onToggledOffExternalJson, widgetId);
-		onToggledOff(gui, oldMouseEventData);	
+		onToggledOff(gui, oldMouseEventData);
 		toggled = false;
 		if (updatedRadio)
 			if (radio)
@@ -1000,4 +996,3 @@ void gui::Widget::setClassname(std::string newClassname)
 {
 	classname = newClassname;
 }
-

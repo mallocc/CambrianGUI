@@ -32,7 +32,6 @@ namespace gui
 		{"wait", IDC_WAIT},
 		{"no", IDC_NO}
 	};
-
 }
 
 void GUI::draw()
@@ -68,7 +67,6 @@ void GUI::draw()
 			}
 		}
 
-
 		Widget* floatingLabelWidget = widgetManager->getFloatingLabelWidget();
 		if (floatingLabelWidget != nullptr && floatingLabelWidget->visible)
 		{
@@ -87,7 +85,6 @@ void GUI::draw()
 		//{
 		//	editedWidgetInfoLabel->draw(oldMouseEventData.x, oldMouseEventData.y);
 		//}
-
 	}
 	frameCount++;
 }
@@ -226,7 +223,6 @@ void GUI::onKeyEvent(KeyEventData keyEventData)
 			std::cout << "Could not open tempory file for writing: " << tPath.string() << std::endl;
 			tFile.close();
 		}
-
 	}
 	if (keyDown('R', &keyEventData))
 	{
@@ -358,7 +354,6 @@ void gui::GUI::loadDimensions(std::string configOverridePath)
 		bool success = true;
 		success &= readJSON(j, "w", w);
 		success &= readJSON(j, "h", h);
-
 	}
 	catch (std::exception& e)
 	{
@@ -424,9 +419,7 @@ GUI::GUI(int32_t w, int32_t h)
 	registerTriggerCallback("show_credits", [&](GUI* g) { g->displayCredits = true; });
 	registerTriggerCallback("hide_credits", [&](GUI* g) { g->displayCredits = false; });
 	registerTriggerCallback("test", [&](GUI* g) { std::cout << "test" << std::endl; });
-
 }
-
 
 TextureManager* GUI::getTextureManager()
 {
@@ -451,8 +444,6 @@ gui::Configuration* gui::GUI::getGUIConfig()
 {
 	return config;
 }
-
-
 
 void gui::GUI::showCursor()
 {
@@ -524,8 +515,8 @@ void gui::GUI::showFloatingLabel(int32_t x, int32_t y, std::string text, uint64_
 
 		floatingLabelWidget->visible = true;
 		floatingLabelWidget->text = text;
-		floatingLabelWidget->targetX = x;
-		floatingLabelWidget->targetY = y;
+		floatingLabelWidget->xTarget = x;
+		floatingLabelWidget->yTarget = y;
 	}
 }
 
@@ -567,4 +558,3 @@ void gui::GUI::registerTriggerCallback(std::string triggerName, TriggerCallback 
 {
 	triggerCallbacks[triggerName] = function;
 }
-

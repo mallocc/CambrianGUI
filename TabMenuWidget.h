@@ -1,14 +1,14 @@
 #pragma once
 
-#include "LayoutWidget.h"
+#include "ContainerWidget.h"
 
 namespace gui
 {
 	const std::string TABMENUWIDGET_CLASSNAME = "tabmenu";
-	struct TabMenuWidget : public LayoutWidget
+	struct TabMenuWidget : public ContainerWidget
 	{
-		LayoutWidget* tabPane = nullptr;
-		LayoutWidget* tabMenu = nullptr;
+		ContainerWidget* tabPane = nullptr;
+		ContainerWidget* tabMenu = nullptr;
 		Texture* tabSelectionTex = nullptr;
 		Texture* tabOverTex = nullptr;
 		nlohmann::json tabLabelTemplate;

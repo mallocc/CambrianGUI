@@ -56,15 +56,15 @@ namespace gui
 		"list",
 	};
 
-	const std::string STR_LAYOUTWIDGET = "layout";
+	const std::string STR_LAYOUTWIDGET = "container";
 
-	struct LayoutWidget : Widget
+	struct ContainerWidget : Widget
 	{
 		ALIGNMENT alignment = ALIGN_NONE;
 		SIZING sizing = SIZE_INHERIT;
 		float padding = 0.0f;
 		float spacing = 0.0f;
-		bool radio = false;		
+		bool radio = false;
 		bool childEnvoke = false;
 		std::vector<Widget*> children;
 		Widget* lastLocalWidgetHandled = nullptr;
@@ -92,7 +92,7 @@ namespace gui
 
 		virtual void onIntent(std::string intentChoice) override;
 
-		LayoutWidget(GUI* gui, nlohmann::json j);
+		ContainerWidget(GUI* gui, nlohmann::json j);
 
 		virtual int32_t getChildIndex(Widget* child);
 	};
