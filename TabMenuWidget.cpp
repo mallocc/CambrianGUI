@@ -7,7 +7,7 @@ bool gui::TabMenuWidget::init(nlohmann::json j, bool ignoreType)
 {
 	if (ContainerWidget::init(j, true))
 	{
-		if (doesTypeMatch(ignoreType))
+		if (checkWidgetType<TabMenuWidget>(ignoreType))
 		{
 			addToManifestList(j,
 				{
@@ -115,6 +115,8 @@ void gui::TabMenuWidget::onIntent(nlohmann::json intent)
 
 gui::TabMenuWidget::TabMenuWidget(GUI* gui, nlohmann::json j) : ContainerWidget(gui, j)
 {
-	setClassname(TABMENUWIDGET_CLASSNAME);
-	init(j);
+	if (!init(j))
+	{
+		std::cout << "Failed to init widget: " << getClassname() << std::endl;
+	}
 }

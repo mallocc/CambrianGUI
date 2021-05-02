@@ -26,7 +26,7 @@ namespace gui
 		Widget* getDropDownListWidget();
 
 		template <typename T>
-		void registerWidget(std::string classname);
+		void registerWidget();
 	private:
 		Configuration* config = nullptr;
 		std::map<std::string, Widget*> widgetMap;
@@ -44,11 +44,13 @@ namespace gui
 	};
 
 	template <typename T>
-	void gui::WidgetManager::registerWidget(std::string classname)
+	void gui::WidgetManager::registerWidget()
 	{
-		StringToWidgetFunction allocate = [](GUI* a, nlohmann::json b) { return new T(a, b); };
-		stringToWidgetFunctions[classname] = allocate;
-		std::cout << "Registered new widget class: " << classname << std::endl;
+		StringToWidgetFunction allocate = [](GUI* a, nlohmann::json b) {
+			return new T(a, b); 
+		};
+		stringToWidgetFunctions[T::getClassname()] = allocate;
+		std::cout << "Registered new widget class: " << T::getClassname() << std::endl;
 	}
 
 /**

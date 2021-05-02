@@ -4,15 +4,17 @@
 gui::HLayoutWidget::HLayoutWidget(GUI* gui, nlohmann::json j)
 	: ContainerWidget(gui, j)
 {
-	setClassname(HLAYOUTWIDGET_CLASSNAME);
-	init(j);
+	if (!init(j))
+	{
+		std::cout << "Failed to init widget: " << getClassname() << std::endl;
+	}
 }
 
 bool gui::HLayoutWidget::init(nlohmann::json j, bool ignoreType)
 {
 	if (ContainerWidget::init(j, true))
 	{
-		if (doesTypeMatch(ignoreType))
+		if (checkWidgetType<HLayoutWidget>(ignoreType))
 		{
 		}
 	}

@@ -5,9 +5,13 @@
 
 namespace gui
 {
-	const std::string DROPDOWNLISTWIDGET_CLASSNAME = "dropdownlist";
-	struct DropdownListWidget : VLayoutWidget
+	struct DropdownListWidget : VLayoutWidget, WidgetBase<DropdownListWidget>
 	{
+		static std::string getClassname()
+		{
+			return "dropdownlist";
+		}
+
 		std::map<std::string, LabelWidget*> data;
 		nlohmann::json labelTemplate;
 		virtual bool init(nlohmann::json j, bool ignoreType = false);

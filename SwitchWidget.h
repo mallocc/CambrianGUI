@@ -4,9 +4,13 @@
 
 namespace gui
 {
-	const std::string STR_SWITCHWIDGET = "switch";
-	struct SwitchWidget : Widget
+	struct SwitchWidget : Widget, WidgetBase<SwitchWidget>
 	{
+		static std::string getClassname()
+		{
+			return "switch";
+		}
+
 		Texture* switchOnTex = nullptr;
 		Texture* switchOffTex = nullptr;
 		Texture* currentSwitchTex = nullptr;

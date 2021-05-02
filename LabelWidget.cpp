@@ -53,7 +53,7 @@ bool gui::LabelWidget::init(nlohmann::json j, bool ignoreType)
 {
 	if (Widget::init(j, ignoreType))
 	{
-		if (doesTypeMatch(ignoreType))
+		if (checkWidgetType<LabelWidget>(ignoreType))
 		{
 			addToManifestList(j,
 				{
@@ -147,6 +147,8 @@ void gui::LabelWidget::revalidate()
 gui::LabelWidget::LabelWidget(GUI* gui, nlohmann::json j)
 	: Widget(gui), displayFont(gui->getFontManager()->defaultFont)
 {
-	setClassname(LABELWIDGET_CLASSNAME);
-	init(j);
+	if (!init(j))
+	{
+		std::cout << "Failed to init widget: " << getClassname() << std::endl;
+	}
 }

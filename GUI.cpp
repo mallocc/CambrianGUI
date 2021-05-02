@@ -362,13 +362,6 @@ GUI::GUI(int32_t w, int32_t h)
 	config = new Configuration(&filesys);
 	widgetManager = new WidgetManager(this, config);
 
-	widgetManager->registerWidget<HLayoutWidget>(HLAYOUTWIDGET_CLASSNAME);
-	widgetManager->registerWidget<VLayoutWidget>(VLAYOUTWIDGET_CLASSNAME);
-	widgetManager->registerWidget<LabelWidget>(LABELWIDGET_CLASSNAME);
-	widgetManager->registerWidget<DropdownWidget>(DROPDOWNWIDGET_CLASSNAME);
-	widgetManager->registerWidget<DropdownListWidget>(DROPDOWNLISTWIDGET_CLASSNAME);
-	widgetManager->registerWidget<TabMenuWidget>(TABMENUWIDGET_CLASSNAME);
-
 	registerTriggerCallback("show_credits", [&](GUI* g) { g->displayCredits = true; });
 	registerTriggerCallback("hide_credits", [&](GUI* g) { g->displayCredits = false; });
 	registerTriggerCallback("test", [&](GUI* g) { std::cout << "test" << std::endl; });
@@ -510,4 +503,14 @@ void gui::GUI::hideHintLabel()
 void gui::GUI::registerTriggerCallback(std::string triggerName, TriggerCallback function)
 {
 	triggerCallbacks[triggerName] = function;
+}
+
+void gui::GUI::registerWidgets()
+{
+	widgetManager->registerWidget<HLayoutWidget>();
+	widgetManager->registerWidget<VLayoutWidget>();
+	widgetManager->registerWidget<LabelWidget>();
+	widgetManager->registerWidget<DropdownWidget>();
+	widgetManager->registerWidget<DropdownListWidget>();
+	widgetManager->registerWidget<TabMenuWidget>();
 }

@@ -6,7 +6,7 @@ bool gui::DropdownListWidget::init(nlohmann::json j, bool ignoreType)
 {
 	if (VLayoutWidget::init(j, true))
 	{
-		if (doesTypeMatch(ignoreType))
+		if (checkWidgetType<DropdownListWidget>(ignoreType))
 		{
 			visible = false;
 
@@ -81,6 +81,8 @@ void gui::DropdownListWidget::onIntent(nlohmann::json intent)
 
 gui::DropdownListWidget::DropdownListWidget(GUI* gui, nlohmann::json j) : VLayoutWidget(gui, j)
 {
-	setClassname(DROPDOWNLISTWIDGET_CLASSNAME);
-	init(j);
+	if (!init(j))
+	{
+		std::cout << "Failed to init widget: " << getClassname() << std::endl;
+	}
 }

@@ -56,10 +56,13 @@ namespace gui
 		"list",
 	};
 
-	const std::string STR_LAYOUTWIDGET = "container";
-
-	struct ContainerWidget : Widget
+	struct ContainerWidget : Widget, WidgetBase<ContainerWidget>
 	{
+		static std::string getClassname()
+		{
+			return "container";
+		}
+
 		ALIGNMENT alignment = ALIGNMENT::ALIGN_NONE;
 		SIZING sizing = SIZING::SIZE_INHERIT;
 		float padding = 0.0f;

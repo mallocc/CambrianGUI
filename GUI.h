@@ -48,6 +48,8 @@ namespace gui
 
 		virtual void registerTriggerCallback(std::string triggerName, TriggerCallback function);
 
+		virtual void registerWidgets();
+
 		AssetPacker::fileImageMap_t filesys;
 
 		nlohmann::json toJson();

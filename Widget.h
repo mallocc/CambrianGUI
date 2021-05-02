@@ -16,11 +16,26 @@ namespace gui
 	typedef std::function<void(gui::GUI*, MouseEventData)> callback_t;
 	typedef std::function<void(gui::GUI*, KeyEventData)> keycallback_t;
 
-	struct Widget
+	
+
+	template<typename T>
+	struct WidgetBase
 	{
+		static std::string getClassname()
+		{
+			return T::getClassname();
+		}
+	};
+
+	struct Widget : WidgetBase<Widget>
+	{
+		static std::string getClassname()
+		{
+			return "widget";
+		}
+
 		GUI* gui;
-		std::string type = "undefined";
-		std::string classname = "widget";
+
 		float x = 0, y = 0;
 		float xOffset, yOffset = 0;
 		float xTarget = 0, yTarget = 0;
@@ -36,6 +51,7 @@ namespace gui
 		float backgroundTransitionValue = 0.0f;
 		float transitionSpeed = 1.0f;
 		bool backgroundTiled = 0;
+		std::string type = "undefined";
 		std::string text = "---";
 		Widget* parent = nullptr;
 		MouseEventData oldMouseEventData;
@@ -149,7 +165,14 @@ namespace gui
 		void uncheck(bool updatedRadio = true, bool force = false);
 		void toggleCheck(bool updatedRadio = true, bool force = false);
 
-		bool doesTypeMatch(bool bypass = false, std::string typeQuery = "");
-		void setClassname(std::string newClassname);
+
+		template<typename W>
+		bool checkWidgetType(bool ignoreCheck = false)
+		{
+			return WidgetBase<W>::getClassname() == type || ignoreCheck;
+		}
 	};
+
+#define check_widget_type(WIDGET_TYPE_SYMBOL, WIDGET_TYPE_NAME_SYMBOL) \
+	if ()
 }

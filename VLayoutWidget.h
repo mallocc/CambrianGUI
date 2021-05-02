@@ -4,9 +4,12 @@
 
 namespace gui
 {
-	const std::string VLAYOUTWIDGET_CLASSNAME = "vlayout";
-	struct VLayoutWidget : ContainerWidget
+	struct VLayoutWidget : ContainerWidget, WidgetBase<VLayoutWidget>
 	{
+		static std::string getClassname()
+		{
+			return "vlayout";
+		}
 		VLayoutWidget(GUI* gui, nlohmann::json j);
 
 		virtual bool init(nlohmann::json j, bool ignoreType = false);

@@ -8,8 +8,10 @@ using gui::Widget;
 
 ContainerWidget::ContainerWidget(GUI* gui, nlohmann::json j) : Widget(gui)
 {
-	setClassname(STR_LAYOUTWIDGET);
-	init(j);
+	if (!init(j))
+	{
+		std::cout << "Failed to init widget: " << getClassname() << std::endl;
+	}
 }
 
 int32_t gui::ContainerWidget::getChildIndex(Widget* child)
@@ -175,7 +177,7 @@ bool gui::ContainerWidget::init(nlohmann::json j, bool ignoreType)
 
 	if (Widget::init(j, ignoreType))
 	{
-		if (doesTypeMatch(ignoreType))
+		if (checkWidgetType<ContainerWidget>(ignoreType))
 		{
 			if (checkJSON(j, "children"))
 			{

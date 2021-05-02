@@ -4,9 +4,13 @@
 
 namespace gui
 {
-	const std::string DROPDOWNWIDGET_CLASSNAME = "dropdown";
-	struct DropdownWidget : HLayoutWidget
+	struct DropdownWidget : HLayoutWidget, WidgetBase<DropdownWidget>
 	{
+		static std::string getClassname()
+		{
+			return "dropdown";
+		}
+
 		Widget* icon;
 		nlohmann::json iconJson;
 		Widget* label;

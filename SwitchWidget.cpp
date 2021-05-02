@@ -49,7 +49,7 @@ bool gui::SwitchWidget::init(nlohmann::json j, bool ignoreType)
 {
 	if (Widget::init(j, ignoreType))
 	{
-		if (doesTypeMatch(ignoreType))
+		if (checkWidgetType<SwitchWidget>(ignoreType))
 		{
 			addToManifestList(j,
 				{
@@ -121,12 +121,14 @@ void gui::SwitchWidget::switchOff()
 
 gui::SwitchWidget::SwitchWidget(GUI* gui, nlohmann::json j) : Widget(gui)
 {
-	setClassname(STR_SWITCHWIDGET);
 	onRelease = [&](GUI* gui, MouseEventData mouseEventData)
 	{
 		toggleSwitch();
 		radioUp();
 	};
-	init(j);
+	if (!init(j))
+	{
+		std::cout << "Failed to init widget: " << getClassname() << std::endl;
+	}
 	currentSwitchTex = switchOffTex;
 }

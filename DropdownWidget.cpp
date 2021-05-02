@@ -5,7 +5,7 @@ bool gui::DropdownWidget::init(nlohmann::json j, bool ignoreType)
 {
 	if (HLayoutWidget::init(j, true))
 	{
-		if (doesTypeMatch(ignoreType))
+		if (checkWidgetType<DropdownWidget>(ignoreType))
 		{
 			alignment = ALIGN_SPACED;
 			sizing = SIZE_NONE;
@@ -111,10 +111,12 @@ nlohmann::json gui::DropdownWidget::toJson()
 
 gui::DropdownWidget::DropdownWidget(GUI* gui, nlohmann::json j) : HLayoutWidget(gui, j)
 {
-	setClassname(DROPDOWNWIDGET_CLASSNAME);
 	onClick = [&](GUI* gui, MouseEventData mouseEventData)
 	{
 		this->openDropdown();
 	};
-	init(j);
+	if (!init(j))
+	{
+		std::cout << "Failed to init widget: " << getClassname() << std::endl;
+	}
 }

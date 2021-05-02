@@ -1004,13 +1004,3 @@ void gui::Widget::toggleCheck(bool updatedRadio, bool force)
 		check(updatedRadio, force);
 	}
 }
-
-bool gui::Widget::doesTypeMatch(bool bypass, std::string typeQuery)
-{
-	return (type == (typeQuery.empty() ? classname : typeQuery)) || bypass;
-}
-
-void gui::Widget::setClassname(std::string newClassname)
-{
-	classname = newClassname;
-}
