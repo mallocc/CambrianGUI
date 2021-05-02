@@ -97,10 +97,11 @@ gui::Widget* gui::WidgetManager::createWidget(nlohmann::json& j)
 		if (stringToWidgetFunctions.find(tmp) != stringToWidgetFunctions.end())
 		{
 			widget = stringToWidgetFunctions.at(tmp)(gui, j);
+			//std::cout << "Found registered widget:" << tmp << std::endl;
 		}
 		else
 		{
-			std::cout << "Failed to find widget type field" << std::endl;
+			std::cout << "Failed to find registered widget:" << tmp << std::endl;
 		}
 	}
 	else
@@ -171,16 +172,16 @@ void gui::WidgetManager::handleDynamicJson(nlohmann::json j, std::string id)
 					bool reset = tmp == "true";
 					loadManifest(reset ? widget->config : i, widget->manifestList, false, !reset);
 
-					readJSONAsString(i, "TOGGLE", tmp);
-					bool toggleOn = tmp == "true";
-					bool toggleOff = tmp == "false";
-					if (toggleOn)
+					readJSONAsString(i, "CHECK", tmp);
+					bool checked = tmp == "true";
+					bool unchecked = tmp == "false";
+					if (checked)
 					{
-						widget->toggleOn(true);
+						widget->check(true);
 					}
-					if (toggleOff)
+					if (unchecked)
 					{
-						widget->toggleOff(true);
+						widget->uncheck(true);
 					}
 				}
 				else

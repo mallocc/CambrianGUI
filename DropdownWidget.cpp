@@ -50,7 +50,10 @@ bool gui::DropdownWidget::init(nlohmann::json j, bool ignoreType)
 			{
 				if (defaultChoice == count)
 				{
-					onIntent(d.dump(4));
+					nlohmann::json j;
+					j["intent"] = "dropdown";
+					j["data"] = d;
+					onIntent(j);
 					defaultChoiceFound = true;
 					break;
 				}
@@ -60,7 +63,10 @@ bool gui::DropdownWidget::init(nlohmann::json j, bool ignoreType)
 			{
 				for (auto& d : data)
 				{
-					onIntent(d.dump(4));
+					nlohmann::json j;
+					j["intent"] = "dropdown";
+					j["data"] = d;
+					onIntent(j);
 					break;
 				}
 			}
@@ -70,16 +76,31 @@ bool gui::DropdownWidget::init(nlohmann::json j, bool ignoreType)
 	return true;
 }
 
-void gui::DropdownWidget::onIntent(std::string intentChoice)
+void gui::DropdownWidget::onIntent(nlohmann::json intentData)
 {
 	if (icon != nullptr)
-		icon->toggleOff();
+		icon->uncheck();
+
+	json_get_string(intentData, "intent", intent)
+	{
+		if (intent == "dropdown")
+		{
+			json_get_object(intentData, "data", data)
+			{			
+				json_get_string(data, "text", text)
+				{
+					if (label != nullptr)
+						label->text = text;
+				}
+			}
+		}
+	}
 }
 
 void gui::DropdownWidget::openDropdown()
 {
 	if (icon != nullptr)
-		icon->toggleOn();
+		icon->check();
 	gui->openDropdownIntent(this, this->data);
 }
 
@@ -95,5 +116,5 @@ gui::DropdownWidget::DropdownWidget(GUI* gui, nlohmann::json j) : HLayoutWidget(
 	{
 		this->openDropdown();
 	};
-	init(j);	
+	init(j);
 }

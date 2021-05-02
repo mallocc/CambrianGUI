@@ -14,7 +14,7 @@ namespace gui
 		nlohmann::json tabLabelTemplate;
 
 		virtual bool init(nlohmann::json j, bool ignoreType = false);
-		virtual void onIntent(std::string intentChoice);
+		virtual void onIntent(nlohmann::json intent);
 		TabMenuWidget(GUI* gui, nlohmann::json j);
 	};
 }

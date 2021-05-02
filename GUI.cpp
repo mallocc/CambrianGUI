@@ -156,6 +156,9 @@ void GUI::onMouseEvent(MouseEventData mouseEventData)
 		//hideFloatingLabel();
 	}
 
+	if (focusedWidget != nullptr)
+		lastHandledWidget = focusedWidget;
+
 	oldMouseEventData = mouseEventData;
 }
 
@@ -174,60 +177,6 @@ void GUI::onKeyEvent(KeyEventData keyEventData)
 	if (rootWidget != nullptr)
 		rootWidget->onKeyEvent(keyEventData);
 
-	if (keyDown('E', &keyEventData))
-	{
-		char* pValue;
-		size_t len;
-		errno_t err = _dupenv_s(&pValue, &len, "APPDATA");
-
-		std::filesystem::path tPath(pValue);
-		tPath /= std::tmpnam(nullptr);
-		tPath += ".json";
-
-		std::cout << tPath.string().c_str() << std::endl;
-
-		std::ofstream tFile(tPath, std::ios::binary);
-		if (tFile)
-		{
-			tFile.write(filesys["assets/guiconfig.json"].data, filesys["assets/guiconfig.json"].size);
-			//std::string data = toJson().dump(4);
-			//tFile.write(data.c_str(), strlen(data.c_str()));
-			tFile.close();
-
-			GUI* guiPtr = this;
-
-			auto watch = new filewatch::FileWatch<std::filesystem::path>(tPath,
-				[=](const std::filesystem::path& path, const filewatch::Event change_type) {
-					if (change_type == filewatch::Event::modified)
-					{
-						if (GetTickCount() - lastEditTime > 250)
-						{
-							std::cout << "Config modified, reloading: " << tPath << std::endl;
-							//init(path.string());
-
-							guiPtr->configureOverride = tPath;
-							guiPtr->configInvalidated = 1;
-
-							guiPtr->lastEditTime = GetTickCount();
-							guiPtr->draw();
-						}
-					}
-				}
-			);
-
-			ShellExecuteA(NULL, "open", (LPCSTR)tPath.string().c_str(), NULL, NULL, SW_NORMAL);
-			std::cout << (LPCSTR)tPath.string().c_str() << std::endl << "Last Error: " << GetLastError() << std::endl;
-		}
-		else
-		{
-			std::cout << "Could not open tempory file for writing: " << tPath.string() << std::endl;
-			tFile.close();
-		}
-	}
-	if (keyDown('R', &keyEventData))
-	{
-		getShaderManger()->flushShaders();
-	}
 	if (keyDown(VK_F4, &keyEventData))
 	{
 		bool oldEditMode = editMode;
@@ -265,6 +214,8 @@ void GUI::init(std::string configOverridePath, bool firstLoad_)
 	if (firstLoad)
 	{
 		texMan->clear();
+
+#ifdef SHADERS
 		timer.split("Textures Cleared");
 		shaderManager->flushShaders();
 		timer.split("Shaders Flushed");
@@ -281,7 +232,7 @@ void GUI::init(std::string configOverridePath, bool firstLoad_)
 			});
 
 		timer.split("Loaded Cubemap");
-
+#endif
 		std::string fontPath = "assets/fonts/Open_Sans/OpenSans-Regular.ttf";
 		fontMan->defaultFont = new Font(&fontMan->ft, fontPath, "OpenSans@24", 24, this);
 		timer.split("Loaded Default Font");
@@ -289,27 +240,29 @@ void GUI::init(std::string configOverridePath, bool firstLoad_)
 
 	try
 	{
-		std::cout << "Configuration load status: " << config->loadConfig("assets/guiconfig.json", *this) << std::endl;
+		config->loadConfig(configOverridePath.empty() ? "assets/guiconfig.json" : configOverridePath, *this);
+		w = config->w;
+		h = config->h;
 
 		widgetManager->init();
 
 		//std::ifstream t(ExePath() + "\\..\\..\\Vst_Plugins\\assets\\guiconfig.json");
 		//std::string str((std::istreambuf_iterator<char>(t)),
 		//std::istreambuf_iterator<char>());
-		std::string str(filesys["assets/guiconfig.json"].data, filesys["assets/guiconfig.json"].size);
+		//std::string str(filesys["assets/guiconfig.json"].data, filesys["assets/guiconfig.json"].size);
 
-		if (configOverridePath != "")
-		{
-			std::cout << "Loaded Overridden config: " << configOverridePath << std::endl;
-			std::ifstream t(configOverridePath);
-			str = std::string((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
-		}
-		timer.split("Loaded Config from image");
-		nlohmann::json j = nlohmann::json::parse(str);
-		timer.split("Parsed Config to JSON structure");
+		//if (configOverridePath != "")
+		//{
+		//	std::cout << "Loaded Overridden config: " << configOverridePath << std::endl;
+		//	std::ifstream t(configOverridePath);
+		//	str = std::string((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+		//}
+		//timer.split("Loaded Config from image");
+		//nlohmann::json j = nlohmann::json::parse(str);
+		//timer.split("Parsed Config to JSON structure");
 
-		std::string tmp;
-		bool success = true;
+		//std::string tmp;
+		//bool success = true;
 
 		if (Widget* buildDateLabel = widgetManager->findWidget("builddatelabel"))
 		{
@@ -499,7 +452,7 @@ void gui::GUI::closeDropdownIntent()
 	DropdownListWidget* dropdownListWidget = dynamic_cast<DropdownListWidget*>(widgetManager->getDropDownListWidget());
 	if (dropdownListWidget != nullptr)
 	{
-		dropdownListWidget->onIntent("");
+		dropdownListWidget->onIntent();
 		dropdownListWidget->visible = false;
 		dropdownListWidget->parent = nullptr;
 	}

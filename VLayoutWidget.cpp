@@ -38,7 +38,7 @@ void gui::VLayoutWidget::revalidate()
 
 		switch (alignment)
 		{
-		case ALIGN_LIST:
+		case ALIGNMENT::ALIGN_LIST:
 		{
 			float start = 0.0f;
 			for (int i = 0; i < visibleChildren.size(); ++i)
@@ -50,7 +50,7 @@ void gui::VLayoutWidget::revalidate()
 			}
 			break;
 		}
-		case ALIGN_CENTERED:
+		case ALIGNMENT::ALIGN_CENTERED:
 		{
 			for (int i = 0; i < visibleChildren.size(); ++i)
 			{
@@ -59,7 +59,7 @@ void gui::VLayoutWidget::revalidate()
 			}
 			break;
 		}
-		case ALIGN_TOP:
+		case ALIGNMENT::ALIGN_TOP:
 		{
 			float start = padding;
 			for (int i = 0; i < visibleChildren.size(); ++i)
@@ -72,7 +72,7 @@ void gui::VLayoutWidget::revalidate()
 			}
 			break;
 		}
-		case ALIGN_BOTTOM:
+		case ALIGNMENT::ALIGN_BOTTOM:
 		{
 			float start = h - size - padding;
 			for (int i = 0; i < visibleChildren.size(); ++i)
@@ -85,12 +85,12 @@ void gui::VLayoutWidget::revalidate()
 			}
 			break;
 		}
-		case ALIGN_LEFT:
+		case ALIGNMENT::ALIGN_LEFT:
 		{
 			float start = midy - size / 2.0f;
 			for (int i = 0; i < visibleChildren.size(); ++i)
 			{
-				visibleChildren[i]->x = 0;
+				visibleChildren[i]->x = spacing;
 				visibleChildren[i]->y = start;
 				start += visibleChildren[i]->h + visibleChildren[i]->weight * (visibleChildren[i]->proportional ? h : 1);
 				if (visibleChildren[i]->centered)
@@ -98,7 +98,7 @@ void gui::VLayoutWidget::revalidate()
 			}
 			break;
 		}
-		case ALIGN_RIGHT:
+		case ALIGNMENT::ALIGN_RIGHT:
 		{
 			float start = midy - size / 2.0f;
 			for (int i = 0; i < visibleChildren.size(); ++i)
@@ -111,7 +111,7 @@ void gui::VLayoutWidget::revalidate()
 			}
 			break;
 		}
-		case ALIGN_STACKED:
+		case ALIGNMENT::ALIGN_STACKED:
 		{
 			float start = midy - size / 2.0f;
 			for (int i = 0; i < visibleChildren.size(); ++i)
@@ -124,7 +124,7 @@ void gui::VLayoutWidget::revalidate()
 			}
 			break;
 		}
-		case ALIGN_START:
+		case ALIGNMENT::ALIGN_START:
 		{
 			float start = 0.0f;
 			for (int i = 0; i < visibleChildren.size(); ++i)
@@ -137,7 +137,7 @@ void gui::VLayoutWidget::revalidate()
 			}
 			break;
 		}
-		case ALIGN_END:
+		case ALIGNMENT::ALIGN_END:
 		{
 			float leftOver = h - size;
 			float start = leftOver;
@@ -151,7 +151,7 @@ void gui::VLayoutWidget::revalidate()
 			}
 			break;
 		}
-		case ALIGN_RSTART:
+		case ALIGNMENT::ALIGN_RSTART:
 		{
 			float leftOver = h - size;
 			float start = leftOver;
@@ -165,7 +165,7 @@ void gui::VLayoutWidget::revalidate()
 			}
 			break;
 		}
-		case ALIGN_REND:
+		case ALIGNMENT::ALIGN_REND:
 		{
 			float start = 0.0f;
 			for (int i = 0; i < visibleChildren.size(); ++i)
@@ -178,7 +178,7 @@ void gui::VLayoutWidget::revalidate()
 			}
 			break;
 		}
-		case ALIGN_SPACED:
+		case ALIGNMENT::ALIGN_SPACED:
 		{
 			float leftOver = h - size - padding * 2.0f;
 			float d = leftOver / (visibleChildren.size() - 1);
@@ -193,7 +193,7 @@ void gui::VLayoutWidget::revalidate()
 			}
 			break;
 		}
-		case ALIGN_NONE:
+		case ALIGNMENT::ALIGN_NONE:
 		default:
 			break;
 		}

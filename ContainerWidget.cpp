@@ -33,6 +33,9 @@ void gui::ContainerWidget::clearChildren()
 	{
 		if (c != nullptr)
 		{
+			ContainerWidget* container = dynamic_cast<ContainerWidget*>(c);
+			if (container != nullptr)
+				container->clearChildren();
 			gui->getWidgetManager()->removeWidget(c->widgetId);
 		}
 	}
@@ -54,6 +57,15 @@ void gui::ContainerWidget::addChild(Widget* widget)
 	{
 		widget->parent = this;
 		children.push_back(widget);
+	}
+}
+
+void gui::ContainerWidget::addRadioChild(Widget* component)
+{
+	if (component != nullptr)
+	{
+		component->radioParent = this;
+		radioChildren.push_back(component);
 	}
 }
 
@@ -197,13 +209,13 @@ bool gui::ContainerWidget::init(nlohmann::json j, bool ignoreType)
 					{
 						"align",
 						{"NONE",
-						[&](std::string value) { for (int i = 0; i < ALIGN_NUMBER; ++i)	if (ALIGN_STRINGS[i] == value) alignment = (ALIGNMENT)i; },
+						[&](std::string value) { for (int i = 0; i < ALIGNMENT::ALIGN_NUMBER; ++i)	if (ALIGN_STRINGS[i] == value) alignment = (ALIGNMENT)i; },
 						[&](std::string fieldName) { return nlohmann::json({{fieldName, ALIGN_STRINGS[alignment]}}); }}
 					},
 					{
 						"size",
 						{"INHERIT",
-						[&](std::string value) { for (int i = 0; i < SIZE_NUMBER; ++i) if (SIZE_STRINGS[i] == value) sizing = (SIZING)i; },
+						[&](std::string value) { for (int i = 0; i < SIZING::SIZE_NUMBER; ++i) if (SIZE_STRINGS[i] == value) sizing = (SIZING)i; },
 						[&](std::string fieldName) { return nlohmann::json({{fieldName, SIZE_STRINGS[sizing]}}); }}
 					},
 					{
@@ -256,7 +268,7 @@ void gui::ContainerWidget::revalidate()
 {
 	Widget::revalidate();
 
-	if (sizing == SIZE_INHERIT)
+	if (sizing == SIZING::SIZE_INHERIT)
 	{
 		if (w == 0)
 		{
@@ -358,20 +370,7 @@ void gui::ContainerWidget::expand()
 	}
 }
 
-void gui::ContainerWidget::onIntent(std::string intentChoice)
+void gui::ContainerWidget::onIntent(nlohmann::json intent)
 {
-	for (Widget* widget : children)
-	{
-		if (widget != nullptr)
-			if (widget->radio && widget->toggled)
-				widget->toggleOff();
-	}
 
-	for (Widget* widget : children)
-	{
-		if (widget != nullptr)
-			if (widget->radio)
-				if (widget->widgetId == intentChoice && !widget->toggled)
-					widget->toggleOn();
-	}
 }

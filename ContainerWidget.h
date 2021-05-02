@@ -32,7 +32,7 @@ namespace gui
 		SIZE_NUMBER
 	};
 
-	const static std::string SIZE_STRINGS[SIZE_NUMBER] = {
+	const static std::string SIZE_STRINGS[static_cast<size_t>(SIZING::SIZE_NUMBER)] = {
 		"inherit",
 		"none",
 		"expand",
@@ -40,7 +40,7 @@ namespace gui
 		"expand-height",
 	};
 
-	const static std::string ALIGN_STRINGS[ALIGN_NUMBER] = {
+	const static std::string ALIGN_STRINGS[static_cast<size_t>(ALIGNMENT::ALIGN_NUMBER)] = {
 		"none",
 		"top",
 		"bottom",
@@ -60,13 +60,14 @@ namespace gui
 
 	struct ContainerWidget : Widget
 	{
-		ALIGNMENT alignment = ALIGN_NONE;
-		SIZING sizing = SIZE_INHERIT;
+		ALIGNMENT alignment = ALIGNMENT::ALIGN_NONE;
+		SIZING sizing = SIZING::SIZE_INHERIT;
 		float padding = 0.0f;
 		float spacing = 0.0f;
 		bool radio = false;
 		bool childEnvoke = false;
 		std::vector<Widget*> children;
+		std::vector<Widget*> radioChildren;
 		Widget* lastLocalWidgetHandled = nullptr;
 
 		void clearChildren();
@@ -74,6 +75,7 @@ namespace gui
 		std::vector<Widget*> getVisibleChildren();
 
 		void addChild(Widget* component);
+		void addRadioChild(Widget* component);
 
 		virtual Widget* onMouseEvent(MouseEventData mouseEventData, bool process, bool focus);
 
@@ -90,7 +92,7 @@ namespace gui
 
 		virtual void expand();
 
-		virtual void onIntent(std::string intentChoice) override;
+		virtual void onIntent(nlohmann::json intent) override;
 
 		ContainerWidget(GUI* gui, nlohmann::json j);
 

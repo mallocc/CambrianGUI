@@ -52,6 +52,8 @@ Font::Font(FT_Library* ft, std::string fontPath, std::string fontName, int size,
 
 	int styles = 2;
 
+	bool success = false;
+
 	if (guiPtr->filesys.find(italicFontPath) != guiPtr->filesys.end())
 	{
 		std::cout << "Found Italic Font for " << fontName << " (" << italicFontPath << ")" << std::endl;
@@ -60,114 +62,118 @@ Font::Font(FT_Library* ft, std::string fontPath, std::string fontName, int size,
 		FT_Set_Pixel_Sizes(itaicFace, 0, size);
 
 		styles = 3;
+
+		success = true;
 	}
 	else
 	{
 		std::cout << "No italic font: " << italicFontPath << std::endl;
 	}
 
-
-	FT_Stroker stroker;
-	FT_Stroker_New(*ft, &stroker);
-	FT_Set_Pixel_Sizes(face, 0, size);
-	int numGlyphs = std::min((int)face->num_glyphs, 128);
-
-	fontAtlas = new FontAtlas();
-
-	std::cout << fontName << ": " << face->num_faces << " embedded faces, " << numGlyphs << " glyphs." << std::endl;
-
-
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disable byte-alignment restriction
-	for (int c = 0; c < numGlyphs; c++)
+	if (success)
 	{
-		for (int style = 0; style < styles; style++)
+		FT_Stroker stroker;
+		FT_Stroker_New(*ft, &stroker);
+		FT_Set_Pixel_Sizes(face, 0, size);
+		int numGlyphs = std::min((int)face->num_glyphs, 128);
+
+		fontAtlas = new FontAtlas();
+
+		std::cout << fontName << ": " << face->num_faces << " embedded faces, " << numGlyphs << " glyphs." << std::endl;
+
+
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disable byte-alignment restriction
+		for (int c = 0; c < numGlyphs; c++)
 		{
-			FT_Face lFace = face;
+			for (int style = 0; style < styles; style++)
+			{
+				FT_Face lFace = face;
 
-			if (style == 2)
-				lFace = itaicFace;
+				if (style == 2)
+					lFace = itaicFace;
 
-			if (FT_Load_Char(lFace, c, FT_LOAD_DEFAULT | FT_LOAD_NO_BITMAP))
-				continue;
+				if (FT_Load_Char(lFace, c, FT_LOAD_DEFAULT | FT_LOAD_NO_BITMAP))
+					continue;
 
-			FT_Glyph glyphD;
-			if (FT_Get_Glyph(lFace->glyph, &glyphD) != 0)
-				continue;
+				FT_Glyph glyphD;
+				if (FT_Get_Glyph(lFace->glyph, &glyphD) != 0)
+					continue;
 
-			FT_Stroker_Set(stroker, weight + ((style == 1) * .33) * 64.f, FT_STROKER_LINECAP_ROUND, FT_STROKER_LINEJOIN_ROUND, 0);
+				FT_Stroker_Set(stroker, weight + ((style == 1) * .33) * 64.f, FT_STROKER_LINECAP_ROUND, FT_STROKER_LINEJOIN_ROUND, 0);
 
-			if (!outline)
-				FT_Glyph_StrokeBorder(&glyphD, stroker, false, true);
-			else
-				FT_Glyph_Stroke(&glyphD, stroker, true);
+				if (!outline)
+					FT_Glyph_StrokeBorder(&glyphD, stroker, false, true);
+				else
+					FT_Glyph_Stroke(&glyphD, stroker, true);
 
-			FT_Glyph_To_Bitmap(&glyphD, FT_RENDER_MODE_NORMAL, 0, 1);
+				FT_Glyph_To_Bitmap(&glyphD, FT_RENDER_MODE_NORMAL, 0, 1);
 
-			FT_BitmapGlyph btGlyph = (FT_BitmapGlyph)glyphD;
+				FT_BitmapGlyph btGlyph = (FT_BitmapGlyph)glyphD;
 
-			fontAtlas->precalcGlyph(btGlyph->bitmap.width, btGlyph->bitmap.rows);
-			char* glyphCopy = new char[btGlyph->bitmap.width * btGlyph->bitmap.rows];
-			memcpy(glyphCopy, btGlyph->bitmap.buffer, btGlyph->bitmap.width * btGlyph->bitmap.rows);
+				fontAtlas->precalcGlyph(btGlyph->bitmap.width, btGlyph->bitmap.rows);
+				char* glyphCopy = new char[btGlyph->bitmap.width * btGlyph->bitmap.rows];
+				memcpy(glyphCopy, btGlyph->bitmap.buffer, btGlyph->bitmap.width * btGlyph->bitmap.rows);
 
-			Character character = {
-				{btGlyph->bitmap.width, btGlyph->bitmap.rows},
-				{btGlyph->left, btGlyph->top},
-				lFace->glyph->advance.x,
-				FontAtlasEntry(),
-				glyphCopy
-			};
-			characters.insert(std::pair<uint32_t, Character>(c + style * 0x4000, character));
+				Character character = {
+					{btGlyph->bitmap.width, btGlyph->bitmap.rows},
+					{btGlyph->left, btGlyph->top},
+					lFace->glyph->advance.x,
+					FontAtlasEntry(),
+					glyphCopy
+				};
+				characters.insert(std::pair<uint32_t, Character>(c + style * 0x4000, character));
+			}
 		}
+
+		fontAtlas->finishPrecalc();
+		fontAtlas->realloc();
+
+		for (auto& i : characters)
+		{
+			i.second.ae = fontAtlas->addGlyph((char*)i.second.glyphData, i.second.Size[0], i.second.Size[1]);
+			delete[] i.second.glyphData;
+		}
+
+		GLuint texture;
+		glGenTextures(1, &texture);
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glTexImage2D(
+			GL_TEXTURE_2D,
+			0,
+			GL_ALPHA,
+			fontAtlas->width,
+			fontAtlas->height,
+			0,
+			GL_ALPHA,
+			GL_UNSIGNED_BYTE,
+			fontAtlas->data
+		);
+		fontAtlas->textureID = texture;
+
+		fontAtlas->writeAtlas("atlas/" + fontName + ".png");
+
+		fontAtlas->free();
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+		std::cout << "Loaded typeface: " << fontPath << " (" << size << " px)" << std::endl;
+		FT_Done_Face(face);
+		FT_Done_Face(itaicFace);
+		FT_Stroker_Done(stroker);
+		/*glGenVertexArrays(1, &VAO);
+		glGenBuffers(1, &VBO);
+		glBindVertexArray(VAO);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);*/
+		glDisable(GL_TEXTURE_2D);
 	}
-
-	fontAtlas->finishPrecalc();
-	fontAtlas->realloc();
-
-	for (auto& i : characters)
-	{
-		i.second.ae = fontAtlas->addGlyph((char*)i.second.glyphData, i.second.Size[0], i.second.Size[1]);
-		delete[] i.second.glyphData;
-	}
-
-	GLuint texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(
-		GL_TEXTURE_2D,
-		0,
-		GL_ALPHA,
-		fontAtlas->width,
-		fontAtlas->height,
-		0,
-		GL_ALPHA,
-		GL_UNSIGNED_BYTE,
-		fontAtlas->data
-	);
-	fontAtlas->textureID = texture;
-
-	fontAtlas->writeAtlas("atlas/" + fontName + ".png");
-
-	fontAtlas->free();
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	std::cout << "Loaded typeface: " << fontPath << " (" << size << " px)" << std::endl;
-	FT_Done_Face(face);
-	FT_Done_Face(itaicFace);
-	FT_Stroker_Done(stroker);
-	/*glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);*/
-	glDisable(GL_TEXTURE_2D);
 }
 
 void Font::layoutText(std::string text, float scale, float textSpacing, gui::coord_t bdims, std::vector<LineInfo>* layout)

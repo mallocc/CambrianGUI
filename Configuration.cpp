@@ -12,6 +12,8 @@ namespace gui
 
 	bool Configuration::loadConfig(std::string filename, GUI& gui)
 	{
+		std::cout << "Loading config: " << filename << std::endl;
+
 		std::string str(filesys[filename].data, filesys[filename].size);
 		nlohmann::json j = nlohmann::json::parse(str);
 

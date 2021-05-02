@@ -13,6 +13,18 @@ inline float fmodFixed(float a, float b)
 	return fmod(fmod(a, b) + b, b);
 }
 
+void gui::Widget::radioUp()
+{
+	if (radio)
+		if (radioParent != nullptr)
+		{
+			nlohmann::json j;
+			j["intent"] = "radio";
+			j["id"] = widgetId;
+			radioParent->onIntent(j);
+		}
+}
+
 Widget* gui::Widget::onMouseEvent(MouseEventData mouseEventData, bool process, bool focus)
 {
 	bool handled = false;
@@ -141,6 +153,7 @@ void gui::Widget::draw(float tx, float ty, bool editMode)
 {
 	tx += x; ty += y;
 
+#ifdef SHADERS
 	if (shaderProperties.shader != "" && shaderProperties.texture != "")
 	{
 		glEnable(GL_MULTISAMPLE);
@@ -189,6 +202,7 @@ void gui::Widget::draw(float tx, float ty, bool editMode)
 		glActiveTexture(GL_TEXTURE0);
 		glDisable(GL_TEXTURE_2D);
 	}
+#endif
 
 	if (background != nullptr)
 	{
@@ -233,6 +247,22 @@ void gui::Widget::draw(float tx, float ty, bool editMode)
 		glDisable(GL_TEXTURE_2D);
 		glDisable(GL_BLEND);
 	}
+	//else
+	//{
+	//	glColor4f(color.r, color.g, color.b, opacity);
+	//	glPushMatrix();
+	//	glTranslatef(tx, ty, 0);
+	//	glScalef(w, h, 1);
+	//	glBegin(GL_QUADS);
+	//	{
+	//		glVertex2f(0, 0);
+	//		glVertex2f(1, 0);
+	//		glVertex2f(1, 1);
+	//		glVertex2f(0, 1);
+	//	}
+	//	glEnd();
+	//	glPopMatrix();
+	//}
 
 	if (background != backgroundTransition)
 		if (backgroundTransition != nullptr)
@@ -561,16 +591,16 @@ bool gui::Widget::init(nlohmann::json j, bool ignoreType)
 					[&](std::string fieldName) { return nlohmann::json({{ fieldName, onClickJson.dump(4) }}); }}
 				},
 				{
-					"on-toggled-on",
+					"on-checked",
 					{"{}",
-					[&](std::string value) { onToggledOnJson = nlohmann::json::parse(value); },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, onToggledOnJson.dump(4) }}); }}
+					[&](std::string value) { onCheckedJson = nlohmann::json::parse(value); },
+					[&](std::string fieldName) { return nlohmann::json({{ fieldName, onCheckedJson.dump(4) }}); }}
 				},
 				{
-					"on-toggled-off",
+					"on-unchecked",
 					{"{}",
-					[&](std::string value) { onToggledOffJson = nlohmann::json::parse(value); },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, onToggledOffJson.dump(4) }}); }}
+					[&](std::string value) { onUncheckedJson = nlohmann::json::parse(value); },
+					[&](std::string fieldName) { return nlohmann::json({{ fieldName, onUncheckedJson.dump(4) }}); }}
 				},
 				{
 					"on-click-external",
@@ -585,16 +615,16 @@ bool gui::Widget::init(nlohmann::json j, bool ignoreType)
 					[&](std::string fieldName) { return nlohmann::json({{ fieldName, onReleaseExternalJson.dump(4) }}); }}
 				},
 				{
-					"on-toggled-on-external",
+					"on-checked-external",
 					{"{}",
-					[&](std::string value) { onToggledOnExternalJson = nlohmann::json::parse(value); },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, onToggledOnExternalJson.dump(4) }}); }}
+					[&](std::string value) { onCheckedExternalJson = nlohmann::json::parse(value); },
+					[&](std::string fieldName) { return nlohmann::json({{ fieldName, onCheckedExternalJson.dump(4) }}); }}
 				},
 				{
-					"on-toggled-off-external",
+					"on-unchecked-external",
 					{"{}",
-					[&](std::string value) { onToggledOffExternalJson = nlohmann::json::parse(value); },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, onToggledOffExternalJson.dump(4) }}); }}
+					[&](std::string value) { onUncheckedExternalJson = nlohmann::json::parse(value); },
+					[&](std::string fieldName) { return nlohmann::json({{ fieldName, onUncheckedExternalJson.dump(4) }}); }}
 				},
 				{
 					"cursor",
@@ -603,22 +633,22 @@ bool gui::Widget::init(nlohmann::json j, bool ignoreType)
 					[&](std::string fieldName) { return nlohmann::json({{ fieldName, cursor }}); }}
 				},
 				{
-					"toggled",
+					"checked",
 					{"false",
-					[&](std::string value) { toggled = "true" == value; },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, toggled }}); }}
+					[&](std::string value) { checked = "true" == value; },
+					[&](std::string fieldName) { return nlohmann::json({{ fieldName, checked }}); }}
 				},
 				{
-					"toggle-on-click",
+					"checked-click",
 					{"false",
-					[&](std::string value) { toggleOnClick = "true" == value; },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, toggleOnClick }}); }}
+					[&](std::string value) { checkOnClick = "true" == value; },
+					[&](std::string fieldName) { return nlohmann::json({{ fieldName, checkOnClick }}); }}
 				},
 				{
-					"toggleable",
+					"checkable",
 					{"false",
-					[&](std::string value) { toggleable = "true" == value; },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, toggleable }}); }}
+					[&](std::string value) { checkable = "true" == value; },
+					[&](std::string fieldName) { return nlohmann::json({{ fieldName, checkable }}); }}
 				},
 				{
 					"shader-properties",
@@ -675,8 +705,14 @@ bool gui::Widget::init(nlohmann::json j, bool ignoreType)
 			}
 		}
 
-		if (toggled)
-			toggleOn(false, true);
+		if (checked)
+		{
+			loadManifest(onCheckedJson, manifestList, 0, true);
+		}
+		else
+		{
+			loadManifest(onUncheckedJson, manifestList, 0, true);
+		}
 	}
 	else
 	{
@@ -725,8 +761,8 @@ gui::Widget::Widget(GUI* gui) : gui(gui)
 	onDrag = [](gui::GUI* gui, MouseEventData mouseEventData) { /*std::cout << "dragged" << std::endl; */};
 	onMiddleClick = [](gui::GUI* gui, MouseEventData mouseEventData) { /*std::cout << "dragged" << std::endl; */};
 	onRightClick = [](gui::GUI* gui, MouseEventData mouseEventData) { /*std::cout << "dragged" << std::endl; */};
-	onToggledOn = [](gui::GUI* gui, MouseEventData mouseEventData) { /*std::cout << "dragged" << std::endl; */};
-	onToggledOff = [](gui::GUI* gui, MouseEventData mouseEventData) { /*std::cout << "dragged" << std::endl; */};
+	onChecked = [](gui::GUI* gui, MouseEventData mouseEventData) { /*std::cout << "dragged" << std::endl; */};
+	onUnchecked = [](gui::GUI* gui, MouseEventData mouseEventData) { /*std::cout << "dragged" << std::endl; */};
 }
 
 bool gui::Widget::onClickEvent(MouseEventData mouseEventData, bool process)
@@ -745,27 +781,10 @@ bool gui::Widget::onClickEvent(MouseEventData mouseEventData, bool process)
 
 			loadManifest(onClickJson, manifestList, 0, true);
 
-			if (toggleOnClick)
-				if (toggleable)
+			if (checkOnClick)
+				if (checkable || radio)
 				{
-					toggled = !toggled;
-					if (toggled)
-					{
-						gui->fireTriggers(onToggledOnJson);
-						loadManifest(onToggledOnJson, manifestList, 0, true);
-						gui->getWidgetManager()->handleDynamicJson(onToggledOnExternalJson, widgetId);
-						onToggledOn(gui, mouseEventData);
-					}
-					else
-					{
-						gui->fireTriggers(onToggledOffJson);
-						loadManifest(onToggledOffJson, manifestList, 0, true);
-						gui->getWidgetManager()->handleDynamicJson(onToggledOffExternalJson, widgetId);
-						onToggledOff(gui, mouseEventData);
-					}
-					if (radio)
-						if (parent != nullptr)
-							parent->onIntent(widgetId);
+					toggleCheck();
 				}
 
 			gui->getWidgetManager()->handleDynamicJson(onClickExternalJson, widgetId);
@@ -799,7 +818,8 @@ bool gui::Widget::onDoubleClickEvent(MouseEventData mouseEventData, bool process
 		if (elapsed < GetDoubleClickTime())
 		{
 			// Do stuff for double click
-			return true;
+			oldClickTime = {};
+			return true;;
 		}
 	}
 	return false;
@@ -836,20 +856,10 @@ bool gui::Widget::onReleaseEvent(MouseEventData mouseEventData, bool process)
 		{
 			loadManifest(onReleaseJson, manifestList, 0, true);
 
-			if (!toggleOnClick)
-				if (toggleable)
+			if (!checkOnClick)
+				if (checkable || radio)
 				{
-					if (!toggled)
-					{
-						toggleOn();
-					}
-					else
-					{
-						toggleOff();
-					}
-					if (radio)
-						if (parent != nullptr)
-							parent->onIntent(widgetId);
+					toggleCheck();
 				}
 
 			gui->getWidgetManager()->handleDynamicJson(onReleaseExternalJson, widgetId);
@@ -870,7 +880,7 @@ bool gui::Widget::onOverEvent(MouseEventData mouseEventData, bool process)
 	{
 		if (process)
 		{
-			if (!over && !toggled)
+			if (!over && !checked)
 			{
 				loadManifest(onOverJson, manifestList, 0, true);
 			}
@@ -894,7 +904,7 @@ bool gui::Widget::onLeaveEvent(MouseEventData mouseEventData, bool process)
 		{
 			if (over)
 			{
-				if (!toggled)
+				if (!checked)
 					loadManifest(onLeaveJson, manifestList, 0, true);
 				gui->hideHintLabel();
 			}
@@ -943,7 +953,7 @@ bool gui::Widget::onMiddleClickEvent(MouseEventData mouseEventData, bool process
 	return false;
 }
 
-void gui::Widget::onIntent(std::string intentChoice)
+void gui::Widget::onIntent(nlohmann::json intent)
 {
 }
 
@@ -955,35 +965,43 @@ void gui::Widget::getContextPosition(float& tx, float& ty)
 		parent->getContextPosition(tx, ty);
 }
 
-void gui::Widget::toggleOn(bool updatedRadio, bool force)
+void gui::Widget::check(bool updatedRadio, bool force)
 {
-	if (!toggled || force)
+	if (!checked || force)
 	{
-		gui->fireTriggers(onToggledOnJson);
-		loadManifest(onToggledOnJson, manifestList, 0, true);
-		gui->getWidgetManager()->handleDynamicJson(onToggledOnExternalJson, widgetId);
-		onToggledOn(gui, oldMouseEventData);
-		toggled = true;
+		gui->fireTriggers(onCheckedJson);
+		loadManifest(onCheckedJson, manifestList, 0, true);
+		gui->getWidgetManager()->handleDynamicJson(onCheckedExternalJson, widgetId);
+		onChecked(gui, oldMouseEventData);
+		checked = true;
 		if (updatedRadio)
-			if (radio)
-				if (parent != nullptr)
-					parent->onIntent(widgetId);
+			radioUp();
 	}
 }
 
-void gui::Widget::toggleOff(bool updatedRadio, bool force)
+void gui::Widget::uncheck(bool updatedRadio, bool force)
 {
-	if (toggled || force)
+	if (checked || force)
 	{
-		gui->fireTriggers(onToggledOffJson);
-		loadManifest(onToggledOffJson, manifestList, 0, true);
-		gui->getWidgetManager()->handleDynamicJson(onToggledOffExternalJson, widgetId);
-		onToggledOff(gui, oldMouseEventData);
-		toggled = false;
+		gui->fireTriggers(onUncheckedJson);
+		loadManifest(onUncheckedJson, manifestList, 0, true);
+		gui->getWidgetManager()->handleDynamicJson(onUncheckedExternalJson, widgetId);
+		onUnchecked(gui, oldMouseEventData);
+		checked = false;
 		if (updatedRadio)
-			if (radio)
-				if (parent != nullptr)
-					parent->onIntent(widgetId);
+			radioUp();
+	}
+}
+
+void gui::Widget::toggleCheck(bool updatedRadio, bool force)
+{
+	if (checked)
+	{
+		uncheck(updatedRadio, force);
+	}
+	else
+	{
+		check(updatedRadio, force);
 	}
 }
 

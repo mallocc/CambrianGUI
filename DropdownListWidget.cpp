@@ -19,7 +19,7 @@ bool gui::DropdownListWidget::init(nlohmann::json j, bool ignoreType)
 						[&](std::string fieldName) { return nlohmann::json({{ fieldName, labelTemplate.dump(4) }}); }}
 					},
 				}
-			);	
+			);
 		}
 	}
 
@@ -32,17 +32,22 @@ bool gui::DropdownListWidget::initList(nlohmann::json j)
 
 	for (auto& d : j)
 	{
-		labelTemplate["text"] = d[0];
-		labelTemplate["w"] = w;
-		LabelWidget* label = dynamic_cast<LabelWidget*>(gui->getWidgetManager()->createWidget(labelTemplate));
-		if (label != nullptr)
+		json_get_string(d, "text", text)
 		{
-			label->onClick = [=](GUI* gui, MouseEventData mouseEventData)
+			labelTemplate["text"] = text;
+			labelTemplate["w"] = w;
+			create_widget(widget, labelTemplate)
 			{
-				this->onIntent(d.dump(4));
-			};
+				widget->onClick = [=](GUI* gui, MouseEventData mouseEventData)
+				{
+					nlohmann::json j;
+					j["intent"] = "dropdown";
+					j["data"] = d;
+					this->onIntent(j);
+				};
+				addChild(widget);
+			}
 		}
-		addChild(label);
 	}
 
 	return true;
@@ -65,11 +70,11 @@ gui::Widget* gui::DropdownListWidget::onMouseEvent(MouseEventData mouseEventData
 	return VLayoutWidget::onMouseEvent(mouseEventData, process, focus);
 }
 
-void gui::DropdownListWidget::onIntent(std::string intentChoice)
+void gui::DropdownListWidget::onIntent(nlohmann::json intent)
 {
 	if (parent != nullptr)
 	{
-		parent->onIntent(intentChoice);
+		parent->onIntent(intent);
 	}
 	visible = false;
 }

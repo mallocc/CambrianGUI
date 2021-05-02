@@ -80,9 +80,9 @@ bool gui::SwitchWidget::init(nlohmann::json j, bool ignoreType)
 				}
 			);
 			if (currentValue > activationValue)
-				toggleOn();
+				check();
 			else
-				toggleOff();
+				uncheck();
 		}
 	}
 
@@ -125,9 +125,7 @@ gui::SwitchWidget::SwitchWidget(GUI* gui, nlohmann::json j) : Widget(gui)
 	onRelease = [&](GUI* gui, MouseEventData mouseEventData)
 	{
 		toggleSwitch();
-		if (radio)
-			if (parent != nullptr)
-				parent->onIntent(widgetId);
+		radioUp();
 	};
 	init(j);
 	currentSwitchTex = switchOffTex;

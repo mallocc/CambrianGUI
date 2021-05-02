@@ -14,7 +14,7 @@ namespace gui
 		nlohmann::json data;
 		uint32_t defaultChoice = 0U;
 		virtual bool init(nlohmann::json j, bool ignoreType = false);
-		virtual void onIntent(std::string intentChoice);
+		virtual void onIntent(nlohmann::json intent);
 		virtual void openDropdown();
 		virtual nlohmann::json toJson();
 		DropdownWidget(GUI* gui, nlohmann::json j);

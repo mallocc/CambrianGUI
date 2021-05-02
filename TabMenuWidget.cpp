@@ -60,7 +60,9 @@ bool gui::TabMenuWidget::init(nlohmann::json j, bool ignoreType)
 							{
 								label->onClick = [=](GUI* gui, MouseEventData mouseEventData)
 								{
-									this->onIntent(label->text);
+									nlohmann::json j;
+									j["tab"] = label->text;
+									this->onIntent(j);
 								};
 							}
 							tabMenu->addChild(label);
@@ -73,7 +75,7 @@ bool gui::TabMenuWidget::init(nlohmann::json j, bool ignoreType)
 					}
 					if (tabMenu->children.size() > 0)
 					{
-						tabMenu->children[0]->toggleOn();
+						tabMenu->children[0]->check();
 					}
 				}
 			}
@@ -83,14 +85,16 @@ bool gui::TabMenuWidget::init(nlohmann::json j, bool ignoreType)
 	return true;
 }
 
-void gui::TabMenuWidget::onIntent(std::string intentChoice)
+void gui::TabMenuWidget::onIntent(nlohmann::json intent)
 {
+	std::string tab;
+	readJSON(intent, "tab", tab);
 	if (tabPane != nullptr)
 	{
 		for (Widget* widget : tabPane->children)
 			if (widget != nullptr)
 			{
-				if (widget->text == intentChoice)
+				if (widget->text == tab)
 					widget->visible = true;
 				else
 					widget->visible = false;
@@ -101,10 +105,10 @@ void gui::TabMenuWidget::onIntent(std::string intentChoice)
 		for (Widget* widget : tabMenu->children)
 			if (widget != nullptr)
 			{
-				if (widget->text == intentChoice)
-					widget->toggleOn();
+				if (widget->text == tab)
+					widget->check();
 				else
-					widget->toggleOff();
+					widget->uncheck();
 			}
 	}
 }

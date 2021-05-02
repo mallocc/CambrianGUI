@@ -65,20 +65,22 @@ namespace gui
 		callback_t onLeave;
 		callback_t onDrag;
 		callback_t onMiddleClick;
-		callback_t onToggledOn;
-		callback_t onToggledOff;
+		callback_t onChecked;
+		callback_t onUnchecked;
 
 		nlohmann::json config;
 		nlohmann::json onOverJson;
 		nlohmann::json onLeaveJson;
-		nlohmann::json onReleaseJson;
-		nlohmann::json onToggledOnJson;
 		nlohmann::json onClickJson;
-		nlohmann::json onToggledOffJson;
+		nlohmann::json onReleaseJson;
+		nlohmann::json onCheckedJson;
+		nlohmann::json onUncheckedJson;
 		nlohmann::json onClickExternalJson;
 		nlohmann::json onReleaseExternalJson;
-		nlohmann::json onToggledOnExternalJson;
-		nlohmann::json onToggledOffExternalJson;
+		nlohmann::json onCheckedExternalJson;
+		nlohmann::json onUncheckedExternalJson;
+
+		nlohmann::json data;
 
 		Color color = { 1, 1, 1 };
 		Color colorStart = { 1, 1, 1 };
@@ -87,7 +89,7 @@ namespace gui
 
 		float sensitivity = 300.0f;
 		float sensitivityShift = sensitivity * 10.0f;
-		bool toggleOnClick = false;
+		bool checkOnClick = false;
 		bool down = false;
 		bool over = false;
 
@@ -99,10 +101,12 @@ namespace gui
 
 		bool scaled = false;
 
-		bool toggled = false;
-		bool toggleable = false;
+		bool checked = false;
+		bool checkable = false;
 
 		bool radio = false;
+		Widget* radioParent = nullptr;
+		virtual void radioUp();
 
 		std::string cursor = "";
 
@@ -137,12 +141,13 @@ namespace gui
 		virtual bool onUpEvent(MouseEventData mouseEventData, bool process);
 		virtual bool onMiddleClickEvent(MouseEventData mouseEventData, bool process);
 
-		virtual void onIntent(std::string intentChoice);
+		virtual void onIntent(nlohmann::json intent = nlohmann::json());
 
 		void getContextPosition(float& tx, float& ty);
 
-		void toggleOn(bool updatedRadio = false, bool force = false);
-		void toggleOff(bool updatedRadio = false, bool force = false);
+		void check(bool updatedRadio = true, bool force = false);
+		void uncheck(bool updatedRadio = true, bool force = false);
+		void toggleCheck(bool updatedRadio = true, bool force = false);
 
 		bool doesTypeMatch(bool bypass = false, std::string typeQuery = "");
 		void setClassname(std::string newClassname);

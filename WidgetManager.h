@@ -48,5 +48,44 @@ namespace gui
 	{
 		StringToWidgetFunction allocate = [](GUI* a, nlohmann::json b) { return new T(a, b); };
 		stringToWidgetFunctions[classname] = allocate;
+		std::cout << "Registered new widget class: " << classname << std::endl;
 	}
+
+/**
+	Create a new scope when creating a new widget.
+	create_widget(WIDGET_SYMBOL, JSON_SYMBOL)
+	>	Widget* WIDGET_SYMBOL = gui->getWidgetManager()->createWidget(JSON_SYMBOL);
+	>	if (WIDGET_SYMBOL != nullptr)
+*/
+#define create_widget(WIDGET_SYMBOL, JSON_SYMBOL) \
+		Widget* WIDGET_SYMBOL = gui->getWidgetManager()->createWidget(JSON_SYMBOL); \
+		if (WIDGET_SYMBOL != nullptr)
+
+/**
+	Create a new scope when finding a widget.
+	find_widget(WIDGET_SYMBOL, ID_SYMBOL)
+	>	Widget* WIDGET_SYMBOL = gui->getWidgetManager()->findWidget(ID_SYMBOL);
+	>	if (WIDGET_SYMBOL != nullptr)
+*/
+#define find_widget(WIDGET_SYMBOL, ID_SYMBOL) \
+		Widget* WIDGET_SYMBOL = gui->getWidgetManager()->findWidget(ID_SYMBOL); \
+		if (WIDGET_SYMBOL != nullptr)
+/**
+	Create a new scope when getting widget of specific type.
+	widget_as(TYPE_SYMBOL, WIDGET_SYMBOL)
+	>	TYPE_SYMBOL* WIDGET_SYMBOL = dynamic_cast<TYPE_SYMBOL*>(WIDGET_SYMBOL);
+	>	if (WIDGET_SYMBOL != nullptr)
+*/
+#define widget_as(TYPE_SYMBOL, WIDGET_SYMBOL) \
+		TYPE_SYMBOL* WIDGET_SYMBOL = dynamic_cast<TYPE_SYMBOL*>(WIDGET_SYMBOL); \
+		if (WIDGET_SYMBOL != nullptr)
+/**
+	Create a new scope when finding a widget of specific type.
+	find_widget_as(TYPE_SYMBOL, WIDGET_SYMBOL, ID_SYMBOL)
+	>	TYPE_SYMBOL* WIDGET_SYMBOL = dynamic_cast<TYPE_SYMBOL*>(gui->getWidgetManager()->findWidget(ID_SYMBOL));
+	>	if (WIDGET_SYMBOL != nullptr)
+*/
+#define find_widget_as(TYPE_SYMBOL, WIDGET_SYMBOL, ID_SYMBOL) \
+		TYPE_SYMBOL* WIDGET_SYMBOL = dynamic_cast<TYPE_SYMBOL*>(gui->getWidgetManager()->findWidget(ID_SYMBOL)); \
+		if (WIDGET_SYMBOL != nullptr)
 }

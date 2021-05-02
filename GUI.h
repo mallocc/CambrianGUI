@@ -73,6 +73,7 @@ namespace gui
 
 		HCURSOR hCursor;
 
+		Widget* lastHandledWidget = nullptr;
 	private:
 		Configuration* config = nullptr;
 		WidgetManager* widgetManager = nullptr;
