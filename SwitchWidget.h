@@ -4,12 +4,9 @@
 
 namespace gui
 {
-	struct SwitchWidget : Widget, WidgetBase<SwitchWidget>
+	struct SwitchWidget : Widget, WidgetType<SwitchWidget>
 	{
-		static std::string getClassname()
-		{
-			return "switch";
-		}
+		DEFINE_WIDGET_TYPE("switch");
 
 		Texture* switchOnTex = nullptr;
 		Texture* switchOffTex = nullptr;

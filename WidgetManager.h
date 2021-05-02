@@ -49,8 +49,8 @@ namespace gui
 		StringToWidgetFunction allocate = [](GUI* a, nlohmann::json b) {
 			return new T(a, b); 
 		};
-		stringToWidgetFunctions[T::getClassname()] = allocate;
-		std::cout << "Registered new widget class: " << T::getClassname() << std::endl;
+		stringToWidgetFunctions[T::getWidgetType()] = allocate;
+		std::cout << "Registered new widget class: " << T::getWidgetType() << std::endl;
 	}
 
 /**

@@ -56,12 +56,9 @@ namespace gui
 		"list",
 	};
 
-	struct ContainerWidget : Widget, WidgetBase<ContainerWidget>
+	struct ContainerWidget : Widget, WidgetType<ContainerWidget>
 	{
-		static std::string getClassname()
-		{
-			return "container";
-		}
+		DEFINE_WIDGET_TYPE("container");
 
 		ALIGNMENT alignment = ALIGNMENT::ALIGN_NONE;
 		SIZING sizing = SIZING::SIZE_INHERIT;

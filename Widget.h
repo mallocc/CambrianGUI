@@ -16,23 +16,24 @@ namespace gui
 	typedef std::function<void(gui::GUI*, MouseEventData)> callback_t;
 	typedef std::function<void(gui::GUI*, KeyEventData)> keycallback_t;
 
-	
+
 
 	template<typename T>
-	struct WidgetBase
+	struct WidgetType
 	{
-		static std::string getClassname()
+		static std::string getWidgetType()
 		{
-			return T::getClassname();
+			return T::getWidgetType();
 		}
 	};
 
-	struct Widget : WidgetBase<Widget>
+
+#define DEFINE_WIDGET_TYPE(WIDGET_TYPENAME_SYMBOL) \
+	static std::string getWidgetType() { return WIDGET_TYPENAME_SYMBOL; }
+
+	struct Widget : WidgetType<Widget>
 	{
-		static std::string getClassname()
-		{
-			return "widget";
-		}
+		DEFINE_WIDGET_TYPE("widget");
 
 		GUI* gui;
 
@@ -169,10 +170,8 @@ namespace gui
 		template<typename W>
 		bool checkWidgetType(bool ignoreCheck = false)
 		{
-			return WidgetBase<W>::getClassname() == type || ignoreCheck;
+			return WidgetType<W>::getWidgetType() == type || ignoreCheck;
 		}
 	};
 
-#define check_widget_type(WIDGET_TYPE_SYMBOL, WIDGET_TYPE_NAME_SYMBOL) \
-	if ()
 }

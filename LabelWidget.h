@@ -5,12 +5,9 @@
 
 namespace gui
 {
-	struct LabelWidget : Widget, WidgetBase<LabelWidget>
+	struct LabelWidget : Widget, WidgetType<LabelWidget>
 	{
-		static std::string getClassname()
-		{
-			return "label";
-		}
+		DEFINE_WIDGET_TYPE("label");
 		Font* displayFont = nullptr;
 		bool center = false;
 		bool revalidateSize = false;

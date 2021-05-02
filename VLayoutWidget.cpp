@@ -5,7 +5,7 @@ gui::VLayoutWidget::VLayoutWidget(GUI* gui, nlohmann::json j) : ContainerWidget(
 {
 	if (!init(j))
 	{
-		std::cout << "Failed to init widget: " << getClassname() << std::endl;
+		std::cout << "Failed to init widget: " << getWidgetType() << std::endl;
 	}
 }
 

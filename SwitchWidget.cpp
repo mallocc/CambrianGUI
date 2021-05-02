@@ -128,7 +128,7 @@ gui::SwitchWidget::SwitchWidget(GUI* gui, nlohmann::json j) : Widget(gui)
 	};
 	if (!init(j))
 	{
-		std::cout << "Failed to init widget: " << getClassname() << std::endl;
+		std::cout << "Failed to init widget: " << getWidgetType() << std::endl;
 	}
 	currentSwitchTex = switchOffTex;
 }

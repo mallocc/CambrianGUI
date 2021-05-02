@@ -4,12 +4,10 @@
 
 namespace gui
 {
-	struct TabMenuWidget : ContainerWidget, WidgetBase<TabMenuWidget>
+	struct TabMenuWidget : ContainerWidget, WidgetType<TabMenuWidget>
 	{
-		static std::string getClassname()
-		{
-			return "tabmenu";
-		}
+		DEFINE_WIDGET_TYPE("tabmenu");
+
 		ContainerWidget* tabPane = nullptr;
 		ContainerWidget* tabMenu = nullptr;
 		Texture* tabSelectionTex = nullptr;
