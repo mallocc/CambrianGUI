@@ -210,50 +210,6 @@ void mergeJsonObjects(nlohmann::json& destination, const nlohmann::json& source)
 	}
 }
 
-void loadManifest(nlohmann::json &j, std::map<std::string, ManifestTuple> &manifestList, bool debugPrint, bool onlyOverrides)
-{
-	for (auto& i : manifestList)
-	{
-		ManifestTuple& manifest = i.second;
-		if (manifest.initCallback != nullptr)
-		{
-			std::string tmp;
-			if (!readJSONAsString(j, i.first, tmp, debugPrint))
-			{
-				tmp = manifest.fieldValue;
-				if (onlyOverrides)
-					continue;
-			}
-
-			manifest.initCallback(tmp);
-
-			if (debugPrint)
-				std::cout << "Loaded value: '" << tmp << "'" << std::endl;
-		}
-	}
-}
-
-nlohmann::json manifestToJson(std::map<std::string, ManifestTuple> manifestList)
-{
-	nlohmann::json j;
-	for (auto& i : manifestList)
-	{
-		ManifestTuple& manifest = i.second;
-		if (manifest.jsonCallback != nullptr)
-		{
-			nlohmann::json k = manifest.jsonCallback(i.first);
-			std::string tmp;
-			if (readJSONAsString(k, i.first, tmp))
-			{
-				if (manifest.fieldValue != tmp)
-				{
-					globProperties(j, k);
-				}
-			}			
-		}
-	}
-	return j;
-}
 
 std::string colorToString(float r, float g, float b)
 {

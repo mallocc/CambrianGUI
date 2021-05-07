@@ -9,40 +9,24 @@ bool gui::DropdownWidget::init(nlohmann::json j, bool ignoreType)
 		{
 			alignment = ALIGN_SPACED;
 			sizing = SIZE_NONE;
-			addToManifestList(j,
-				{
-					{
-						"data",
-						{"",
-						[&](std::string value) { data = nlohmann::json::parse(value); },
-						[&](std::string fieldName) { return nlohmann::json({{ fieldName, data.dump(4) }}); }}
-					},
-					{
-						"iconwidget",
-						{"",
-						[&](std::string value) { iconJson = nlohmann::json::parse(value); },
-						[&](std::string fieldName) { return nlohmann::json({{ fieldName, iconJson.dump(4) }}); }}
-					},
-					{
-						"labelwidget",
-						{"",
-						[&](std::string value) { labelJson = nlohmann::json::parse(value); },
-						[&](std::string fieldName) { return nlohmann::json({{ fieldName, labelJson.dump(4) }}); }}
-					},
-					{
-						"default-choice",
-						{"0",
-						[&](std::string value) { defaultChoice = std::atoi(value.c_str()); },
-						[&](std::string fieldName) { return nlohmann::json({{ fieldName, defaultChoice }}); }}
-					}
-				}
-			);
 
-			icon = gui->getWidgetManager()->createWidget(iconJson);
-			label = gui->getWidgetManager()->createWidget(labelJson);
+			addConfigItem("data", data);
+			addConfigItem("iconwidget", iconJson);
+			addConfigItem("labelwidget", labelJson);
+			addConfigItem("default-choice", defaultChoice);
+			config.load(j);
 
-			addChild(label);
-			addChild(icon);
+			create_widget(labelWidget, labelJson)
+			{
+				addChild(labelWidget);
+				label = labelWidget;
+			}
+
+			create_widget(iconWidget, iconJson)
+			{
+				addChild(iconWidget);
+				icon = iconWidget;
+			}
 
 			uint32_t count = 0U;
 			bool defaultChoiceFound = false;

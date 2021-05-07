@@ -55,6 +55,8 @@ bool gui::LabelWidget::init(nlohmann::json j, bool ignoreType)
 	{
 		if (checkWidgetType<LabelWidget>(ignoreType))
 		{
+	/*		addConfigItem("text-color", targetTextColor);*/
+
 			addToManifestList(j,
 				{
 					{

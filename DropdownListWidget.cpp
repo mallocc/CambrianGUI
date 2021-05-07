@@ -10,16 +10,8 @@ bool gui::DropdownListWidget::init(nlohmann::json j, bool ignoreType)
 		{
 			visible = false;
 
-			addToManifestList(j,
-				{
-					{
-						"labelwidget",
-						{"",
-						[&](std::string value) { labelTemplate = nlohmann::json::parse(value); },
-						[&](std::string fieldName) { return nlohmann::json({{ fieldName, labelTemplate.dump(4) }}); }}
-					},
-				}
-			);
+			addConfigItem("labelwidget", labelTemplate);
+			config.load(j);
 		}
 	}
 

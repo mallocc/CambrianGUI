@@ -170,7 +170,7 @@ void gui::WidgetManager::handleDynamicJson(nlohmann::json j, std::string id)
 					std::cout << "found target widget: " << tmp << std::endl;
 					readJSONAsString(i, "RESET", tmp);
 					bool reset = tmp == "true";
-					loadManifest(reset ? widget->config : i, widget->manifestList, false, !reset);
+					widget->config.load(reset ? widget->defaultJson : i, !reset);
 
 					readJSONAsString(i, "CHECK", tmp);
 					bool checked = tmp == "true";

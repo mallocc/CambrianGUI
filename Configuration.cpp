@@ -163,6 +163,11 @@ namespace gui
 				}
 			}
 		}
+		else
+		{
+			color = hex2rgb("#ffffff");
+			return true;
+		}
 		color = { 0,0,0 };
 		std::cout << "Unable to find color: " << colorName << std::endl;
 		return false;

@@ -21,7 +21,7 @@ gui::ShaderProperties::ShaderProperties()
 
 gui::ShaderProperties::ShaderProperties(nlohmann::json j)
 {
-	std::map<std::string, ManifestTuple> manifest = {
+	ConfigManifest config = {
 		{
 			"shader",
 			{"",
@@ -65,5 +65,5 @@ gui::ShaderProperties::ShaderProperties(nlohmann::json j)
 			[&](std::string fieldName) { return nlohmann::json({{fieldName, iterations }}); }}
 		},
 	};
-	loadManifest(j, manifest);
+	config.load(j);
 }

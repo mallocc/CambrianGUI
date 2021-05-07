@@ -392,278 +392,56 @@ void gui::Widget::revalidate()
 
 bool gui::Widget::init(nlohmann::json j, bool ignoreType)
 {
-	config = j;
+	defaultJson = j;
 	bool success = true;
 	if (checkJSON(j, "widget"))
 	{
-		addToManifestList(j,
-			{
-				{
-					"widget",
-					{"",
-					[&](std::string value) { type = value; },
-					[&](std::string fieldName) { return nlohmann::json({{fieldName, type }}); }}
-				},
-				{
-					"shell-execute",
-					{"",
-					[&](std::string value) { shellExecute = value; },
-					[&](std::string fieldName) { return nlohmann::json({{fieldName, shellExecute }}); }}
-				},
-				{
-					"color",
-					{"#ffffff",
-					[&](std::string value) { gui->getGUIConfig()->getColor(value, targetColor); },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, gui->getGUIConfig()->getColorName(color) }}); }}
-				},
-				{
-					"color-start",
-					{"#ffffff",
-					[&](std::string value) { gui->getGUIConfig()->getColor(value, colorStart); },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, gui->getGUIConfig()->getColorName(colorStart) }}); }}
-				},
-				{
-					"color-end",
-					{"#ffffff",
-					[&](std::string value) { gui->getGUIConfig()->getColor(value, colorEnd); },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, gui->getGUIConfig()->getColorName(colorEnd) }}); }}
-				},
-				{
-					"blend-mode",
-					{"normal",
-					[&](std::string value) { blendMode = value; },
-					[&](std::string fieldName) { return nlohmann::json({{fieldName, blendMode }}); }}
-				},
-				{
-					"opacity",
-					{"1.0",
-					[&](std::string value) { opacity = std::atof(value.c_str()); },
-					[&](std::string fieldName) { return nlohmann::json({{fieldName, opacity }}); }}
-				},
-				{
-					"transition-speed",
-					{"1.0",
-					[&](std::string value) { transitionSpeed = std::atof(value.c_str()); },
-					[&](std::string fieldName) { return nlohmann::json({{fieldName, transitionSpeed }}); }}
-				},
-				{
-					"x",
-					{"0",
-					[&](std::string value) { xTarget = std::atoi(value.c_str()); },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, x }}); }}
-				},
-				{
-					"y",
-					{"0",
-					[&](std::string value) { yTarget = std::atoi(value.c_str()); },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, y }}); }}
-				},
-				{
-					"x-offset",
-					{"0",
-					[&](std::string value) { xOffset = std::atoi(value.c_str()); },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, xOffset }}); }}
-				},
-				{
-					"y-offset",
-					{"0",
-					[&](std::string value) { yOffset = std::atoi(value.c_str()); },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, yOffset }}); }}
-				},
-				{
-					"w",
-					{"0",
-					[&](std::string value) { wTarget = std::atoi(value.c_str()); },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, w }}); }}
-				},
-				{
-					"h",
-					{"0",
-					[&](std::string value) { hTarget = std::atoi(value.c_str()); },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, h }}); }}
-				},
-				{
-					"rotation",
-					{"0",
-					[&](std::string value) { rotationTarget = std::atoi(value.c_str()); },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, rotation }}); }}
-				},
-				{
-					"sensitivity",
-					{"300.0",
-					[&](std::string value) { sensitivity = std::atof(value.c_str()); sensitivityShift = sensitivity * 10.0f; },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, sensitivity }}); }}
-				},
-				{
-					"text",
-					{"---",
-					[&](std::string value) { text = value; },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, text }}); }}
-				},
-				{
-					"hint",
-					{"",
-					[&](std::string value) { hint = value; },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, hint }}); }}
-				},
-				{
-					"visible",
-					{"true",
-					[&](std::string value) { visible = "true" == value; },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, visible }}); }}
-				},
-				{
-					"exclusive-envoke",
-					{"false",
-					[&](std::string value) { exclusiveEnvoke = "true" == value; },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, exclusiveEnvoke }}); }}
-				},
-				{
-					"clickable",
-					{"true",
-					[&](std::string value) { clickable = "true" == value; },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, clickable }}); }}
-				},
-				{
-					"click-through",
-					{"false",
-					[&](std::string value) { clickThrough = "true" == value; },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, clickThrough }}); }}
-				},
-				{
-					"scaled",
-					{"false",
-					[&](std::string value) { scaled = "true" == value; },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, scaled }}); }}
-				},
-				{
-					"centered",
-					{"false",
-					[&](std::string value) { centered = "true" == value; },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, centered }}); }}
-				},
-				{
-					"proportional",
-					{"false",
-					[&](std::string value) { proportional = "true" == value; },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, proportional }}); }}
-				},
-				{
-					"id",
-					{"",
-					[&](std::string value) { widgetId = value; },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, widgetId }}); }}
-				},
-				{
-					"background",
-					{"",
-					[&](std::string value) { background = gui->getTextureManager()->requireTexture(value); },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, background == nullptr ? "" : background->name }}); }}
-				},
-				{
-					"weight",
-					{"0",
-					[&](std::string value) { weight = std::atof(value.c_str()); },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, weight }}); }}
-				},
-				{
-					"on-over",
-					{"{}",
-					[&](std::string value) { onOverJson = nlohmann::json::parse(value); },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, onOverJson.dump(4) }}); }}
-				},
-				{
-					"on-leave",
-					{"{}",
-					[&](std::string value) { onLeaveJson = nlohmann::json::parse(value); },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, onLeaveJson.dump(4) }}); }}
-				},
-				{
-					"on-release",
-					{"{}",
-					[&](std::string value) { onReleaseJson = nlohmann::json::parse(value); },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, onReleaseJson.dump(4) }}); }}
-				},
-				{
-					"on-click",
-					{"{}",
-					[&](std::string value) { onClickJson = nlohmann::json::parse(value); },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, onClickJson.dump(4) }}); }}
-				},
-				{
-					"on-checked",
-					{"{}",
-					[&](std::string value) { onCheckedJson = nlohmann::json::parse(value); },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, onCheckedJson.dump(4) }}); }}
-				},
-				{
-					"on-unchecked",
-					{"{}",
-					[&](std::string value) { onUncheckedJson = nlohmann::json::parse(value); },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, onUncheckedJson.dump(4) }}); }}
-				},
-				{
-					"on-click-external",
-					{"{}",
-					[&](std::string value) { onClickExternalJson = nlohmann::json::parse(value); },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, onClickExternalJson.dump(4) }}); }}
-				},
-				{
-					"on-release-external",
-					{"{}",
-					[&](std::string value) { onReleaseExternalJson = nlohmann::json::parse(value); },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, onReleaseExternalJson.dump(4) }}); }}
-				},
-				{
-					"on-checked-external",
-					{"{}",
-					[&](std::string value) { onCheckedExternalJson = nlohmann::json::parse(value); },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, onCheckedExternalJson.dump(4) }}); }}
-				},
-				{
-					"on-unchecked-external",
-					{"{}",
-					[&](std::string value) { onUncheckedExternalJson = nlohmann::json::parse(value); },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, onUncheckedExternalJson.dump(4) }}); }}
-				},
-				{
-					"cursor",
-					{"",
-					[&](std::string value) { cursor = value; },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, cursor }}); }}
-				},
-				{
-					"checked",
-					{"false",
-					[&](std::string value) { checked = "true" == value; },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, checked }}); }}
-				},
-				{
-					"checked-click",
-					{"false",
-					[&](std::string value) { checkOnClick = "true" == value; },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, checkOnClick }}); }}
-				},
-				{
-					"checkable",
-					{"false",
-					[&](std::string value) { checkable = "true" == value; },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, checkable }}); }}
-				},
-				{
-					"shader-properties",
-					{"{}",
-					[&](std::string value) { shaderProperties = ShaderProperties(nlohmann::json::parse(value)); },
-					[&](std::string fieldName) { return nlohmann::json({{ fieldName, "" }}); }}
-				},
-				{
-					"radio",
-					{"false",
-					[&](std::string value) { radio = "true" == value; },
-					[&](std::string fieldName) { return nlohmann::json({{fieldName, radio}}); }}
-				}
-			}
-		);
+		config["widget"]                = type;
+		config["shell-execute"]         = shellExecute;
+		config["blend-mode"]            = { blendMode      , "normal" };
+		config["opacity"]               = { opacity        , "1.0" };
+		config["transition-speed"]      = { transitionSpeed, "1.0" };
+		config["x"]                     = xTarget;
+		config["y"]                     = yTarget;
+		config["x-offset"]              = xOffset;
+		config["y-offset"]              = yOffset;
+		config["w"]                     = wTarget;
+		config["h"]                     = hTarget;
+		config["rotation"]              = rotationTarget;
+		config["sensitivity"]           = { sensitivity    , "300" };
+		config["text"]                  = text;
+		config["hint"]                  = hint;
+		config["visible"]               = { visible        , "true" };
+		config["exclusive-envoke"]      = exclusiveEnvoke;
+		config["clickable"]             = { clickable      , "true" };
+		config["click-through"]         = clickThrough;
+		config["scaled"]                = scaled;
+		config["centered"]              = centered;
+		config["proportional"]          = proportional;
+		config["id"]                    = widgetId;
+		config["weight"]                = weight;
+		config["on-over"]               = onOverJson;
+		config["on-leave"]              = onLeaveJson;
+		config["on-release"]            = onReleaseJson;
+		config["on-click"]              = onClickJson;
+		config["on-checked"]            = onCheckedJson;
+		config["on-unchecked"]          = onUncheckedJson;
+		config["on-click-external"]     = onClickExternalJson;
+		config["on-release-external"]   = onReleaseExternalJson;
+		config["on-checked-external"]   = onCheckedExternalJson;
+		config["on-unchecked-external"] = onUncheckedExternalJson;
+		config["cursor"]                = cursor;
+		config["checked"]               = checked;
+		config["check-on-click"]        = checkOnClick;
+		config["checkable"]             = checkable;
+		config["radio"]                 = radio;
+		config["background"]            = textureConfigItem(background);
+		config["shader-properties"]     = shaderPropertiesConfigItem(shaderProperties);
+		config["color"]                 = colorConfigItem(targetColor);
+		config["color-start"]           = colorConfigItem(colorStart);
+		config["color-end"]             = colorConfigItem(colorEnd);
+
+		config.load(j);
 
 		backgroundTransition = background;
 		x = xTarget;
@@ -707,38 +485,33 @@ bool gui::Widget::init(nlohmann::json j, bool ignoreType)
 
 		if (checked)
 		{
-			loadManifest(onCheckedJson, manifestList, 0, true);
+			config.load(onCheckedJson, true);
 		}
 		else
 		{
-			loadManifest(onUncheckedJson, manifestList, 0, true);
+			config.load(onUncheckedJson, true);
 		}
 	}
 	else
 	{
 		success = false;
-		std::cout << "There were errors in reading config for Component" << std::endl;
+		std::cout << "There were errors in reading config for Widget" << std::endl;
 	}
 	return success;
 }
 
 nlohmann::json gui::Widget::toJson()
 {
-	return manifestToJson(manifestList);
+	return config.toJson();
 }
 
-void gui::Widget::addToManifestList(nlohmann::json j, std::map<std::string, ManifestTuple> manifest)
+void gui::Widget::addToManifestList(nlohmann::json j, ConfigManifest config)
 {
-	// TODO: remove VST dependancy
-	//UtilityPluginEditor* ptr = (UtilityPluginEditor*)gui->effect->getEditor();
-	//if (ptr != nullptr)
-	//{
-	//	wglMakeCurrent(ptr->hDC, ptr->hGLRC);
-	//}
-
-	manifestList.insert(manifest.begin(), manifest.end());
-	loadManifest(j, manifest);
+	this->config.insert(config.begin(), config.end());
+	config.load(j);
 }
+
+
 void gui::Widget::getAbsolutePosition(float& xPos, float& yPos)
 {
 	xPos += x;
@@ -779,7 +552,7 @@ bool gui::Widget::onClickEvent(MouseEventData mouseEventData, bool process)
 			}
 			gui->fireTriggers(onClickJson);
 
-			loadManifest(onClickJson, manifestList, 0, true);
+			config.load(onClickJson, true);
 
 			if (checkOnClick)
 				if (checkable || radio)
@@ -854,7 +627,7 @@ bool gui::Widget::onReleaseEvent(MouseEventData mouseEventData, bool process)
 	{
 		if (process)
 		{
-			loadManifest(onReleaseJson, manifestList, 0, true);
+			config.load(onReleaseJson, true);
 
 			if (!checkOnClick)
 				if (checkable || radio)
@@ -882,7 +655,7 @@ bool gui::Widget::onOverEvent(MouseEventData mouseEventData, bool process)
 		{
 			if (!over && !checked)
 			{
-				loadManifest(onOverJson, manifestList, 0, true);
+				config.load(onOverJson, true);
 			}
 			over = true;
 		}
@@ -905,7 +678,7 @@ bool gui::Widget::onLeaveEvent(MouseEventData mouseEventData, bool process)
 			if (over)
 			{
 				if (!checked)
-					loadManifest(onLeaveJson, manifestList, 0, true);
+					config.load(onLeaveJson, true);
 				gui->hideHintLabel();
 			}
 			over = false;
@@ -970,7 +743,7 @@ void gui::Widget::check(bool updatedRadio, bool force)
 	if (!checked || force)
 	{
 		gui->fireTriggers(onCheckedJson);
-		loadManifest(onCheckedJson, manifestList, 0, true);
+		config.load(onCheckedJson, true);
 		gui->getWidgetManager()->handleDynamicJson(onCheckedExternalJson, widgetId);
 		onChecked(gui, oldMouseEventData);
 		checked = true;
@@ -984,7 +757,7 @@ void gui::Widget::uncheck(bool updatedRadio, bool force)
 	if (checked || force)
 	{
 		gui->fireTriggers(onUncheckedJson);
-		loadManifest(onUncheckedJson, manifestList, 0, true);
+		config.load(onUncheckedJson, true);
 		gui->getWidgetManager()->handleDynamicJson(onUncheckedExternalJson, widgetId);
 		onUnchecked(gui, oldMouseEventData);
 		checked = false;
@@ -1004,3 +777,88 @@ void gui::Widget::toggleCheck(bool updatedRadio, bool force)
 		check(updatedRadio, force);
 	}
 }
+
+bool gui::Widget::getColor(std::string colorName, Color& color)
+{
+	return gui->getGUIConfig()->getColor(colorName, color);
+}
+
+std::string gui::Widget::getColorName(Color& color)
+{
+	return gui->getGUIConfig()->getColorName(color);
+}
+
+gui::Texture* gui::Widget::requireTexture(std::string path)
+{
+	return  gui->getTextureManager()->requireTexture(path);
+}
+
+gui::ShaderProperties gui::Widget::getShaderProperties(std::string value)
+{
+	return ShaderProperties(nlohmann::json::parse(value));
+}
+
+ManifestTuple gui::Widget::colorConfigItem(Color& reference, std::string defaultValue)
+{
+	ManifestTuple tuple;
+
+	if (defaultValue.empty())
+		defaultValue = "#ffffff";
+
+	tuple.initCallback = [&](std::string value) {
+		getColor(value, reference);
+	};
+
+	tuple.jsonCallback = [&](std::string value) {
+		return nlohmann::json({ { value, getColorName(reference) } });
+	};
+
+	tuple.fieldValue = defaultValue;
+
+	return tuple;
+}
+
+ManifestTuple gui::Widget::textureConfigItem(TexturePtr& reference, std::string defaultValue)
+{
+	ManifestTuple tuple;
+
+	if (defaultValue.empty())
+		defaultValue = "";
+
+	tuple.initCallback = [&](std::string value) {
+		reference = requireTexture(value);
+	};
+
+	tuple.jsonCallback = [&](std::string value) {
+		return nlohmann::json({ { value,  reference == nullptr ? "" : reference->name } });
+	};
+
+	tuple.fieldValue = defaultValue;
+
+	return tuple;
+}
+
+ManifestTuple gui::Widget::shaderPropertiesConfigItem(ShaderProperties& reference, std::string defaultValue)
+{
+	ManifestTuple tuple;
+
+	if (defaultValue.empty())
+		defaultValue = "{}";
+
+	tuple.initCallback = [&](std::string value) {
+		reference = getShaderProperties(value);
+	};
+
+	tuple.jsonCallback = [&](std::string value) {
+		return nlohmann::json({ { value,  "{}" } });
+	};
+
+	tuple.fieldValue = defaultValue;
+
+	return tuple;
+}
+
+
+
+
+

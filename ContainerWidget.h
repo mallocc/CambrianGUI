@@ -64,7 +64,6 @@ namespace gui
 		SIZING sizing = SIZING::SIZE_INHERIT;
 		float padding = 0.0f;
 		float spacing = 0.0f;
-		bool radio = false;
 		bool childEnvoke = false;
 		std::vector<Widget*> children;
 		std::vector<Widget*> radioChildren;

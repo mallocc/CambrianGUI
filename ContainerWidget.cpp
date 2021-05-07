@@ -184,9 +184,30 @@ bool gui::ContainerWidget::init(nlohmann::json j, bool ignoreType)
 				nlohmann::json jc = j.at("children");
 				for (auto& i : jc)
 				{
-					addChild(gui->getWidgetManager()->createWidget(i));
+					create_widget(widget, i)
+					{
+						addChild(widget);
+					}
 				}
 			}
+
+
+			//addConfigItem("child-envoke", childEnvoke);
+			//addConfigItem("padding", padding);
+			//addConfigItem("background-tiled", backgroundTiled);
+			//addConfigItem("align", alignment, "none",
+			//	[&](std::string value) { 
+			//		for (int i = 0; i < ALIGNMENT::ALIGN_NUMBER; ++i)	
+			//			if (ALIGN_STRINGS[i] == value) 
+			//				alignment = (ALIGNMENT)i; },
+			//	[&](std::string fieldName) { return nlohmann::json({ {fieldName, ALIGN_STRINGS[alignment]} }); });
+			//addConfigItem("size", sizing, "inherit",
+			//	[&](std::string value) {
+			//		for (int i = 0; i < SIZING::SIZE_NUMBER; ++i)
+			//			if (SIZE_STRINGS[i] == value)
+			//				sizing = (SIZING)i; },
+			//	[&](std::string fieldName) { return nlohmann::json({ {fieldName, SIZE_STRINGS[sizing]} }); });
+			//addConfigItem("spacing", spacing);
 
 			addToManifestList(j,
 				{
@@ -256,7 +277,7 @@ bool gui::ContainerWidget::init(nlohmann::json j, bool ignoreType)
 
 nlohmann::json gui::ContainerWidget::toJson()
 {
-	nlohmann::json j = manifestToJson(manifestList);
+	nlohmann::json j = config.toJson();
 
 	for (Widget* widget : children)
 	{
