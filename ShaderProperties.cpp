@@ -1,5 +1,6 @@
 #include "ShaderProperties.h"
 #include "Utilities.h"
+#include "ConfigList.h"
 
 GLint stringToWrap(std::string str)
 {

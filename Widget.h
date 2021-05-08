@@ -8,6 +8,7 @@
 #include "EventData.h"
 #include "TextureManager.h"
 #include "ShaderProperties.h"
+#include "ConfigList.h"
 
 namespace gui
 {
