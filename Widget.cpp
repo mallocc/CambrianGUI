@@ -396,7 +396,7 @@ bool gui::Widget::init(nlohmann::json j, bool ignoreType)
 	bool success = true;
 	if (checkJSON(j, "widget"))
 	{
-		ConfigManifest fields;
+		ConfigList fields;
 		{
 			fields["widget"] = type;
 			fields["shell-execute"] = shellExecute;
@@ -508,13 +508,6 @@ nlohmann::json gui::Widget::toJson()
 {
 	return config.toJson();
 }
-
-void gui::Widget::addToManifestList(nlohmann::json j, ConfigManifest config)
-{
-	this->config.insert(config.begin(), config.end());
-	config.load(j);
-}
-
 
 void gui::Widget::getAbsolutePosition(float& xPos, float& yPos)
 {
@@ -802,9 +795,9 @@ gui::ShaderProperties gui::Widget::getShaderProperties(std::string value)
 	return ShaderProperties(nlohmann::json::parse(value));
 }
 
-ManifestTuple gui::Widget::colorConfigItem(Color& reference, std::string defaultValue)
+ConfigItem gui::Widget::colorConfigItem(Color& reference, std::string defaultValue)
 {
-	ManifestTuple tuple;
+	ConfigItem tuple;
 
 	if (defaultValue.empty())
 		defaultValue = "#ffffff";
@@ -817,14 +810,14 @@ ManifestTuple gui::Widget::colorConfigItem(Color& reference, std::string default
 		return nlohmann::json({ { value, getColorName(reference) } });
 	};
 
-	tuple.fieldValue = defaultValue;
+	tuple.val = defaultValue;
 
 	return tuple;
 }
 
-ManifestTuple gui::Widget::textureConfigItem(TexturePtr& reference, std::string defaultValue)
+ConfigItem gui::Widget::textureConfigItem(TexturePtr& reference, std::string defaultValue)
 {
-	ManifestTuple tuple;
+	ConfigItem tuple;
 
 	if (defaultValue.empty())
 		defaultValue = "";
@@ -837,14 +830,14 @@ ManifestTuple gui::Widget::textureConfigItem(TexturePtr& reference, std::string 
 		return nlohmann::json({ { value,  reference == nullptr ? "" : reference->name } });
 	};
 
-	tuple.fieldValue = defaultValue;
+	tuple.val = defaultValue;
 
 	return tuple;
 }
 
-ManifestTuple gui::Widget::shaderPropertiesConfigItem(ShaderProperties& reference, std::string defaultValue)
+ConfigItem gui::Widget::shaderPropertiesConfigItem(ShaderProperties& reference, std::string defaultValue)
 {
-	ManifestTuple tuple;
+	ConfigItem tuple;
 
 	if (defaultValue.empty())
 		defaultValue = "{}";
@@ -857,7 +850,7 @@ ManifestTuple gui::Widget::shaderPropertiesConfigItem(ShaderProperties& referenc
 		return nlohmann::json({ { value,  "{}" } });
 	};
 
-	tuple.fieldValue = defaultValue;
+	tuple.val = defaultValue;
 
 	return tuple;
 }

@@ -75,32 +75,32 @@ extern void gatherInstances(std::string fieldName, const nlohmann::json& j, std:
 typedef std::function<void(std::string)> initcallback_t;
 typedef std::function<nlohmann::json(std::string)> jsoncallback_t;
 
-struct ManifestTuple
+struct ConfigItem
 {
-	std::string fieldValue;
+	std::string val;
 	initcallback_t initCallback = nullptr;
 	jsoncallback_t jsonCallback = nullptr;
 
-	ManifestTuple() {}
+	ConfigItem() {}
 
-	ManifestTuple(
-		std::string fieldValue,
+	ConfigItem(
+		std::string val,
 		initcallback_t initCallback,
 		jsoncallback_t jsonCallback)
-		: fieldValue(fieldValue),
+		: val(val),
 		initCallback(initCallback),
 		jsonCallback(jsonCallback)
 	{
 	}
 
 	template<typename T>
-	ManifestTuple(T& reference, std::string defaultValue)
+	ConfigItem(T& reference, std::string defaultValue)
 	{
 		init(reference, defaultValue);
 	}
 
 	template<typename T>
-	ManifestTuple(T& reference)
+	ConfigItem(T& reference)
 	{
 		init(reference);
 	}
@@ -196,25 +196,25 @@ struct ManifestTuple
 			}
 		}
 
-		this->fieldValue = defaultValue;
+		this->val = defaultValue;
 	}
 };
-struct ConfigManifest : std::map<std::string, ManifestTuple>
+struct ConfigList : std::map<std::string, ConfigItem>
 {
-	using std::map<std::string, ManifestTuple>::map;
+	using std::map<std::string, ConfigItem>::map;
 
-	ManifestTuple& operator()(std::string&& fieldName)
+	ConfigItem& operator()(std::string&& fieldName)
 	{
 		return (*this)[fieldName];
 	}
 
-	ConfigManifest& operator+(ConfigManifest additions)
+	ConfigList& operator+(ConfigList additions)
 	{
 		insert(additions.begin(), additions.end());
 		return *this;
 	}
 
-	ConfigManifest& operator+=(ConfigManifest additions)
+	ConfigList& operator+=(ConfigList additions)
 	{
 		return (*this) + additions;
 	}
@@ -229,22 +229,22 @@ struct ConfigManifest : std::map<std::string, ManifestTuple>
 		return toJson(*this);
 	}
 
-	static void load(nlohmann::json& j, std::map<std::string, ManifestTuple>& manifestList, bool onlyOverrides = false, bool debugPrint = false)
+	static void load(nlohmann::json& j, std::map<std::string, ConfigItem>& fields, bool onlyOverrides = false, bool debugPrint = false)
 	{
-		for (auto& i : manifestList)
+		for (auto& i : fields)
 		{
-			ManifestTuple& manifest = i.second;
-			if (manifest.initCallback != nullptr)
+			ConfigItem& field = i.second;
+			if (field.initCallback != nullptr)
 			{
 				std::string tmp;
 				if (!readJSONAsString(j, i.first, tmp, debugPrint))
 				{
-					tmp = manifest.fieldValue;
+					tmp = field.val;
 					if (onlyOverrides)
 						continue;
 				}
 
-				manifest.initCallback(tmp);
+				field.initCallback(tmp);
 
 				if (debugPrint)
 					std::cout << "Loaded value: '" << i.first << " = " << tmp << "'" << std::endl;
@@ -252,19 +252,19 @@ struct ConfigManifest : std::map<std::string, ManifestTuple>
 		}
 	}
 
-	static nlohmann::json toJson(std::map<std::string, ManifestTuple> manifestList)
+	static nlohmann::json toJson(std::map<std::string, ConfigItem> fields)
 	{
 		nlohmann::json j;
-		for (auto& i : manifestList)
+		for (auto& i : fields)
 		{
-			ManifestTuple& manifest = i.second;
-			if (manifest.jsonCallback != nullptr)
+			ConfigItem& field = i.second;
+			if (field.jsonCallback != nullptr)
 			{
-				nlohmann::json k = manifest.jsonCallback(i.first);
+				nlohmann::json k = field.jsonCallback(i.first);
 				std::string tmp;
 				if (readJSONAsString(k, i.first, tmp))
 				{
-					if (manifest.fieldValue != tmp)
+					if (field.val != tmp)
 					{
 						globProperties(j, k);
 					}

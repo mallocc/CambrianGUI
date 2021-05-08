@@ -129,7 +129,7 @@ namespace gui
 
 		ShaderProperties shaderProperties;
 
-		ConfigManifest config;
+		ConfigList config;
 
 		virtual Widget* onMouseEvent(MouseEventData mouseEventData, bool process = true, bool focus = false);
 		virtual Widget* onKeyEvent(KeyEventData keyEventData);
@@ -137,13 +137,6 @@ namespace gui
 		virtual void revalidate();
 		virtual bool init(nlohmann::json j, bool ignoreType = false);
 		virtual nlohmann::json toJson();
-
-		[[deprecated("Use ConfigManifest[] loading instead.")]]
-		virtual void addToManifestList(nlohmann::json j, ConfigManifest config);
-
-		template <typename T>
-		[[deprecated("Use colorConfigItem(), textureConfigItem(), shaderPropertiesConfigItem() to load ConfigManifest instead.")]]
-		void addConfigItem(std::string fieldName, T& reference, std::string defaultValue = "", initcallback_t initCallback = nullptr, jsoncallback_t jsonCallback = nullptr);
 
 		bool keyDown(int virtualKey, KeyEventData* keys);
 		bool keyUp(int virtualKey, KeyEventData* keys);
@@ -184,129 +177,11 @@ namespace gui
 		}
 
 
-		ManifestTuple colorConfigItem(Color& reference, std::string defaultValue = "");
+		ConfigItem colorConfigItem(Color& reference, std::string defaultValue = "");
 
 		typedef Texture* TexturePtr;
-		ManifestTuple textureConfigItem(TexturePtr& reference, std::string defaultValue = "");
+		ConfigItem textureConfigItem(TexturePtr& reference, std::string defaultValue = "");
 
-		ManifestTuple shaderPropertiesConfigItem(ShaderProperties& reference, std::string defaultValue = "");
+		ConfigItem shaderPropertiesConfigItem(ShaderProperties& reference, std::string defaultValue = "");
 	};
-
-
-	template <typename T>
-	void gui::Widget::addConfigItem(std::string fieldName, T& reference, std::string defaultValue, initcallback_t initCallback, jsoncallback_t jsonCallback)
-	{
-		if (initCallback == nullptr)
-		{
-			if constexpr (std::is_same_v<T, nlohmann::json>)
-			{
-				if (defaultValue.empty())
-					defaultValue = "{}";
-				initCallback = [&](std::string value) {
-					reference = nlohmann::json::parse(value);
-				};
-			}
-			else if constexpr (std::is_same_v<T, std::string>)
-			{
-				if (defaultValue.empty())
-					defaultValue = "";
-				initCallback = [&](std::string value) {
-					reference = value;
-				};
-			}
-			else if constexpr (std::is_same_v<T, float> || std::is_same_v<T, double>)
-			{
-				if (defaultValue.empty())
-					defaultValue = "0";
-				initCallback = [&](std::string value) {
-					reference = std::atof(value.c_str());
-				};
-			}
-			else if constexpr (std::is_same_v<T, int32_t> || std::is_same_v<T, int16_t> || std::is_same_v<T, int8_t> || std::is_same_v<T, int64_t>)
-			{
-				if (defaultValue.empty())
-					defaultValue = "0";
-				initCallback = [&](std::string value) {
-					reference = std::atoi(value.c_str());
-				};
-			}
-			else if constexpr (std::is_same_v<T, uint32_t> || std::is_same_v<T, uint16_t> || std::is_same_v<T, uint8_t> || std::is_same_v<T, uint64_t>)
-			{
-				if (defaultValue.empty())
-					defaultValue = "0";
-				initCallback = [&](std::string value) {
-					reference = std::stoul(value.c_str());
-				};
-			}
-			else if constexpr (std::is_same_v<T, bool>)
-			{
-				if (defaultValue.empty())
-					defaultValue = "false";
-				initCallback = [&](std::string value) {
-					reference = value == "true";
-				};
-			}
-			else if constexpr (std::is_same_v<T, Color>)
-			{
-				if (defaultValue.empty())
-					defaultValue = "#ffffff";
-				initCallback = [&](std::string value) {
-					getColor(value, reference);
-				};
-			}
-			else if constexpr (std::is_same_v<T, Texture*>)
-			{
-				if (defaultValue.empty())
-					defaultValue = "";
-				initCallback = [&](std::string value) {
-					reference = requireTexture(value);
-				};
-			}
-			else if constexpr (std::is_same_v<T, ShaderProperties>)
-			{
-				if (defaultValue.empty())
-					defaultValue = "{}";
-				initCallback = [&](std::string value) {
-					reference = getShaderProperties(value);
-				};
-			}
-		}
-
-		if (jsonCallback == nullptr)
-		{
-			if constexpr (std::is_same_v<T, Color>)
-			{
-				jsonCallback = [&](std::string value) {
-					return nlohmann::json({ { value, getColorName(reference) } });
-				};
-			}
-			else if constexpr (std::is_same_v<T, nlohmann::json>)
-			{
-				jsonCallback = [&](std::string value) {
-					return nlohmann::json({ { value, (reference).dump(4) } });
-				};
-			}
-			else if constexpr (std::is_same_v<T, Texture*>)
-			{
-				jsonCallback = [&](std::string value) {
-					return nlohmann::json({ { value,  reference == nullptr ? "" : reference->name } });
-				};
-			}
-			else if constexpr (std::is_same_v<T, ShaderProperties>)
-			{
-				jsonCallback = [&](std::string value) {
-					return nlohmann::json({ { value,  "{}" } });
-				};
-			}
-			else
-			{
-				jsonCallback = [&](std::string value) {
-					return nlohmann::json({ {value, reference } });
-				};
-			}
-		}
-
-		std::pair<std::string, ManifestTuple> newTuplePair(fieldName, { defaultValue, initCallback, jsonCallback });
-		config.insert(newTuplePair);
-	}
 }

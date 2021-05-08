@@ -191,7 +191,7 @@ bool gui::ContainerWidget::init(nlohmann::json j, bool ignoreType)
 				}
 			}
 
-			ConfigManifest fields;
+			ConfigList fields;
 			{
 				fields["child-envoke"] = childEnvoke;
 				fields["padding"] = padding;

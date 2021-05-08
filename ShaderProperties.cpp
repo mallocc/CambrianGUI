@@ -21,7 +21,7 @@ gui::ShaderProperties::ShaderProperties()
 
 gui::ShaderProperties::ShaderProperties(nlohmann::json j)
 {
-	ConfigManifest config = {
+	ConfigList config = {
 		{
 			"shader",
 			{"",
