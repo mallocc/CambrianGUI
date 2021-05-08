@@ -191,84 +191,27 @@ bool gui::ContainerWidget::init(nlohmann::json j, bool ignoreType)
 				}
 			}
 
-
-			//addConfigItem("child-envoke", childEnvoke);
-			//addConfigItem("padding", padding);
-			//addConfigItem("background-tiled", backgroundTiled);
-			//addConfigItem("align", alignment, "none",
-			//	[&](std::string value) { 
-			//		for (int i = 0; i < ALIGNMENT::ALIGN_NUMBER; ++i)	
-			//			if (ALIGN_STRINGS[i] == value) 
-			//				alignment = (ALIGNMENT)i; },
-			//	[&](std::string fieldName) { return nlohmann::json({ {fieldName, ALIGN_STRINGS[alignment]} }); });
-			//addConfigItem("size", sizing, "inherit",
-			//	[&](std::string value) {
-			//		for (int i = 0; i < SIZING::SIZE_NUMBER; ++i)
-			//			if (SIZE_STRINGS[i] == value)
-			//				sizing = (SIZING)i; },
-			//	[&](std::string fieldName) { return nlohmann::json({ {fieldName, SIZE_STRINGS[sizing]} }); });
-			//addConfigItem("spacing", spacing);
-
-			addToManifestList(j,
-				{
-					{
-						"child-envoke",
-						{"false",
-						[&](std::string value) { childEnvoke = "true" == value; },
-						[&](std::string fieldName) { return nlohmann::json({{ fieldName, childEnvoke }}); }}
-					},
-					{
-						"padding",
-						{"0",
-						[&](std::string value) { padding = std::atoi(value.c_str()); },
-						[&](std::string fieldName) { return nlohmann::json({{fieldName, padding}}); }}
-					},
-					{
-						"background-tiled",
-						{"false",
-						[&](std::string value) { backgroundTiled = "true" == value; },
-						[&](std::string fieldName) { return nlohmann::json({{fieldName, backgroundTiled}}); }}
-					},
-					{
-						"align",
-						{"NONE",
-						[&](std::string value) { for (int i = 0; i < ALIGNMENT::ALIGN_NUMBER; ++i)	if (ALIGN_STRINGS[i] == value) alignment = (ALIGNMENT)i; },
-						[&](std::string fieldName) { return nlohmann::json({{fieldName, ALIGN_STRINGS[alignment]}}); }}
-					},
-					{
-						"size",
-						{"INHERIT",
-						[&](std::string value) { for (int i = 0; i < SIZING::SIZE_NUMBER; ++i) if (SIZE_STRINGS[i] == value) sizing = (SIZING)i; },
-						[&](std::string fieldName) { return nlohmann::json({{fieldName, SIZE_STRINGS[sizing]}}); }}
-					},
-					{
-						"spacing",
-						{"0",
-						[&](std::string value) { spacing = std::atoi(value.c_str()); },
-						[&](std::string fieldName) { return nlohmann::json({{fieldName, spacing}}); }}
-					},
-					{
-						"radio",
-						{"false",
-						[&](std::string value) { radio = "true" == value; },
-						[&](std::string fieldName) { return nlohmann::json({{fieldName, radio}}); }}
-					},
-				}
-			);
-
-			if (radio)
+			ConfigManifest fields;
 			{
-				for (Widget* widget : children)
-				{
-					SwitchWidget* switchWidget = dynamic_cast<SwitchWidget*>(widget);
-					if (switchWidget != nullptr)
-						if (switchWidget->radio)
-						{
-							switchWidget->switchOn();
-							break;
-						}
-				}
+				fields["child-envoke"] = childEnvoke;
+				fields["padding"] = padding;
+				fields["background-tiled"] = backgroundTiled;
+				fields["align"] = {
+					"NONE",
+							[&](std::string value) { for (int i = 0; i < ALIGNMENT::ALIGN_NUMBER; ++i)	if (ALIGN_STRINGS[i] == value) alignment = (ALIGNMENT)i; },
+							[&](std::string fieldName) { return nlohmann::json({{fieldName, ALIGN_STRINGS[alignment]}}); }
+				};
+				fields["size"] = {
+					"INHERIT",
+							[&](std::string value) { for (int i = 0; i < SIZING::SIZE_NUMBER; ++i) if (SIZE_STRINGS[i] == value) sizing = (SIZING)i; },
+							[&](std::string fieldName) { return nlohmann::json({{fieldName, SIZE_STRINGS[sizing]}}); }
+				};
+				fields["spacing"] = spacing;
+				fields["radio"] = radio;
 			}
+			fields.load(j);
+
+			config += fields;
 		}
 	}
 

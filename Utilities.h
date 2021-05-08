@@ -208,6 +208,17 @@ struct ConfigManifest : std::map<std::string, ManifestTuple>
 		return (*this)[fieldName];
 	}
 
+	ConfigManifest& operator+(ConfigManifest additions)
+	{
+		insert(additions.begin(), additions.end());
+		return *this;
+	}
+
+	ConfigManifest& operator+=(ConfigManifest additions)
+	{
+		return (*this) + additions;
+	}
+
 	void load(nlohmann::json& j, bool onlyOverrides = false, bool debugPrint = false)
 	{
 		load(j, *this, onlyOverrides, debugPrint);

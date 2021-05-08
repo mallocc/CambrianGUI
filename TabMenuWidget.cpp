@@ -9,16 +9,8 @@ bool gui::TabMenuWidget::init(nlohmann::json j, bool ignoreType)
 	{
 		if (checkWidgetType<TabMenuWidget>(ignoreType))
 		{
-			addToManifestList(j,
-				{
-					{
-						"tabwidget",
-						{"",
-						[&](std::string value) { tabLabelTemplate = nlohmann::json::parse(value); },
-						[&](std::string fieldName) { return nlohmann::json({{ fieldName, tabLabelTemplate.dump(4) }}); }}
-					},
-				}
-			);
+			config["tabwidget"] = tabLabelTemplate;
+			config.load(j);
 
 			nlohmann::json mainLayoutJ;
 			mainLayoutJ["widget"] = "vlayout";

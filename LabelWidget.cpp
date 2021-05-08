@@ -55,66 +55,22 @@ bool gui::LabelWidget::init(nlohmann::json j, bool ignoreType)
 	{
 		if (checkWidgetType<LabelWidget>(ignoreType))
 		{
-	/*		addConfigItem("text-color", targetTextColor);*/
+			config["font"] = {
+				"OpenSans@24",
+				[&](std::string value) { displayFont = gui->getFontManager()->fonts[value] == nullptr ? gui->getFontManager()->defaultFont : gui->getFontManager()->fonts[value]; },
+				[&](std::string fieldName) { return nlohmann::json({{ fieldName, displayFont->fontName }}); }
+			};
+			config["revalidate-size"]  = revalidateSize;
+			config["center"]           = center;
+			config["bold"]             = bold;
+			config["italic"]           = italic;
+			config["padding"]          = padding;
+			config["text-color"]       = colorConfigItem(targetTextColor);
+			config["text-color-start"] = colorConfigItem(textColorStart);
+			config["text-color-end"]   = colorConfigItem(textColorEnd);
 
-			addToManifestList(j,
-				{
-					{
-						"text-color",
-						{"#ffffff",
-						[&](std::string value) { gui->getGUIConfig()->getColor(value, targetTextColor); },
-						[&](std::string fieldName) { return nlohmann::json({{ fieldName, gui->getGUIConfig()->getColorName(textColor) }}); }}
-					},
-					{
-						"font",
-						{"OpenSans@24",
-						[&](std::string value) { displayFont = gui->getFontManager()->fonts[value] == nullptr ? gui->getFontManager()->defaultFont : gui->getFontManager()->fonts[value]; },
-						[&](std::string fieldName) { return nlohmann::json({{ fieldName, displayFont->fontName }}); }}
-					},
-					{
-						"revalidate-size",
-						{"false",
-						[&](std::string value) { revalidateSize = "true" == value; },
-						[&](std::string fieldName) { return nlohmann::json({{ fieldName, revalidateSize }}); }}
-					},
-					{
-						"center",
-						{"false",
-						[&](std::string value) { center = "true" == value; },
-						[&](std::string fieldName) { return nlohmann::json({{ fieldName, center }}); }}
-					},
-					{
-						"bold",
-						{"false",
-						[&](std::string value) { bold = "true" == value; },
-						[&](std::string fieldName) { return nlohmann::json({{ fieldName, bold }}); }}
-					},
-					{
-						"italic",
-						{"false",
-						[&](std::string value) { italic = "true" == value; },
-						[&](std::string fieldName) { return nlohmann::json({{ fieldName, italic }}); }}
-					},
-					{
-						"padding",
-						{"0",
-						[&](std::string value) { padding = std::atoi(value.c_str()); },
-						[&](std::string fieldName) { return nlohmann::json({{ fieldName, padding }}); }}
-					},
-					{
-						"text-color-start",
-						{"#ffffff",
-						[&](std::string value) { gui->getGUIConfig()->getColor(value, textColorStart); },
-						[&](std::string fieldName) { return nlohmann::json({{ fieldName, gui->getGUIConfig()->getColorName(textColorStart) }}); }}
-					},
-					{
-						"text-color-end",
-						{"#ffffff",
-						[&](std::string value) { gui->getGUIConfig()->getColor(value, textColorEnd); },
-						[&](std::string fieldName) { return nlohmann::json({{ fieldName, gui->getGUIConfig()->getColorName(textColorEnd) }}); }}
-					},
-				}
-			);
+			config.load(j);
+
 			textColor = targetTextColor;
 		}
 	}

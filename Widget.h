@@ -137,9 +137,12 @@ namespace gui
 		virtual void revalidate();
 		virtual bool init(nlohmann::json j, bool ignoreType = false);
 		virtual nlohmann::json toJson();
+
+		[[deprecated("Use ConfigManifest[] loading instead.")]]
 		virtual void addToManifestList(nlohmann::json j, ConfigManifest config);
 
 		template <typename T>
+		[[deprecated("Use colorConfigItem(), textureConfigItem(), shaderPropertiesConfigItem() to load ConfigManifest instead.")]]
 		void addConfigItem(std::string fieldName, T& reference, std::string defaultValue = "", initcallback_t initCallback = nullptr, jsoncallback_t jsonCallback = nullptr);
 
 		bool keyDown(int virtualKey, KeyEventData* keys);

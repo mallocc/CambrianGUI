@@ -10,7 +10,7 @@ bool gui::DropdownListWidget::init(nlohmann::json j, bool ignoreType)
 		{
 			visible = false;
 
-			addConfigItem("labelwidget", labelTemplate);
+			config["labelwidget"] = labelTemplate;
 			config.load(j);
 		}
 	}

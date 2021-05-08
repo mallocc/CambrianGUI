@@ -51,34 +51,11 @@ bool gui::SwitchWidget::init(nlohmann::json j, bool ignoreType)
 	{
 		if (checkWidgetType<SwitchWidget>(ignoreType))
 		{
-			addToManifestList(j,
-				{
-					{
-						"switch-off",
-						{"",
-						[&](std::string value) { switchOffTex = gui->getTextureManager()->requireTexture(value); },
-						[&](std::string fieldName) { return nlohmann::json({{ fieldName, switchOffTex == nullptr ? "" : switchOffTex->name }}); }}
-					},
-					{
-						"switch-on",
-						{"",
-						[&](std::string value) { switchOnTex = gui->getTextureManager()->requireTexture(value); },
-						[&](std::string fieldName) { return nlohmann::json({{ fieldName, switchOnTex == nullptr ? "" : switchOnTex->name }}); }}
-					},
-					{
-						"activation-value",
-						{"0.5",
-						[&](std::string value) { activationValue = std::atof(value.c_str()); },
-						[&](std::string fieldName) { return nlohmann::json({{ fieldName, activationValue }}); }}
-					},
-					{
-						"radio",
-						{"false",
-						[&](std::string value) { radio = "true" == value; },
-						[&](std::string fieldName) { return nlohmann::json({{fieldName, radio}}); }}
-					}
-				}
-			);
+			config["switch-off"] = textureConfigItem(switchOffTex);
+			config["switch-on"] = textureConfigItem(switchOnTex);
+			config["activation-value"] = activationValue;
+			config.load(j);
+
 			if (currentValue > activationValue)
 				check();
 			else

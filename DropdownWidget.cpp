@@ -10,10 +10,10 @@ bool gui::DropdownWidget::init(nlohmann::json j, bool ignoreType)
 			alignment = ALIGN_SPACED;
 			sizing = SIZE_NONE;
 
-			addConfigItem("data", data);
-			addConfigItem("iconwidget", iconJson);
-			addConfigItem("labelwidget", labelJson);
-			addConfigItem("default-choice", defaultChoice);
+			config["data"] = data;
+			config["iconwidget"] = iconJson;
+			config["labelwidget"] = labelJson;
+			config["default-choice"] = defaultChoice;
 			config.load(j);
 
 			create_widget(labelWidget, labelJson)
