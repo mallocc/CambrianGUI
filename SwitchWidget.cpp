@@ -101,7 +101,7 @@ gui::SwitchWidget::SwitchWidget(GUI* gui, nlohmann::json j) : Widget(gui)
 	onRelease = [&](GUI* gui, MouseEventData mouseEventData)
 	{
 		toggleSwitch();
-		radioUp();
+		//radioUp();
 	};
 	if (!init(j))
 	{

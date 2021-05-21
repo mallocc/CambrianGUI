@@ -22,6 +22,7 @@ bool gui::DropdownListWidget::initList(nlohmann::json j)
 {
 	clearChildren();
 
+	std::cout << "gui::DropdownListWidget::initList() - j: " << j.dump(2) << std::endl;
 	for (auto& d : j)
 	{
 		json_get_string(d, "text", text)
@@ -47,18 +48,22 @@ bool gui::DropdownListWidget::initList(nlohmann::json j)
 
 void gui::DropdownListWidget::draw(float tx, float ty, bool editMode)
 {
-	if (parent != nullptr)
+	if (!floating)
 	{
-		parent->getAbsolutePosition(tx, ty);
-		ty += parent->h;
+		if (parent != nullptr)
+		{
+			parent->getAbsolutePosition(tx, ty);
+			ty += parent->h;
+		}
 	}
 	VLayoutWidget::draw(tx, ty, editMode);
 }
 
 gui::Widget* gui::DropdownListWidget::onMouseEvent(MouseEventData mouseEventData, bool process, bool focus)
 {
-	if (parent != nullptr)
-		mouseEventData.y -= parent->h;
+	if (!floating)
+		if (parent != nullptr)
+			mouseEventData.y -= parent->h;
 	return VLayoutWidget::onMouseEvent(mouseEventData, process, focus);
 }
 
@@ -69,6 +74,7 @@ void gui::DropdownListWidget::onIntent(nlohmann::json intent)
 		parent->onIntent(intent);
 	}
 	visible = false;
+	floating = false;
 }
 
 gui::DropdownListWidget::DropdownListWidget(GUI* gui, nlohmann::json j) : VLayoutWidget(gui, j)

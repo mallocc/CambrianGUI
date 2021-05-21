@@ -15,5 +15,6 @@ namespace gui
 
 		//std::string dataStr;
 		nlohmann::json data;
+
 	};
 }

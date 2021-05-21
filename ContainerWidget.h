@@ -96,5 +96,7 @@ namespace gui
 		ContainerWidget(GUI* gui, nlohmann::json j);
 
 		virtual int32_t getChildIndex(Widget* child);
+
+		virtual std::vector<Widget*> getCheckedChildren();
 	};
 }

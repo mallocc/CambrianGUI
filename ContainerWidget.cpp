@@ -340,3 +340,13 @@ void gui::ContainerWidget::onIntent(nlohmann::json intent)
 {
 
 }
+
+
+std::vector<gui::Widget*> gui::ContainerWidget::getCheckedChildren()
+{
+	std::vector<Widget*> checkedChildren;
+	for (auto& child : children)
+		if (child->isChecked())
+			checkedChildren.push_back(child);
+	return checkedChildren;
+}

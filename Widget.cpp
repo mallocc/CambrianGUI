@@ -13,7 +13,7 @@ inline float fmodFixed(float a, float b)
 	return fmod(fmod(a, b) + b, b);
 }
 
-void gui::Widget::radioUp()
+void gui::Widget::radioUp(std::string event)
 {
 	if (radio)
 		if (radioParent != nullptr)
@@ -21,6 +21,8 @@ void gui::Widget::radioUp()
 			nlohmann::json j;
 			j["intent"] = "radio";
 			j["id"] = widgetId;
+			j["event"] = event;
+			j["meta"] = metaData;
 			radioParent->onIntent(j);
 		}
 }
@@ -307,7 +309,7 @@ void gui::Widget::draw(float tx, float ty, bool editMode)
 			glDisable(GL_BLEND);
 		}
 
-	if (editMode)// && gui->editedWidget == this)
+	if (debugMode == DebugMode::DBG_BOUNDS)// && gui->editedWidget == this)
 	{
 		glLineWidth(2);
 		if (over)
@@ -398,50 +400,51 @@ bool gui::Widget::init(nlohmann::json j, bool ignoreType)
 	{
 		ConfigList fields;
 		{
-			fields["widget"] = type;
-			fields["shell-execute"] = shellExecute;
-			fields["blend-mode"] = { blendMode      , "normal" };
-			fields["opacity"] = { opacity        , "1.0" };
-			fields["transition-speed"] = { transitionSpeed, "1.0" };
-			fields["x"] = xTarget;
-			fields["y"] = yTarget;
-			fields["x-offset"] = xOffset;
-			fields["y-offset"] = yOffset;
-			fields["w"] = wTarget;
-			fields["h"] = hTarget;
-			fields["rotation"] = rotationTarget;
-			fields["sensitivity"] = { sensitivity    , "300" };
-			fields["text"] = text;
-			fields["hint"] = hint;
-			fields["visible"] = { visible        , "true" };
-			fields["exclusive-envoke"] = exclusiveEnvoke;
-			fields["clickable"] = { clickable      , "true" };
-			fields["click-through"] = clickThrough;
-			fields["scaled"] = scaled;
-			fields["centered"] = centered;
-			fields["proportional"] = proportional;
-			fields["id"] = widgetId;
-			fields["weight"] = weight;
-			fields["on-over"] = onOverJson;
-			fields["on-leave"] = onLeaveJson;
-			fields["on-release"] = onReleaseJson;
-			fields["on-click"] = onClickJson;
-			fields["on-checked"] = onCheckedJson;
-			fields["on-unchecked"] = onUncheckedJson;
-			fields["on-click-external"] = onClickExternalJson;
-			fields["on-release-external"] = onReleaseExternalJson;
-			fields["on-checked-external"] = onCheckedExternalJson;
+			fields["widget"]                = type;
+			fields["meta"]                  = metaData;
+			fields["shell-execute"]         = shellExecute;
+			fields["blend-mode"]            = { blendMode      , "normal" };
+			fields["opacity"]               = { opacity        , "1.0" };
+			fields["transition-speed"]      = { transitionSpeed, "1.0" };
+			fields["x"]                     = xTarget;
+			fields["y"]                     = yTarget;
+			fields["x-offset"]              = xOffset;
+			fields["y-offset"]              = yOffset;
+			fields["w"]                     = wTarget;
+			fields["h"]                     = hTarget;
+			fields["rotation"]              = rotationTarget;
+			fields["sensitivity"]           = { sensitivity    , "300" };
+			fields["text"]                  = text;
+			fields["hint"]                  = hint;
+			fields["visible"]               = { visible        , "true" };
+			fields["exclusive-envoke"]      = exclusiveEnvoke;
+			fields["clickable"]             = { clickable      , "true" };
+			fields["click-through"]         = clickThrough;
+			fields["scaled"]                = scaled;
+			fields["centered"]              = centered;
+			fields["proportional"]          = proportional;
+			fields["id"]                    = widgetId;
+			fields["weight"]                = weight;
+			fields["on-over"]               = onOverJson;
+			fields["on-leave"]              = onLeaveJson;
+			fields["on-release"]            = onReleaseJson;
+			fields["on-click"]              = onClickJson;
+			fields["on-checked"]            = onCheckedJson;
+			fields["on-unchecked"]          = onUncheckedJson;
+			fields["on-click-external"]     = onClickExternalJson;
+			fields["on-release-external"]   = onReleaseExternalJson;
+			fields["on-checked-external"]   = onCheckedExternalJson;
 			fields["on-unchecked-external"] = onUncheckedExternalJson;
-			fields["cursor"] = cursor;
-			fields["checked"] = checked;
-			fields["check-on-click"] = checkOnClick;
-			fields["checkable"] = checkable;
-			fields["radio"] = radio;
-			fields["background"] = textureConfigItem(background);
-			fields["shader-properties"] = shaderPropertiesConfigItem(shaderProperties);
-			fields["color"] = colorConfigItem(targetColor);
-			fields["color-start"] = colorConfigItem(colorStart);
-			fields["color-end"] = colorConfigItem(colorEnd);
+			fields["cursor"]                = cursor;
+			fields["checked"]               = checked;
+			fields["check-on-click"]        = checkOnClick;
+			fields["checkable"]             = checkable;
+			fields["radio"]                 = radio;
+			fields["background"]            = textureConfigItem(background);
+			fields["shader-properties"]     = shaderPropertiesConfigItem(shaderProperties);
+			fields["color"]                 = colorConfigItem(targetColor);
+			fields["color-start"]           = colorConfigItem(colorStart);
+			fields["color-end"]             = colorConfigItem(colorEnd);
 		}
 		fields.load(j);
 
@@ -519,7 +522,7 @@ void gui::Widget::getAbsolutePosition(float& xPos, float& yPos)
 	}
 }
 
-gui::Widget::Widget(GUI* gui) : gui(gui)
+gui::Widget::Widget(GUI* gui) : gui(gui)/*, debugMode(DebugMode::DBG_BOUNDS)*/
 {
 	onUp = [](gui::GUI* gui, MouseEventData mouseEventData) {/* std::cout << "up" << std::endl;*/ };
 	onDown = [](gui::GUI* gui, MouseEventData mouseEventData) {/* std::cout << "down" << std::endl;*/ };
@@ -739,13 +742,13 @@ void gui::Widget::check(bool updatedRadio, bool force)
 {
 	if (!checked || force)
 	{
+		if (updatedRadio)
+			radioUp("check");
 		gui->fireTriggers(onCheckedJson);
 		config.load(onCheckedJson, true);
 		gui->getWidgetManager()->handleDynamicJson(onCheckedExternalJson, widgetId);
 		onChecked(gui, oldMouseEventData);
 		checked = true;
-		if (updatedRadio)
-			radioUp();
 	}
 }
 
@@ -759,7 +762,7 @@ void gui::Widget::uncheck(bool updatedRadio, bool force)
 		onUnchecked(gui, oldMouseEventData);
 		checked = false;
 		if (updatedRadio)
-			radioUp();
+			radioUp("uncheck");
 	}
 }
 
@@ -773,6 +776,11 @@ void gui::Widget::toggleCheck(bool updatedRadio, bool force)
 	{
 		check(updatedRadio, force);
 	}
+}
+
+bool gui::Widget::isChecked()
+{
+	return checked;
 }
 
 bool gui::Widget::getColor(std::string colorName, Color& color)

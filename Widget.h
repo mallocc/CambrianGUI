@@ -98,7 +98,7 @@ namespace gui
 		nlohmann::json onCheckedExternalJson;
 		nlohmann::json onUncheckedExternalJson;
 
-		nlohmann::json data;
+		nlohmann::json metaData;
 
 		Color color = { 1, 1, 1 };
 		Color colorStart = { 1, 1, 1 };
@@ -124,7 +124,7 @@ namespace gui
 
 		bool radio = false;
 		Widget* radioParent = nullptr;
-		virtual void radioUp();
+		virtual void radioUp(std::string event);
 
 		std::string cursor = "";
 
@@ -165,6 +165,7 @@ namespace gui
 		void check(bool updatedRadio = true, bool force = false);
 		void uncheck(bool updatedRadio = true, bool force = false);
 		void toggleCheck(bool updatedRadio = true, bool force = false);
+		virtual bool isChecked();
 
 		bool getColor(std::string colorName, Color& color);
 		std::string getColorName(Color& color);
@@ -184,5 +185,12 @@ namespace gui
 		ConfigItem textureConfigItem(TexturePtr& reference, std::string defaultValue = "");
 
 		ConfigItem shaderPropertiesConfigItem(ShaderProperties& reference, std::string defaultValue = "");
+
+
+		enum class DebugMode
+		{
+			DBG_OFF,
+			DBG_BOUNDS,
+		} debugMode = DebugMode::DBG_OFF;
 	};
 }

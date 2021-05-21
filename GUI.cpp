@@ -74,12 +74,12 @@ void GUI::draw()
 			floatingLabelWidget->draw(0, 0);
 		}
 
-		Widget* dropdownListWidget = widgetManager->getDropDownListWidget();
-		if (dropdownListWidget != nullptr && dropdownListWidget->visible)
-		{
-			dropdownListWidget->revalidate();
-			dropdownListWidget->draw(0, 0);
-		}
+		//Widget* dropdownListWidget = widgetManager->getDropDownListWidget();
+		//if (dropdownListWidget != nullptr && dropdownListWidget->visible)
+		//{
+		//	dropdownListWidget->revalidate();
+		//	dropdownListWidget->draw(0, 0);
+		//}
 
 		//if (editedWidgetInfoLabel != nullptr && editMode)
 		//{
@@ -111,7 +111,7 @@ SplitTimer::Timer* gui::GUI::getTimer()
 
 void GUI::onMouseEvent(MouseEventData mouseEventData)
 {
-	//std::cout << mouseEventData.x << " " << mouseEventData.y << std::endl;
+	//std::cout << mouseEventData.x << " " << mouseEventData.y << " left: " << mouseEventData.leftDown << " middle: " << mouseEventData.middleDown << " right: " << mouseEventData.rightDown << std::endl;
 
 	hCursor = LoadCursor(NULL, IDC_ARROW);
 	// Look for a new focused widget in children
@@ -368,6 +368,7 @@ GUI::GUI(int32_t w, int32_t h)
 	widgetManager->registerWidget<DropdownWidget>();
 	widgetManager->registerWidget<DropdownListWidget>();
 	widgetManager->registerWidget<TabMenuWidget>();
+	widgetManager->registerWidget<ContainerWidget>();
 
 	registerTriggerCallback("show_credits", [&](GUI* g) { g->displayCredits = true; });
 	registerTriggerCallback("hide_credits", [&](GUI* g) { g->displayCredits = false; });
@@ -444,6 +445,38 @@ void gui::GUI::openDropdownIntent(Widget* parent, nlohmann::json j)
 			dropdownListWidget->w = parent->w;
 			dropdownListWidget->initList(j);
 		}
+
+		//widgetManager->bringToFront(dropdownListWidget);
+	}
+	else
+	{
+		std::cout << "Dropdown list is not configured" << std::endl;
+	}
+}
+
+void gui::GUI::openRightClickIntent(Widget* parent, nlohmann::json j)
+{
+	DropdownListWidget* dropdownListWidget = dynamic_cast<DropdownListWidget*>(widgetManager->getDropDownListWidget());
+	if (dropdownListWidget != nullptr &&
+		dropdownListWidget->parent != parent)
+	{
+		dropdownListWidget->visible = true;
+
+		if (dropdownListWidget->visible)
+		{
+			dropdownListWidget->parent = parent;
+			dropdownListWidget->floating = true;
+			dropdownListWidget->initList(j);
+			dropdownListWidget->wTarget = parent->w;
+			dropdownListWidget->xTarget = oldMouseEventData.x;
+			dropdownListWidget->yTarget = oldMouseEventData.y;
+		}
+
+		//widgetManager->sendToBack(dropdownListWidget);
+	}
+	else
+	{
+		std::cout << "Dropdown list is not configured" << std::endl;
 	}
 }
 
@@ -452,8 +485,12 @@ void gui::GUI::closeDropdownIntent()
 	DropdownListWidget* dropdownListWidget = dynamic_cast<DropdownListWidget*>(widgetManager->getDropDownListWidget());
 	if (dropdownListWidget != nullptr)
 	{
-		dropdownListWidget->onIntent();
+		nlohmann::json j;
+		j["intent"] = "dropdown";
+		j["event"] = "close";
+		dropdownListWidget->onIntent(j);
 		dropdownListWidget->visible = false;
+		dropdownListWidget->floating = false;
 		dropdownListWidget->parent = nullptr;
 	}
 }

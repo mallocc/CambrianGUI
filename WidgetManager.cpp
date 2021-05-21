@@ -38,6 +38,7 @@ bool gui::WidgetManager::init()
 
 	createFloatingLabelWidget();
 	createDropDownListWidget();
+	//createRightClickListWidget();
 
 	return success;
 }

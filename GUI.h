@@ -40,6 +40,8 @@ namespace gui
 		virtual void openDropdownIntent(Widget* parent, nlohmann::json j);
 		virtual void closeDropdownIntent();
 
+		virtual void openRightClickIntent(Widget* parent, nlohmann::json j);
+
 		virtual void showFloatingLabel(int32_t x, int32_t y, std::string text, uint64_t showTime = 0UL);
 		virtual void hideFloatingLabel();
 
