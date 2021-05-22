@@ -2,7 +2,7 @@
 #include "LabelWidget.h"
 #include "GUI.h"
 
-void gui::LabelWidget::draw(float tx, float ty, bool editMode)
+void gui::Label::draw(float tx, float ty, bool editMode)
 {
 	Widget::draw(tx, ty, editMode);
 
@@ -49,11 +49,11 @@ void gui::LabelWidget::draw(float tx, float ty, bool editMode)
 	glColor4f(1, 1, 1, 1);
 }
 
-bool gui::LabelWidget::init(nlohmann::json j, bool ignoreType)
+bool gui::Label::init(nlohmann::json j, bool ignoreType)
 {
 	if (Widget::init(j, ignoreType))
 	{
-		if (checkWidgetType<LabelWidget>(ignoreType))
+		if (checkWidgetType<Label>(ignoreType))
 		{
 			ConfigList fields;
 			{
@@ -83,7 +83,7 @@ bool gui::LabelWidget::init(nlohmann::json j, bool ignoreType)
 	return true;
 }
 
-void gui::LabelWidget::revalidate()
+void gui::Label::revalidate()
 {
 	textColor.r += (targetTextColor.r - textColor.r) * getTransitionSpeed();
 	textColor.g += (targetTextColor.g - textColor.g) * getTransitionSpeed();
@@ -108,7 +108,7 @@ void gui::LabelWidget::revalidate()
 	Widget::revalidate();
 }
 
-gui::LabelWidget::LabelWidget(GUI* gui, nlohmann::json j)
+gui::Label::Label(GUI* gui, nlohmann::json j)
 	: Widget(gui), displayFont(gui->getFontManager()->defaultFont)
 {
 	if (!init(j))

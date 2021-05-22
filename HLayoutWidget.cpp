@@ -1,8 +1,8 @@
 #include "HLayoutWidget.h"
 #include "GUI.h"
 
-gui::HLayoutWidget::HLayoutWidget(GUI* gui, nlohmann::json j)
-	: ContainerWidget(gui, j)
+gui::HLayout::HLayout(GUI* gui, nlohmann::json j)
+	: Container(gui, j)
 {
 	if (!init(j))
 	{
@@ -10,20 +10,20 @@ gui::HLayoutWidget::HLayoutWidget(GUI* gui, nlohmann::json j)
 	}
 }
 
-bool gui::HLayoutWidget::init(nlohmann::json j, bool ignoreType)
+bool gui::HLayout::init(nlohmann::json j, bool ignoreType)
 {
-	if (ContainerWidget::init(j, true))
+	if (Container::init(j, true))
 	{
-		if (checkWidgetType<HLayoutWidget>(ignoreType))
+		if (checkWidgetType<HLayout>(ignoreType))
 		{
 		}
 	}
 	return true;
 }
 
-void gui::HLayoutWidget::revalidate()
+void gui::HLayout::revalidate()
 {
-	ContainerWidget::revalidate();
+	Container::revalidate();
 
 	std::vector<Widget*> visibleChildren = getVisibleChildren();
 	if (visibleChildren.size() > 0)

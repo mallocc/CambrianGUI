@@ -4,7 +4,7 @@
 
 namespace gui
 {
-	class SwitchWidget : public Widget, public WidgetType<SwitchWidget>
+	class Switch : public Widget, public WidgetType<Switch>
 	{
 	public:
 		DEFINE_WIDGET_TYPE("switch");
@@ -25,6 +25,6 @@ namespace gui
 		virtual void switchOn();
 		virtual void switchOff();
 
-		SwitchWidget(GUI* gui, nlohmann::json j);
+		Switch(GUI* gui, nlohmann::json j);
 	};
 }

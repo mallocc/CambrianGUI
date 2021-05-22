@@ -200,7 +200,7 @@ void gui::WidgetManager::bringForwards(Widget* widget)
 	{
 		if (widget->getParent() != nullptr)
 		{
-			ContainerWidget* layout = dynamic_cast<ContainerWidget*>(widget->getParent());
+			Container* layout = dynamic_cast<Container*>(widget->getParent());
 			if (layout != nullptr)
 			{
 				size_t position = 0U;
@@ -225,7 +225,7 @@ void gui::WidgetManager::bringToFront(Widget* widget)
 	{
 		if (widget->getParent() != nullptr)
 		{
-			ContainerWidget* layout = dynamic_cast<ContainerWidget*>(widget->getParent());
+			Container* layout = dynamic_cast<Container*>(widget->getParent());
 			if (layout != nullptr)
 			{
 				size_t position = 0UL;
@@ -250,7 +250,7 @@ void gui::WidgetManager::sendBackwards(Widget* widget)
 	{
 		if (widget->getParent() != nullptr)
 		{
-			ContainerWidget* layout = dynamic_cast<ContainerWidget*>(widget->getParent());
+			Container* layout = dynamic_cast<Container*>(widget->getParent());
 			if (layout != nullptr)
 			{
 				size_t position = 0UL;
@@ -275,7 +275,7 @@ void gui::WidgetManager::sendToBack(Widget* widget)
 	{
 		if (widget->getParent() != nullptr)
 		{
-			ContainerWidget* layout = dynamic_cast<ContainerWidget*>(widget->getParent());
+			Container* layout = dynamic_cast<Container*>(widget->getParent());
 			if (layout != nullptr)
 			{
 				size_t position = 0U;
@@ -314,12 +314,12 @@ void gui::WidgetManager::createFloatingLabelWidget()
 	nlohmann::json& j = config->getConfig();
 	if (checkJSON(j, "floating-label"))
 	{
-		floatingLabelWidget = dynamic_cast<LabelWidget*>(createWidget(j.at("floating-label")));
+		floatingLabelWidget = dynamic_cast<Label*>(createWidget(j.at("floating-label")));
 		if (floatingLabelWidget != nullptr)
 		{
 			floatingLabelWidget->revalidate();
 			floatingLabelWidget->hide();
-			ContainerWidget* widget = dynamic_cast<ContainerWidget*>(rootWidget);
+			Container* widget = dynamic_cast<Container*>(rootWidget);
 			if (widget)
 				widget->addChild(floatingLabelWidget);
 		}
@@ -331,12 +331,12 @@ void gui::WidgetManager::createDropDownListWidget()
 	nlohmann::json& j = config->getConfig();
 	if (checkJSON(j, "dropdown-list"))
 	{
-		dropDownListWidget = dynamic_cast<DropdownListWidget*>(createWidget(j.at("dropdown-list")));
+		dropDownListWidget = dynamic_cast<DropdownList*>(createWidget(j.at("dropdown-list")));
 		if (dropDownListWidget != nullptr)
 		{
 			dropDownListWidget->revalidate();
 			dropDownListWidget->hide();
-			ContainerWidget* widget = dynamic_cast<ContainerWidget*>(rootWidget);
+			Container* widget = dynamic_cast<Container*>(rootWidget);
 			if (widget)
 			{
 				widget->addChild(dropDownListWidget);

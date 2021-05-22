@@ -1,7 +1,7 @@
 #include "ListWidget.h"
 #include <GUI.h>
 
-gui::ListWidget::ListWidget(GUI* gui, nlohmann::json j) : VLayoutWidget(gui, j)
+gui::List::List(GUI* gui, nlohmann::json j) : VLayout(gui, j)
 {
 	if (!init(j))
 	{
@@ -9,13 +9,13 @@ gui::ListWidget::ListWidget(GUI* gui, nlohmann::json j) : VLayoutWidget(gui, j)
 	}
 }
 
-bool gui::ListWidget::init(nlohmann::json j, bool ignoreType)
+bool gui::List::init(nlohmann::json j, bool ignoreType)
 {
 	bool success = false;
 
-	if (VLayoutWidget::init(j, true))
+	if (VLayout::init(j, true))
 	{
-		if (checkWidgetType<ListWidget>(ignoreType))
+		if (checkWidgetType<List>(ignoreType))
 		{
 			ConfigList fields;
 			{
@@ -70,7 +70,7 @@ bool gui::ListWidget::init(nlohmann::json j, bool ignoreType)
 	return success;
 }
 
-void gui::ListWidget::onIntent(nlohmann::json intentData)
+void gui::List::onIntent(nlohmann::json intentData)
 {
 	json_get_string(intentData, "intent", intent)
 	{

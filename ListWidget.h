@@ -4,12 +4,12 @@
 
 namespace gui
 {
-	class ListWidget : public VLayoutWidget, public WidgetType<ListWidget>
+	class List : public VLayout, public WidgetType<List>
 	{
 	public:
 		DEFINE_WIDGET_TYPE("list");
 
-		ListWidget(GUI* gui, nlohmann::json j);
+		List(GUI* gui, nlohmann::json j);
 
 		virtual bool init(nlohmann::json j, bool ignoreType = false);
 		virtual void onIntent(nlohmann::json intent);

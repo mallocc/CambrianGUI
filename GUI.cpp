@@ -264,7 +264,7 @@ void GUI::init(std::string configOverridePath, bool firstLoad_)
 		//std::string tmp;
 		//bool success = true;
 
-		find_widget_as(LabelWidget, buildDateLabel, "builddatelabel")
+		find_widget_as(Label, buildDateLabel, "builddatelabel")
 		{
 			buildDateLabel->text = "Build Date: " + std::string(__DATE__) + " @ " + std::string(__TIME__);
 		}
@@ -362,13 +362,13 @@ GUI::GUI(int32_t w, int32_t h)
 	config = new Configuration(&filesys);
 	widgetManager = new WidgetManager(this, config);
 
-	widgetManager->registerWidget<HLayoutWidget>();
-	widgetManager->registerWidget<VLayoutWidget>();
-	widgetManager->registerWidget<LabelWidget>();
-	widgetManager->registerWidget<DropdownWidget>();
-	widgetManager->registerWidget<DropdownListWidget>();
-	widgetManager->registerWidget<TabMenuWidget>();
-	widgetManager->registerWidget<ContainerWidget>();
+	widgetManager->registerWidget<HLayout>();
+	widgetManager->registerWidget<VLayout>();
+	widgetManager->registerWidget<Label>();
+	widgetManager->registerWidget<Dropdown>();
+	widgetManager->registerWidget<DropdownList>();
+	widgetManager->registerWidget<TabMenu>();
+	widgetManager->registerWidget<Container>();
 
 	registerTriggerCallback("show_credits", [&](GUI* g) { g->displayCredits = true; });
 	registerTriggerCallback("hide_credits", [&](GUI* g) { g->displayCredits = false; });
@@ -438,7 +438,7 @@ void gui::GUI::setCursor(std::string cursor)
 
 void gui::GUI::openDropdownIntent(Widget* parent, nlohmann::json j)
 {
-	DropdownListWidget* dropdownListWidget = dynamic_cast<DropdownListWidget*>(widgetManager->getDropDownListWidget());
+	DropdownList* dropdownListWidget = dynamic_cast<DropdownList*>(widgetManager->getDropDownListWidget());
 	if (dropdownListWidget != nullptr &&
 		dropdownListWidget->getParent() != parent)
 	{
@@ -461,7 +461,7 @@ void gui::GUI::openDropdownIntent(Widget* parent, nlohmann::json j)
 
 void gui::GUI::openRightClickIntent(Widget* parent, nlohmann::json j)
 {
-	DropdownListWidget* dropdownListWidget = dynamic_cast<DropdownListWidget*>(widgetManager->getDropDownListWidget());
+	DropdownList* dropdownListWidget = dynamic_cast<DropdownList*>(widgetManager->getDropDownListWidget());
 	if (dropdownListWidget != nullptr &&
 		dropdownListWidget->getParent() != parent)
 	{
@@ -487,7 +487,7 @@ void gui::GUI::openRightClickIntent(Widget* parent, nlohmann::json j)
 
 void gui::GUI::closeDropdownIntent()
 {
-	DropdownListWidget* dropdownListWidget = dynamic_cast<DropdownListWidget*>(widgetManager->getDropDownListWidget());
+	DropdownList* dropdownListWidget = dynamic_cast<DropdownList*>(widgetManager->getDropDownListWidget());
 	if (dropdownListWidget != nullptr)
 	{
 		nlohmann::json j;
@@ -502,7 +502,7 @@ void gui::GUI::closeDropdownIntent()
 
 void gui::GUI::showFloatingLabel(int32_t x, int32_t y, std::string text, uint64_t showTime)
 {
-	LabelWidget* floatingLabelWidget = dynamic_cast<LabelWidget*>(widgetManager->getFloatingLabelWidget());
+	Label* floatingLabelWidget = dynamic_cast<Label*>(widgetManager->getFloatingLabelWidget());
 	if (floatingLabelWidget != nullptr)
 	{
 		std::cout << "Showing floating label: " << text << " " << x << ":" << y << " " << showTime << std::endl;
@@ -517,7 +517,7 @@ void gui::GUI::showFloatingLabel(int32_t x, int32_t y, std::string text, uint64_
 
 void gui::GUI::hideFloatingLabel()
 {
-	LabelWidget* floatingLabelWidget = dynamic_cast<LabelWidget*>(widgetManager->getFloatingLabelWidget());
+	Label* floatingLabelWidget = dynamic_cast<Label*>(widgetManager->getFloatingLabelWidget());
 	if (floatingLabelWidget != nullptr)
 	{
 		floatingLabelWidget->text = "";
@@ -529,7 +529,7 @@ void gui::GUI::showHintLabel(std::string text, uint64_t showTime)
 {
 	if (text != "")
 	{
-		find_widget_as(LabelWidget, widget, "hintlabel")
+		find_widget_as(Label, widget, "hintlabel")
 		{
 			currentShowTimeHintLabel = showTime;
 			widget->show();
@@ -540,7 +540,7 @@ void gui::GUI::showHintLabel(std::string text, uint64_t showTime)
 
 void gui::GUI::hideHintLabel()
 {
-	find_widget_as(LabelWidget, widget, "hintlabel")
+	find_widget_as(Label, widget, "hintlabel")
 	{
 		widget->hide();
 		widget->text = "";

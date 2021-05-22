@@ -5,7 +5,7 @@
 
 namespace gui
 {
-	class LabelWidget : public Widget, public WidgetType<LabelWidget>
+	class Label : public Widget, public WidgetType<Label>
 	{
 	public:
 		DEFINE_WIDGET_TYPE("label");
@@ -24,6 +24,6 @@ namespace gui
 		virtual void draw(float tx, float ty, bool editMode = false);
 		virtual bool init(nlohmann::json j, bool ignoreType = false);
 		virtual void revalidate();
-		LabelWidget(GUI* gui, nlohmann::json j);
+		Label(GUI* gui, nlohmann::json j);
 	};
 }

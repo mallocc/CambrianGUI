@@ -1,11 +1,11 @@
 #include "DropdownWidget.h"
 #include "GUI.h"
 
-bool gui::DropdownWidget::init(nlohmann::json j, bool ignoreType)
+bool gui::Dropdown::init(nlohmann::json j, bool ignoreType)
 {
-	if (HLayoutWidget::init(j, true))
+	if (HLayout::init(j, true))
 	{
-		if (checkWidgetType<DropdownWidget>(ignoreType))
+		if (checkWidgetType<Dropdown>(ignoreType))
 		{
 			ConfigList fields;
 			{
@@ -17,7 +17,7 @@ bool gui::DropdownWidget::init(nlohmann::json j, bool ignoreType)
 			fields.load(j);
 			m_config += fields;
 
-			create_widget_as(LabelWidget, labelWidget, labelJson)
+			create_widget_as(Label, labelWidget, labelJson)
 			{
 				addChild(labelWidget);
 				label = labelWidget;
@@ -63,7 +63,7 @@ bool gui::DropdownWidget::init(nlohmann::json j, bool ignoreType)
 	return true;
 }
 
-void gui::DropdownWidget::onIntent(nlohmann::json intentData)
+void gui::Dropdown::onIntent(nlohmann::json intentData)
 {
 	if (icon != nullptr)
 		icon->uncheck();
@@ -84,19 +84,19 @@ void gui::DropdownWidget::onIntent(nlohmann::json intentData)
 	}
 }
 
-void gui::DropdownWidget::openDropdown()
+void gui::Dropdown::openDropdown()
 {
 	if (icon != nullptr)
 		icon->check();
 	getGUI()->openDropdownIntent(this, this->data);
 }
 
-nlohmann::json gui::DropdownWidget::toJson()
+nlohmann::json gui::Dropdown::toJson()
 {
 	return Widget::toJson();
 }
 
-gui::DropdownWidget::DropdownWidget(GUI* gui, nlohmann::json j) : HLayoutWidget(gui, j)
+gui::Dropdown::Dropdown(GUI* gui, nlohmann::json j) : HLayout(gui, j)
 {
 	onClick = [&](GUI* gui, MouseEventData mouseEventData)
 	{

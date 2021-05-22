@@ -1,7 +1,7 @@
 #include "VLayoutWidget.h"
 #include <algorithm>
 
-gui::VLayoutWidget::VLayoutWidget(GUI* gui, nlohmann::json j) : ContainerWidget(gui, j)
+gui::VLayout::VLayout(GUI* gui, nlohmann::json j) : Container(gui, j)
 {
 	if (!init(j))
 	{
@@ -9,20 +9,20 @@ gui::VLayoutWidget::VLayoutWidget(GUI* gui, nlohmann::json j) : ContainerWidget(
 	}
 }
 
-bool gui::VLayoutWidget::init(nlohmann::json j, bool ignoreType)
+bool gui::VLayout::init(nlohmann::json j, bool ignoreType)
 {
-	if (ContainerWidget::init(j, true))
+	if (Container::init(j, true))
 	{
-		if (checkWidgetType<VLayoutWidget>(ignoreType))
+		if (checkWidgetType<VLayout>(ignoreType))
 		{
 		}
 	}
 	return true;
 }
 
-void gui::VLayoutWidget::revalidate()
+void gui::VLayout::revalidate()
 {
-	ContainerWidget::revalidate();
+	Container::revalidate();
 
 	std::vector<Widget*> visibleChildren = getVisibleChildren();
 

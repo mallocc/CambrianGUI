@@ -3,11 +3,11 @@
 #include "Utilities.h"
 #include "LabelWidget.h"
 
-bool gui::TabMenuWidget::init(nlohmann::json j, bool ignoreType)
+bool gui::TabMenu::init(nlohmann::json j, bool ignoreType)
 {
-	if (ContainerWidget::init(j, true))
+	if (Container::init(j, true))
 	{
-		if (checkWidgetType<TabMenuWidget>(ignoreType))
+		if (checkWidgetType<TabMenu>(ignoreType))
 		{
 			ConfigList fields;
 			{
@@ -19,13 +19,13 @@ bool gui::TabMenuWidget::init(nlohmann::json j, bool ignoreType)
 			nlohmann::json mainLayoutJ;
 			mainLayoutJ["widget"] = "vlayout";
 			mainLayoutJ["align"] = "start";
-			ContainerWidget* mainLayout = dynamic_cast<ContainerWidget*>(getGUI()->getWidgetManager()->createWidget(mainLayoutJ));
+			Container* mainLayout = dynamic_cast<Container*>(getGUI()->getWidgetManager()->createWidget(mainLayoutJ));
 
 			nlohmann::json tabMenuJ;
 			tabMenuJ["widget"] = "hlayout";
 			tabMenuJ["align"] = "start";
 			tabMenuJ["size"] = "expand-height";
-			tabMenu = dynamic_cast<ContainerWidget*>(getGUI()->getWidgetManager()->createWidget(tabMenuJ));
+			tabMenu = dynamic_cast<Container*>(getGUI()->getWidgetManager()->createWidget(tabMenuJ));
 
 			if (mainLayout != nullptr && tabMenu != nullptr)
 			{
@@ -34,7 +34,7 @@ bool gui::TabMenuWidget::init(nlohmann::json j, bool ignoreType)
 
 				nlohmann::json tabPaneJ;
 				tabPaneJ["widget"] = "hlayout";
-				tabPane = dynamic_cast<ContainerWidget*>(getGUI()->getWidgetManager()->createWidget(tabPaneJ));
+				tabPane = dynamic_cast<Container*>(getGUI()->getWidgetManager()->createWidget(tabPaneJ));
 
 				if (tabPane != nullptr)
 				{
@@ -46,14 +46,14 @@ bool gui::TabMenuWidget::init(nlohmann::json j, bool ignoreType)
 						nlohmann::json jc = j.at("tabs");
 						for (auto& i : jc)
 						{
-							create_widget_as(LabelWidget, child, i)
+							create_widget_as(Label, child, i)
 							{
 								child->hide();
 								tabPane->addChild(child);
 
 								tabLabelTemplate["text"] = child->text;
 
-								create_widget_as(LabelWidget, label, tabLabelTemplate)
+								create_widget_as(Label, label, tabLabelTemplate)
 								{
 									label->onClick = [=](GUI* gui, MouseEventData mouseEventData)
 									{
@@ -83,7 +83,7 @@ bool gui::TabMenuWidget::init(nlohmann::json j, bool ignoreType)
 	return true;
 }
 
-void gui::TabMenuWidget::onIntent(nlohmann::json intent)
+void gui::TabMenu::onIntent(nlohmann::json intent)
 {
 	std::string tab;
 	readJSON(intent, "tab", tab);
@@ -92,7 +92,7 @@ void gui::TabMenuWidget::onIntent(nlohmann::json intent)
 		for (auto& widget : tabPane->children)
 			if (widget != nullptr)
 			{
-				widget_as(LabelWidget, labelWidget, widget)
+				widget_as(Label, labelWidget, widget)
 				{
 					labelWidget->setVisible(labelWidget->text == tab);
 				}
@@ -103,7 +103,7 @@ void gui::TabMenuWidget::onIntent(nlohmann::json intent)
 		for (Widget* widget : tabMenu->children)
 			if (widget != nullptr)
 			{
-				widget_as(LabelWidget, labelWidget, widget)
+				widget_as(Label, labelWidget, widget)
 				{
 					if (labelWidget->text == tab)
 						labelWidget->check();
@@ -114,7 +114,7 @@ void gui::TabMenuWidget::onIntent(nlohmann::json intent)
 	}
 }
 
-gui::TabMenuWidget::TabMenuWidget(GUI* gui, nlohmann::json j) : ContainerWidget(gui, j)
+gui::TabMenu::TabMenu(GUI* gui, nlohmann::json j) : Container(gui, j)
 {
 	if (!init(j))
 	{

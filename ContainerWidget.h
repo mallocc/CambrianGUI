@@ -56,7 +56,7 @@ namespace gui
 		"list",
 	};
 
-	class ContainerWidget : public Widget, public WidgetType<ContainerWidget>
+	class Container : public Widget, public WidgetType<Container>
 	{
 	public:
 		DEFINE_WIDGET_TYPE("container");
@@ -94,7 +94,7 @@ namespace gui
 
 		virtual void onIntent(nlohmann::json intent) override;
 
-		ContainerWidget(GUI* gui, nlohmann::json j);
+		Container(GUI* gui, nlohmann::json j);
 
 		virtual int32_t getChildIndex(Widget* child);
 

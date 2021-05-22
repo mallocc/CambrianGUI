@@ -5,13 +5,13 @@
 
 namespace gui
 {
-	class DropdownWidget : public HLayoutWidget, public WidgetType<DropdownWidget>
+	class Dropdown : public HLayout, public WidgetType<Dropdown>
 	{
 	public:
 		DEFINE_WIDGET_TYPE("dropdown");
 		Widget* icon;
 		nlohmann::json iconJson;
-		LabelWidget* label;
+		Label* label;
 		nlohmann::json labelJson;
 		nlohmann::json data;
 		uint32_t defaultChoice = 0U;
@@ -19,6 +19,6 @@ namespace gui
 		virtual void onIntent(nlohmann::json intent);
 		virtual void openDropdown();
 		virtual nlohmann::json toJson();
-		DropdownWidget(GUI* gui, nlohmann::json j);
+		Dropdown(GUI* gui, nlohmann::json j);
 	};
 }

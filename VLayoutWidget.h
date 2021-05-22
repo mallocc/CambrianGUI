@@ -4,11 +4,11 @@
 
 namespace gui
 {
-	class VLayoutWidget : public ContainerWidget, public WidgetType<VLayoutWidget>
+	class VLayout : public Container, public WidgetType<VLayout>
 	{
 		DEFINE_WIDGET_TYPE("vlayout");
 
-		VLayoutWidget(GUI* gui, nlohmann::json j);
+		VLayout(GUI* gui, nlohmann::json j);
 
 		virtual bool init(nlohmann::json j, bool ignoreType = false);
 		virtual void revalidate();

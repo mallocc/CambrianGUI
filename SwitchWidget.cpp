@@ -4,7 +4,7 @@
 
 using gui::Widget;
 
-void gui::SwitchWidget::draw(float tx, float ty, bool editMode)
+void gui::Switch::draw(float tx, float ty, bool editMode)
 {
 	Widget::draw(tx, ty, editMode);
 	tx += X(); ty += Y();
@@ -45,11 +45,11 @@ void gui::SwitchWidget::draw(float tx, float ty, bool editMode)
 	}
 }
 
-bool gui::SwitchWidget::init(nlohmann::json j, bool ignoreType)
+bool gui::Switch::init(nlohmann::json j, bool ignoreType)
 {
 	if (Widget::init(j, ignoreType))
 	{
-		if (checkWidgetType<SwitchWidget>(ignoreType))
+		if (checkWidgetType<Switch>(ignoreType))
 		{
 			ConfigList fields;
 			{
@@ -71,7 +71,7 @@ bool gui::SwitchWidget::init(nlohmann::json j, bool ignoreType)
 	return true;
 }
 
-void gui::SwitchWidget::revalidate()
+void gui::Switch::revalidate()
 {
 	Widget::revalidate();
 
@@ -85,23 +85,23 @@ void gui::SwitchWidget::revalidate()
 	}
 }
 
-void gui::SwitchWidget::toggleSwitch()
+void gui::Switch::toggleSwitch()
 {
 	currentValue = currentValue <= activationValue ? 1.0f : 0.0f;
 }
 
-void gui::SwitchWidget::switchOn()
+void gui::Switch::switchOn()
 {
 	currentValue = 1.0f;
 }
 
-void gui::SwitchWidget::switchOff()
+void gui::Switch::switchOff()
 {
 	currentValue = 0.0f;
 }
 
 
-gui::SwitchWidget::SwitchWidget(GUI* gui, nlohmann::json j) : Widget(gui)
+gui::Switch::Switch(GUI* gui, nlohmann::json j) : Widget(gui)
 {
 	onRelease = [&](GUI* gui, MouseEventData mouseEventData)
 	{
