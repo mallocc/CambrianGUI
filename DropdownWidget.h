@@ -5,8 +5,9 @@
 
 namespace gui
 {
-	struct DropdownWidget : HLayoutWidget, WidgetType<DropdownWidget>
+	class DropdownWidget : public HLayoutWidget, public WidgetType<DropdownWidget>
 	{
+	public:
 		DEFINE_WIDGET_TYPE("dropdown");
 		Widget* icon;
 		nlohmann::json iconJson;

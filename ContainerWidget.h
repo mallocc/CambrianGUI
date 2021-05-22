@@ -56,8 +56,9 @@ namespace gui
 		"list",
 	};
 
-	struct ContainerWidget : Widget, WidgetType<ContainerWidget>
+	class ContainerWidget : public Widget, public WidgetType<ContainerWidget>
 	{
+	public:
 		DEFINE_WIDGET_TYPE("container");
 
 		ALIGNMENT alignment = ALIGNMENT::ALIGN_NONE;

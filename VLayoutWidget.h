@@ -4,7 +4,7 @@
 
 namespace gui
 {
-	struct VLayoutWidget : ContainerWidget, WidgetType<VLayoutWidget>
+	class VLayoutWidget : public ContainerWidget, public WidgetType<VLayoutWidget>
 	{
 		DEFINE_WIDGET_TYPE("vlayout");
 

@@ -20,8 +20,9 @@ namespace gui
 
 
 	template<typename T>
-	struct WidgetType
+	class WidgetType
 	{
+	public:
 		static std::string getWidgetType()
 		{
 			return T::getWidgetType();
@@ -30,10 +31,13 @@ namespace gui
 
 
 #define DEFINE_WIDGET_TYPE(WIDGET_TYPENAME_SYMBOL) \
+public: \
 	static std::string getWidgetType() { return WIDGET_TYPENAME_SYMBOL; }
 
-	struct Widget : WidgetType<Widget>
+	class Widget : public WidgetType<Widget>
 	{
+
+	public:
 		DEFINE_WIDGET_TYPE("widget");
 
 		GUI* gui;

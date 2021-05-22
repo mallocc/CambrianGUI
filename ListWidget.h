@@ -4,8 +4,9 @@
 
 namespace gui
 {
-	struct ListWidget : VLayoutWidget, WidgetType<ListWidget>
+	class ListWidget : public VLayoutWidget, public WidgetType<ListWidget>
 	{
+	public:
 		DEFINE_WIDGET_TYPE("list");
 
 		ListWidget(GUI* gui, nlohmann::json j);

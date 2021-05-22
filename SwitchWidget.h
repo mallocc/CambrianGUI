@@ -4,8 +4,9 @@
 
 namespace gui
 {
-	struct SwitchWidget : Widget, WidgetType<SwitchWidget>
+	class SwitchWidget : public Widget, public WidgetType<SwitchWidget>
 	{
+	public:
 		DEFINE_WIDGET_TYPE("switch");
 
 		Texture* switchOnTex = nullptr;

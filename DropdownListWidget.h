@@ -5,8 +5,9 @@
 
 namespace gui
 {
-	struct DropdownListWidget : VLayoutWidget, WidgetType<DropdownListWidget>
+	class DropdownListWidget : public VLayoutWidget, public WidgetType<DropdownListWidget>
 	{
+	public:
 		DEFINE_WIDGET_TYPE("dropdownlist");
 		std::map<std::string, LabelWidget*> data;
 		nlohmann::json labelTemplate;

@@ -5,8 +5,9 @@
 
 namespace gui
 {
-	struct LabelWidget : Widget, WidgetType<LabelWidget>
+	class LabelWidget : public Widget, public WidgetType<LabelWidget>
 	{
+	public:
 		DEFINE_WIDGET_TYPE("label");
 		Font* displayFont = nullptr;
 		bool center = false;

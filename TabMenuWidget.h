@@ -4,8 +4,9 @@
 
 namespace gui
 {
-	struct TabMenuWidget : ContainerWidget, WidgetType<TabMenuWidget>
+	class TabMenuWidget : public ContainerWidget, public WidgetType<TabMenuWidget>
 	{
+	public:
 		DEFINE_WIDGET_TYPE("tabmenu");
 
 		ContainerWidget* tabPane = nullptr;
