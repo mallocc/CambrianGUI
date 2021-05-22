@@ -7,8 +7,6 @@ bool gui::DropdownWidget::init(nlohmann::json j, bool ignoreType)
 	{
 		if (checkWidgetType<DropdownWidget>(ignoreType))
 		{
-			alignment = ALIGN_SPACED;
-			sizing = SIZE_NONE;
 			ConfigList fields;
 			{
 				fields["data"] = data;
@@ -57,6 +55,8 @@ bool gui::DropdownWidget::init(nlohmann::json j, bool ignoreType)
 					break;
 				}
 			}
+			alignment = ALIGN_SPACED;
+			sizing = SIZE_NONE;
 		}
 	}
 
@@ -88,7 +88,7 @@ void gui::DropdownWidget::openDropdown()
 {
 	if (icon != nullptr)
 		icon->check();
-	m_gui->openDropdownIntent(this, this->data);
+	getGUI()->openDropdownIntent(this, this->data);
 }
 
 nlohmann::json gui::DropdownWidget::toJson()

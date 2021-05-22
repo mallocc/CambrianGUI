@@ -9,19 +9,23 @@ bool gui::TabMenuWidget::init(nlohmann::json j, bool ignoreType)
 	{
 		if (checkWidgetType<TabMenuWidget>(ignoreType))
 		{
-			m_config["tabwidget"] = tabLabelTemplate;
-			m_config.load(j);
+			ConfigList fields;
+			{
+				fields["tabwidget"] = tabLabelTemplate;
+				fields.load(j);
+			}
+			m_config += fields;
 
 			nlohmann::json mainLayoutJ;
 			mainLayoutJ["widget"] = "vlayout";
 			mainLayoutJ["align"] = "start";
-			ContainerWidget* mainLayout = dynamic_cast<ContainerWidget*>(m_gui->getWidgetManager()->createWidget(mainLayoutJ));
+			ContainerWidget* mainLayout = dynamic_cast<ContainerWidget*>(getGUI()->getWidgetManager()->createWidget(mainLayoutJ));
 
 			nlohmann::json tabMenuJ;
 			tabMenuJ["widget"] = "hlayout";
 			tabMenuJ["align"] = "start";
 			tabMenuJ["size"] = "expand-height";
-			tabMenu = dynamic_cast<ContainerWidget*>(m_gui->getWidgetManager()->createWidget(tabMenuJ));
+			tabMenu = dynamic_cast<ContainerWidget*>(getGUI()->getWidgetManager()->createWidget(tabMenuJ));
 
 			if (mainLayout != nullptr && tabMenu != nullptr)
 			{
@@ -30,7 +34,7 @@ bool gui::TabMenuWidget::init(nlohmann::json j, bool ignoreType)
 
 				nlohmann::json tabPaneJ;
 				tabPaneJ["widget"] = "hlayout";
-				tabPane = dynamic_cast<ContainerWidget*>(m_gui->getWidgetManager()->createWidget(tabPaneJ));
+				tabPane = dynamic_cast<ContainerWidget*>(getGUI()->getWidgetManager()->createWidget(tabPaneJ));
 
 				if (tabPane != nullptr)
 				{
@@ -44,7 +48,7 @@ bool gui::TabMenuWidget::init(nlohmann::json j, bool ignoreType)
 						{
 							create_widget_as(LabelWidget, child, i)
 							{
-								child->m_visible = false;
+								child->hide();
 								tabPane->addChild(child);
 
 								tabLabelTemplate["text"] = child->text;
@@ -65,7 +69,7 @@ bool gui::TabMenuWidget::init(nlohmann::json j, bool ignoreType)
 
 					if (tabPane->children.size() > 0)
 					{
-						tabPane->children[0]->m_visible = true;
+						tabPane->children[0]->show();
 					}
 					if (tabMenu->children.size() > 0)
 					{
@@ -90,10 +94,7 @@ void gui::TabMenuWidget::onIntent(nlohmann::json intent)
 			{
 				widget_as(LabelWidget, labelWidget, widget)
 				{
-					if (labelWidget->text == tab)
-						labelWidget->m_visible = true;
-					else
-						labelWidget->m_visible = false;
+					labelWidget->setVisible(labelWidget->text == tab);
 				}
 			}
 	}

@@ -29,6 +29,8 @@ namespace gui
 		}
 	};
 
+#define FORCE true
+#define LERP false
 
 #define DEFINE_WIDGET_TYPE(WIDGET_TYPENAME_SYMBOL) \
 public: \
@@ -36,36 +38,11 @@ public: \
 
 	class Widget : public WidgetType<Widget>
 	{
-
 	public:
 		DEFINE_WIDGET_TYPE("widget");
 
-		GUI* m_gui;
 		GUI* getGUI();
 
-		float m_x = 0, m_y = 0;
-		float m_xOffset, m_yOffset = 0;
-		float m_xTarget = 0, m_yTarget = 0;
-		float m_w = 0, m_h = 0;
-		float m_wTarget = 0, m_hTarget = 0;
-		float m_weight = 0.0f;
-		bool  m_proportional = false;
-		bool  m_centered = false;
-		float m_rotation = 0.0f;
-		float m_rotationTarget = 0.0f;
-		Texture* m_background = nullptr;
-		Texture* m_backgroundTransition = m_background;
-		float m_backgroundTransitionValue = 0.0f;
-		float m_transitionSpeed = 1.0f;
-		bool m_backgroundTiled = false;
-		std::string m_type = "undefined";
-		Widget* m_parent = nullptr;
-		MouseEventData m_oldMouseEventData;
-		MouseEventData m_initialMouseEventData;
-		KeyEventData m_oldKeyEventData;
-		std::chrono::time_point<std::chrono::steady_clock> m_oldClickTime;
-		std::chrono::time_point<std::chrono::steady_clock> m_oldHoverTime;
-		uint64_t m_hintShowTime = 100UL;
 
 		virtual void setX(float x, bool force = false);
 		virtual float getX();
@@ -96,6 +73,8 @@ public: \
 		bool isProportional();
 		void setCentered(bool centered = true);
 		bool isCentered();
+		void setLayoutOmit(bool layoutOmit = true);
+		bool isLayoutOmit();
 		virtual void setBackground(Texture* background);
 		virtual Texture* getBackground();
 		void setTransitionSpeed(float speed);
@@ -127,15 +106,10 @@ public: \
 		float getBackgroundTransitionValue();
 		std::string getType();
 
-		std::string m_id = "widget";
 
-		std::string m_blendMode = "normal";
 
-		std::string m_shellExecute = "";
 
-		std::string m_hint = "";
 
-		float m_opacity = 1.0f;
 
 		callback_t onClick;
 		callback_t onRightClick;
@@ -150,34 +124,11 @@ public: \
 		callback_t onChecked;
 		callback_t onUnchecked;
 
-		nlohmann::json m_defaultJson;
-		nlohmann::json m_onOverJson;
-		nlohmann::json m_onLeaveJson;
-		nlohmann::json m_onClickJson;
-		nlohmann::json m_onReleaseJson;
-		nlohmann::json m_onCheckedJson;
-		nlohmann::json m_onUncheckedJson;
-		nlohmann::json m_onClickExternalJson;
-		nlohmann::json m_onReleaseExternalJson;
-		nlohmann::json m_onCheckedExternalJson;
-		nlohmann::json m_onUncheckedExternalJson;
 
-		nlohmann::json m_meta;
 
-		Color m_color = { 1, 1, 1 };
-		Color m_colorStart = { 1, 1, 1 };
-		Color m_colorEnd = { 1, 1, 1 };
-		Color m_targetColor = m_color;
 
-		bool m_checkOnClick = false;
-		bool m_down = false;
-		bool m_over = false;
 
-		bool m_exclusiveEnvoke = false;
 
-		bool m_visible = true;
-		bool m_clickable = true;
-		bool m_clickThrough = true;
 
 		virtual void setVisible(bool visible = true);
 		virtual void show();
@@ -201,20 +152,12 @@ public: \
 		virtual bool isDown();
 		virtual bool isOver();
 
-		bool m_scaled = false;
 
-		bool m_checked = false;
-		bool m_checkable = false;
 
-		bool m_radio = false;
-		Widget* m_radioParent = nullptr;
 		virtual void radioUp(std::string event);
 
-		std::string m_cursor = "";
 
-		ShaderProperties m_shaderProperties;
 
-		ConfigList m_config;
 
 		virtual Widget* onMouseEvent(MouseEventData mouseEventData, bool process = true, bool focus = false);
 		virtual Widget* onKeyEvent(KeyEventData keyEventData);
@@ -270,14 +213,85 @@ public: \
 
 		ConfigItem shaderPropertiesConfigItem(ShaderProperties& reference, std::string defaultValue = "");
 
-
 		enum class DebugMode
 		{
 			DBG_OFF,
 			DBG_BOUNDS,
 		} m_debugMode = DebugMode::DBG_OFF;
 
+		ConfigList& getConfig();
+		nlohmann::json& getDefaultJson();
+
+		MouseEventData& getMouseEventData();
+		void setMouseEventData(MouseEventData& mouseEventData);
+		MouseEventData& getInitialMouseEventData();
+		void setInitialMouseEventData(MouseEventData& mouseEventData);
+		KeyEventData& getKeyEventData();
+	protected:
+		ConfigList m_config;
+
+	private:
 		void setDebugMode(DebugMode debugMode);
 		DebugMode getDebugMode();
+		GUI* m_gui;
+		float m_x = 0, m_y = 0;
+		float m_xOffset, m_yOffset = 0;
+		float m_xTarget = 0, m_yTarget = 0;
+		float m_w = 0, m_h = 0;
+		float m_wTarget = 0, m_hTarget = 0;
+		float m_weight = 0.0f;
+		bool  m_proportional = false;
+		bool  m_centered = false;
+		bool  m_layoutOmit = false;
+		float m_rotation = 0.0f;
+		float m_rotationTarget = 0.0f;
+		Texture* m_background = nullptr;
+		Texture* m_backgroundTransition = m_background;
+		float m_backgroundTransitionValue = 0.0f;
+		float m_transitionSpeed = 1.0f;
+		bool m_backgroundTiled = false;
+		std::string m_type = "undefined";
+		Widget* m_parent = nullptr;
+		MouseEventData m_oldMouseEventData;
+		MouseEventData m_initialMouseEventData;
+		KeyEventData m_oldKeyEventData;
+		std::chrono::time_point<std::chrono::steady_clock> m_oldClickTime;
+		std::chrono::time_point<std::chrono::steady_clock> m_oldHoverTime;
+		uint64_t m_hintShowTime = 100UL;
+		std::string m_id = "widget";
+		std::string m_blendMode = "normal";
+		std::string m_shellExecute = "";
+		std::string m_hint = "";
+		float m_opacity = 1.0f;
+		nlohmann::json m_defaultJson;
+		nlohmann::json m_onOverJson;
+		nlohmann::json m_onLeaveJson;
+		nlohmann::json m_onClickJson;
+		nlohmann::json m_onReleaseJson;
+		nlohmann::json m_onCheckedJson;
+		nlohmann::json m_onUncheckedJson;
+		nlohmann::json m_onClickExternalJson;
+		nlohmann::json m_onReleaseExternalJson;
+		nlohmann::json m_onCheckedExternalJson;
+		nlohmann::json m_onUncheckedExternalJson;
+		nlohmann::json m_meta;
+		Color m_color = { 1, 1, 1 };
+		Color m_colorStart = { 1, 1, 1 };
+		Color m_colorEnd = { 1, 1, 1 };
+		Color m_targetColor = m_color;
+		bool m_checkOnClick = false;
+		bool m_down = false;
+		bool m_over = false;
+		bool m_exclusiveEnvoke = false;
+		bool m_visible = true;
+		bool m_clickable = true;
+		bool m_clickThrough = true;
+		bool m_scaled = false;
+		bool m_checked = false;
+		bool m_checkable = false;
+		bool m_radio = false;
+		Widget* m_radioParent = nullptr;
+		std::string m_cursor = "";
+		ShaderProperties m_shaderProperties;
 	};
 }

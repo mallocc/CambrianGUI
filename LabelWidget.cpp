@@ -6,10 +6,10 @@ void gui::LabelWidget::draw(float tx, float ty, bool editMode)
 {
 	Widget::draw(tx, ty, editMode);
 
-	tx += m_x; ty += m_y;
+	tx += X(); ty += Y();
 
 	// Draw title
-	glColor4f(textColor.r, textColor.g, textColor.b, m_opacity);
+	glColor4f(textColor.r, textColor.g, textColor.b, getOpacity());
 
 	auto font = displayFont;
 
@@ -20,15 +20,15 @@ void gui::LabelWidget::draw(float tx, float ty, bool editMode)
 	{
 		font->renderText(
 			text,
-			m_xOffset + m_w / 2.0f,
-			m_yOffset + m_h / 2.0f - font->size / 2.0f + (font->size - 2.0f), 1., bold, italic, 1);
+			getOffsetX() + W() / 2.0f,
+			getOffsetY() + H() / 2.0f - font->size / 2.0f + (font->size - 2.0f), 1., bold, italic, 1);
 	}
 	else
 	{
 		font->renderText(
 			text,
-			m_xOffset + padding,
-			m_yOffset + m_h / 2.0f - font->size / 2.0f + (font->size - 2.0f), 1., bold, italic, 0);
+			getOffsetX() + padding,
+			getOffsetY() + H()/ 2.0f - font->size / 2.0f + (font->size - 2.0f), 1., bold, italic, 0);
 	}
 	glPopMatrix();
 
@@ -39,10 +39,10 @@ void gui::LabelWidget::draw(float tx, float ty, bool editMode)
 		glBegin(GL_LINES);
 		{
 			glVertex2f(tx, 0);
-			glVertex2f(tx, m_gui->h);
+			glVertex2f(tx, getGUI()->h);
 
 			glVertex2f(0, ty);
-			glVertex2f(m_gui->w, ty);
+			glVertex2f(getGUI()->w, ty);
 		}
 		glEnd();
 	}
@@ -59,7 +59,7 @@ bool gui::LabelWidget::init(nlohmann::json j, bool ignoreType)
 			{
 				fields["font"] = {
 				"OpenSans@24",
-				[&](std::string value) { displayFont = m_gui->getFontManager()->fonts[value] == nullptr ? m_gui->getFontManager()->defaultFont : m_gui->getFontManager()->fonts[value]; },
+				[&](std::string value) { displayFont = getGUI()->getFontManager()->fonts[value] == nullptr ? getGUI()->getFontManager()->defaultFont : getGUI()->getFontManager()->fonts[value]; },
 				[&](std::string fieldName) { return nlohmann::json({{ fieldName, displayFont->fontName }}); }
 				};
 				fields["revalidate-size"] = revalidateSize;
@@ -85,25 +85,25 @@ bool gui::LabelWidget::init(nlohmann::json j, bool ignoreType)
 
 void gui::LabelWidget::revalidate()
 {
-	textColor.r += (targetTextColor.r - textColor.r) * m_transitionSpeed;
-	textColor.g += (targetTextColor.g - textColor.g) * m_transitionSpeed;
-	textColor.b += (targetTextColor.b - textColor.b) * m_transitionSpeed;
+	textColor.r += (targetTextColor.r - textColor.r) * getTransitionSpeed();
+	textColor.g += (targetTextColor.g - textColor.g) * getTransitionSpeed();
+	textColor.b += (targetTextColor.b - textColor.b) * getTransitionSpeed();
 
 	if (revalidateSize)
 	{
 		auto font = displayFont;
 		auto metrics = font->textMetrics(text, 1.0f);
-		m_wTarget = metrics.x + padding * (center + 1);
-		m_hTarget = font->size + padding * (center + 1);
+		setW(metrics.x + padding * (center + 1));
+		setH(font->size + padding * (center + 1));
 	}
 	else
 	{
 		auto font = displayFont;
 		auto metrics = font->textMetrics(text, 1.0f);
-		if (m_w == 0)
-			m_wTarget = metrics.x + padding * (center + 1);
-		if (m_h == 0)
-			m_hTarget = font->size + padding * (center + 1);
+		if (W() == 0)
+			setW(metrics.x + padding * (center + 1));
+		if (H() == 0)
+			setH(font->size + padding * (center + 1));
 	}
 	Widget::revalidate();
 }

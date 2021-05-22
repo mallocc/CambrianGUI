@@ -443,6 +443,8 @@ bool gui::Widget::init(nlohmann::json j, bool ignoreType)
 			fields["color"] = colorConfigItem(m_targetColor);
 			fields["color-start"] = colorConfigItem(m_colorStart);
 			fields["color-end"] = colorConfigItem(m_colorEnd);
+			fields["background-tiled"] = m_backgroundTiled;
+			fields["omit"] = m_layoutOmit;
 		}
 		fields.load(j);
 
@@ -861,6 +863,41 @@ ConfigItem gui::Widget::shaderPropertiesConfigItem(ShaderProperties& reference, 
 	return tuple;
 }
 
+ConfigList& gui::Widget::getConfig()
+{
+	return m_config;
+}
+
+nlohmann::json& gui::Widget::getDefaultJson()
+{
+	return m_defaultJson;
+}
+
+gui::MouseEventData& gui::Widget::getMouseEventData()
+{
+	return m_oldMouseEventData;
+}
+
+void gui::Widget::setMouseEventData(MouseEventData& mouseEventData)
+{
+	m_oldMouseEventData = mouseEventData;
+}
+
+gui::MouseEventData& gui::Widget::getInitialMouseEventData()
+{
+	return m_initialMouseEventData;
+}
+
+void gui::Widget::setInitialMouseEventData(MouseEventData& mouseEventData)
+{
+	m_initialMouseEventData = mouseEventData;
+}
+
+gui::KeyEventData& gui::Widget::getKeyEventData()
+{
+	return m_oldKeyEventData;
+}
+
 void gui::Widget::setDebugMode(DebugMode debugMode)
 {
 	this->m_debugMode = debugMode;
@@ -1033,6 +1070,16 @@ void gui::Widget::setCentered(bool centered)
 bool gui::Widget::isCentered()
 {
 	return m_centered;
+}
+
+void gui::Widget::setLayoutOmit(bool layoutOmit)
+{
+	this->m_layoutOmit = layoutOmit;
+}
+
+bool gui::Widget::isLayoutOmit()
+{
+	return m_layoutOmit;
 }
 
 void gui::Widget::setBackground(Texture* background)

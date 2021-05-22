@@ -113,23 +113,23 @@ gui::Widget* gui::WidgetManager::createWidget(nlohmann::json& j)
 	if (widget != nullptr)
 	{
 		// Reset widget id to default if one already exists
-		if (findWidget(widget->m_id) != nullptr)
+		if (findWidget(widget->getId()) != nullptr)
 		{
-			widget->m_id = "";
+			widget->setId("");
 		}
 
 		// If default id, generate a unique id
-		if (widget->m_id == "")
+		if (widget->getId() == "")
 		{
 			uint32_t id = 0U;
 			bool found = false;
 			while (!found)
 			{
 				std::stringstream newId;
-				newId << widget->m_type << id;
+				newId << widget->getType() << id;
 				if (findWidget(newId.str()) == nullptr)
 				{
-					widget->m_id = newId.str();
+					widget->setId(newId.str());
 					found = true;
 				}
 				id++;
@@ -137,7 +137,7 @@ gui::Widget* gui::WidgetManager::createWidget(nlohmann::json& j)
 		}
 
 		// Add to map
-		widgetMap[widget->m_id] = widget;
+		widgetMap[widget->getId()] = widget;
 	}
 
 	return widget;
@@ -171,7 +171,7 @@ void gui::WidgetManager::handleDynamicJson(nlohmann::json j, std::string id)
 					std::cout << "found target widget: " << tmp << std::endl;
 					readJSONAsString(i, "RESET", tmp);
 					bool reset = tmp == "true";
-					widget->m_config.load(reset ? widget->m_defaultJson : i, !reset);
+					widget->getConfig().load(reset ? widget->getDefaultJson() : i, !reset);
 
 					readJSONAsString(i, "CHECK", tmp);
 					bool checked = tmp == "true";
@@ -198,9 +198,9 @@ void gui::WidgetManager::bringForwards(Widget* widget)
 {
 	if (widget != nullptr)
 	{
-		if (widget->m_parent != nullptr)
+		if (widget->getParent() != nullptr)
 		{
-			ContainerWidget* layout = dynamic_cast<ContainerWidget*>(widget->m_parent);
+			ContainerWidget* layout = dynamic_cast<ContainerWidget*>(widget->getParent());
 			if (layout != nullptr)
 			{
 				size_t position = 0U;
@@ -223,9 +223,9 @@ void gui::WidgetManager::bringToFront(Widget* widget)
 {
 	if (widget != nullptr)
 	{
-		if (widget->m_parent != nullptr)
+		if (widget->getParent() != nullptr)
 		{
-			ContainerWidget* layout = dynamic_cast<ContainerWidget*>(widget->m_parent);
+			ContainerWidget* layout = dynamic_cast<ContainerWidget*>(widget->getParent());
 			if (layout != nullptr)
 			{
 				size_t position = 0UL;
@@ -248,9 +248,9 @@ void gui::WidgetManager::sendBackwards(Widget* widget)
 {
 	if (widget != nullptr)
 	{
-		if (widget->m_parent != nullptr)
+		if (widget->getParent() != nullptr)
 		{
-			ContainerWidget* layout = dynamic_cast<ContainerWidget*>(widget->m_parent);
+			ContainerWidget* layout = dynamic_cast<ContainerWidget*>(widget->getParent());
 			if (layout != nullptr)
 			{
 				size_t position = 0UL;
@@ -273,9 +273,9 @@ void gui::WidgetManager::sendToBack(Widget* widget)
 {
 	if (widget != nullptr)
 	{
-		if (widget->m_parent != nullptr)
+		if (widget->getParent() != nullptr)
 		{
-			ContainerWidget* layout = dynamic_cast<ContainerWidget*>(widget->m_parent);
+			ContainerWidget* layout = dynamic_cast<ContainerWidget*>(widget->getParent());
 			if (layout != nullptr)
 			{
 				size_t position = 0U;
@@ -318,7 +318,7 @@ void gui::WidgetManager::createFloatingLabelWidget()
 		if (floatingLabelWidget != nullptr)
 		{
 			floatingLabelWidget->revalidate();
-			floatingLabelWidget->m_visible = false;
+			floatingLabelWidget->hide();
 			ContainerWidget* widget = dynamic_cast<ContainerWidget*>(rootWidget);
 			if (widget)
 				widget->addChild(floatingLabelWidget);
@@ -335,7 +335,7 @@ void gui::WidgetManager::createDropDownListWidget()
 		if (dropDownListWidget != nullptr)
 		{
 			dropDownListWidget->revalidate();
-			dropDownListWidget->m_visible = false;
+			dropDownListWidget->hide();
 			ContainerWidget* widget = dynamic_cast<ContainerWidget*>(rootWidget);
 			if (widget)
 			{

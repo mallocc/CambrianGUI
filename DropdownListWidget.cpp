@@ -8,10 +8,14 @@ bool gui::DropdownListWidget::init(nlohmann::json j, bool ignoreType)
 	{
 		if (checkWidgetType<DropdownListWidget>(ignoreType))
 		{
-			m_visible = false;
+			hide();
 
-			m_config["labelwidget"] = labelTemplate;
-			m_config.load(j);
+			ConfigList fields;
+			{
+				fields["labelwidget"] = labelTemplate;
+			}
+			fields.load(j);
+			m_config += fields;
 		}
 	}
 
@@ -28,7 +32,7 @@ bool gui::DropdownListWidget::initList(nlohmann::json j)
 		json_get_string(d, "text", text)
 		{
 			labelTemplate["text"] = text;
-			labelTemplate["w"] = m_w;
+			labelTemplate["w"] = W();
 			create_widget(widget, labelTemplate)
 			{
 				widget->onClick = [=](GUI* gui, MouseEventData mouseEventData)
@@ -50,10 +54,10 @@ void gui::DropdownListWidget::draw(float tx, float ty, bool editMode)
 {
 	if (!floating)
 	{
-		if (m_parent != nullptr)
+		if (getParent() != nullptr)
 		{
-			m_parent->getAbsolutePosition(tx, ty);
-			ty += m_parent->m_h;
+			getParent()->getAbsolutePosition(tx, ty);
+			ty += getParent()->H();
 		}
 	}
 	VLayoutWidget::draw(tx, ty, editMode);
@@ -62,18 +66,18 @@ void gui::DropdownListWidget::draw(float tx, float ty, bool editMode)
 gui::Widget* gui::DropdownListWidget::onMouseEvent(MouseEventData mouseEventData, bool process, bool focus)
 {
 	if (!floating)
-		if (m_parent != nullptr)
-			mouseEventData.y -= m_parent->m_h;
+		if (getParent() != nullptr)
+			mouseEventData.y -= getParent()->H();
 	return VLayoutWidget::onMouseEvent(mouseEventData, process, focus);
 }
 
 void gui::DropdownListWidget::onIntent(nlohmann::json intent)
 {
-	if (m_parent != nullptr)
+	if (getParent() != nullptr)
 	{
-		m_parent->onIntent(intent);
+		getParent()->onIntent(intent);
 	}
-	m_visible = false;
+	hide();
 	floating = false;
 }
 
