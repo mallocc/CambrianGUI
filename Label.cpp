@@ -1,5 +1,5 @@
 #include <GL/glew.h>
-#include "LabelWidget.h"
+#include "Label.h"
 #include "GUI.h"
 
 void gui::Label::draw(float tx, float ty, bool editMode)

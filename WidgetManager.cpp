@@ -1,8 +1,8 @@
 #include "WidgetManager.h"
 #include "Configuration.h"
-#include "ContainerWidget.h"
-#include "LabelWidget.h"
-#include "DropdownListWidget.h"
+#include "Container.h"
+#include "Label.h"
+#include "DropdownList.h"
 
 #include <sstream>
 

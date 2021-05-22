@@ -1,4 +1,4 @@
-#include "HLayoutWidget.h"
+#include "HLayout.h"
 #include "GUI.h"
 
 gui::HLayout::HLayout(GUI* gui, nlohmann::json j)

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <VLayoutWidget.h>
+#include <VLayout.h>
 
 namespace gui
 {

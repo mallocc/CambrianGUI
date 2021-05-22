@@ -1,7 +1,7 @@
 #pragma once
 
-#include "VLayoutWidget.h"
-#include "LabelWidget.h"
+#include "VLayout.h"
+#include "Label.h"
 
 namespace gui
 {

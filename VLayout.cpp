@@ -1,4 +1,4 @@
-#include "VLayoutWidget.h"
+#include "VLayout.h"
 #include <algorithm>
 
 gui::VLayout::VLayout(GUI* gui, nlohmann::json j) : Container(gui, j)

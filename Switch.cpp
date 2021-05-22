@@ -1,5 +1,5 @@
 #include <GL/glew.h>
-#include "SwitchWidget.h"
+#include "Switch.h"
 #include "GUI.h"
 
 using gui::Widget;

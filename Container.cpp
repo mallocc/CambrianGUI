@@ -1,6 +1,6 @@
-#include "ContainerWidget.h"
+#include "Container.h"
 #include "GUI.h"
-#include "SwitchWidget.h"
+#include "Switch.h"
 #include <GL/glew.h>
 
 using gui::Container;

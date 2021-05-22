@@ -1,4 +1,4 @@
-#include "ListWidget.h"
+#include "List.h"
 #include <GUI.h>
 
 gui::List::List(GUI* gui, nlohmann::json j) : VLayout(gui, j)

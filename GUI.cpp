@@ -1,9 +1,9 @@
 #include "GUI.h"
 
-#include "HLayoutWidget.h"
-#include "DropdownListWidget.h"
-#include "DropdownWidget.h"
-#include "TabMenuWidget.h"
+#include "HLayout.h"
+#include "DropdownList.h"
+#include "Dropdown.h"
+#include "TabMenu.h"
 
 #include <sstream>
 #include <fstream>

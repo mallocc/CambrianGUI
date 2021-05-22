@@ -1,7 +1,7 @@
-#include "TabMenuWidget.h"
+#include "TabMenu.h"
 #include "GUI.h"
 #include "Utilities.h"
-#include "LabelWidget.h"
+#include "Label.h"
 
 bool gui::TabMenu::init(nlohmann::json j, bool ignoreType)
 {
