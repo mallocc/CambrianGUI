@@ -369,3 +369,63 @@ std::vector<gui::Widget*> gui::Container::getCheckedChildren()
 			checkedChildren.push_back(child);
 	return checkedChildren;
 }
+
+void gui::Container::setAlignment(ALIGNMENT alignment)
+{
+	this->alignment = alignment;
+}
+
+gui::ALIGNMENT gui::Container::getAlignment()
+{
+	return alignment;
+}
+
+void gui::Container::setSizing(SIZING sizing)
+{
+	this->sizing = sizing;
+}
+
+gui::SIZING gui::Container::getSizing()
+{
+	return sizing;
+}
+
+void gui::Container::setPadding(float padding)
+{
+	this->padding = padding;
+}
+
+float gui::Container::getPadding()
+{
+	return padding;
+}
+
+void gui::Container::setSpacing(float spacing)
+{
+	this->spacing = spacing;
+}
+
+float gui::Container::getSpacing()
+{
+	return spacing;
+}
+
+void gui::Container::setChildEnvoke(bool childEnvoke)
+{
+	this->childEnvoke = childEnvoke;
+}
+
+bool gui::Container::isChildEnvoke()
+{
+	return childEnvoke;
+}
+
+std::vector<Widget*> gui::Container::getRadioChildren()
+{
+	return radioChildren;
+}
+
+std::vector<Widget*> gui::Container::getChildren()
+{
+	return children;
+}

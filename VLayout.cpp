@@ -38,7 +38,7 @@ void gui::VLayout::revalidate()
 			maxx = std::max(maxx, (float)widget->W());
 		}
 
-		switch (alignment)
+		switch (getAlignment())
 		{
 		case ALIGNMENT::ALIGN_LIST:
 		{
@@ -63,7 +63,7 @@ void gui::VLayout::revalidate()
 		}
 		case ALIGNMENT::ALIGN_TOP:
 		{
-			float start = padding;
+			float start = getPadding();
 			for (int i = 0; i < visibleChildren.size(); ++i)
 			{
 				visibleChildren[i]->setX(midx - visibleChildren[i]->W() / 2.0f, FORCE);
@@ -76,7 +76,7 @@ void gui::VLayout::revalidate()
 		}
 		case ALIGNMENT::ALIGN_BOTTOM:
 		{
-			float start = H() - size - padding;
+			float start = H() - size - getPadding();
 			for (int i = 0; i < visibleChildren.size(); ++i)
 			{
 				visibleChildren[i]->setX(midx - visibleChildren[i]->W() / 2.0f, FORCE);
@@ -92,7 +92,7 @@ void gui::VLayout::revalidate()
 			float start = midy - size / 2.0f;
 			for (int i = 0; i < visibleChildren.size(); ++i)
 			{
-				visibleChildren[i]->setX(spacing, FORCE);
+				visibleChildren[i]->setX(getPadding(), FORCE);
 				visibleChildren[i]->setY(start, FORCE);
 				start += visibleChildren[i]->H() + visibleChildren[i]->getWeight() * (visibleChildren[i]->isProportional() ? H() : 1);
 				if (visibleChildren[i]->isCentered())
@@ -182,9 +182,9 @@ void gui::VLayout::revalidate()
 		}
 		case ALIGNMENT::ALIGN_SPACED:
 		{
-			float leftOver = H() - size - padding * 2.0f;
+			float leftOver = H() - size - getPadding() * 2.0f;
 			float d = leftOver / (visibleChildren.size() - 1);
-			float start = padding;
+			float start = getPadding();
 			for (int i = 0; i < visibleChildren.size(); ++i)
 			{
 				visibleChildren[i]->setX(midx - visibleChildren[i]->W() / 2.0f, FORCE);

@@ -38,7 +38,7 @@ void gui::HLayout::revalidate()
 			maxy = std::max(maxy, (float)widget->H());
 		}
 
-		switch (alignment)
+		switch (getAlignment())
 		{
 		case ALIGNMENT::ALIGN_LIST:
 		{
@@ -181,9 +181,9 @@ void gui::HLayout::revalidate()
 		}
 		case ALIGNMENT::ALIGN_SPACED:
 		{
-			float leftOver = W() - size - padding * 2.0f;
+			float leftOver = W() - size - getPadding() * 2.0f;
 			float d = leftOver / (visibleChildren.size() - 1);
-			float start = padding;
+			float start = getPadding();
 			for (int i = 0; i < visibleChildren.size(); ++i)
 			{
 				visibleChildren[i]->setY(midy - visibleChildren[i]->H() / 2.0f, FORCE);

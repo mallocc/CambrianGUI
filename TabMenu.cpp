@@ -67,13 +67,13 @@ bool gui::TabMenu::init(nlohmann::json j, bool ignoreType)
 						}
 					}
 
-					if (tabPane->children.size() > 0)
+					if (tabPane->getChildren().size() > 0)
 					{
-						tabPane->children[0]->show();
+						tabPane->getChildren()[0]->show();
 					}
-					if (tabMenu->children.size() > 0)
+					if (tabMenu->getChildren().size() > 0)
 					{
-						tabMenu->children[0]->check();
+						tabMenu->getChildren()[0]->check();
 					}
 				}
 			}
@@ -89,7 +89,7 @@ void gui::TabMenu::onIntent(nlohmann::json intent)
 	readJSON(intent, "tab", tab);
 	if (tabPane != nullptr)
 	{
-		for (auto& widget : tabPane->children)
+		for (auto& widget : tabPane->getChildren())
 			if (widget != nullptr)
 			{
 				widget_as(Label, labelWidget, widget)
@@ -100,7 +100,7 @@ void gui::TabMenu::onIntent(nlohmann::json intent)
 	}
 	if (tabMenu != nullptr)
 	{
-		for (Widget* widget : tabMenu->children)
+		for (Widget* widget : tabMenu->getChildren())
 			if (widget != nullptr)
 			{
 				widget_as(Label, labelWidget, widget)

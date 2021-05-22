@@ -55,8 +55,8 @@ bool gui::Dropdown::init(nlohmann::json j, bool ignoreType)
 					break;
 				}
 			}
-			alignment = ALIGN_SPACED;
-			sizing = SIZE_NONE;
+			setAlignment(ALIGN_SPACED);
+			setSizing(SIZE_NONE);
 		}
 	}
 

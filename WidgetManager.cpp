@@ -204,15 +204,16 @@ void gui::WidgetManager::bringForwards(Widget* widget)
 			if (layout != nullptr)
 			{
 				size_t position = 0U;
-				for (size_t i = 0U; i < layout->children.size(); ++i)
-					if (layout->children[i] == widget)
+				auto children = layout->getChildren();
+				for (size_t i = 0U; i < children.size(); ++i)
+					if (children[i] == widget)
 						position = i;
-				if (position < layout->children.size() - 1)
+				if (position < children.size() - 1)
 				{
-					std::vector<Widget*>::iterator itor = layout->children.begin() + position;
-					layout->children.erase(itor);
-					itor = layout->children.begin() + position + 1;
-					layout->children.insert(itor, widget);
+					std::vector<Widget*>::iterator itor = children.begin() + position;
+					children.erase(itor);
+					itor = children.begin() + position + 1;
+					children.insert(itor, widget);
 				}
 			}
 		}
@@ -229,15 +230,16 @@ void gui::WidgetManager::bringToFront(Widget* widget)
 			if (layout != nullptr)
 			{
 				size_t position = 0UL;
-				for (size_t i = 0UL; i < layout->children.size(); ++i)
-					if (layout->children[i] == widget)
+				auto children = layout->getChildren();
+				for (size_t i = 0UL; i < children.size(); ++i)
+					if (children[i] == widget)
 						position = i;
 				if (position > 0UL)
 				{
-					std::vector<Widget*>::iterator itor = layout->children.begin() + position;
-					layout->children.erase(itor);
-					itor = layout->children.begin();
-					layout->children.insert(itor, widget);
+					std::vector<Widget*>::iterator itor = children.begin() + position;
+					children.erase(itor);
+					itor = children.begin();
+					children.insert(itor, widget);
 				}
 			}
 		}
@@ -254,15 +256,16 @@ void gui::WidgetManager::sendBackwards(Widget* widget)
 			if (layout != nullptr)
 			{
 				size_t position = 0UL;
-				for (size_t i = 0UL; i < layout->children.size(); ++i)
-					if (layout->children[i] == widget)
+				auto children = layout->getChildren();
+				for (size_t i = 0UL; i < children.size(); ++i)
+					if (children[i] == widget)
 						position = i;
 				if (position > 0UL)
 				{
-					std::vector<Widget*>::iterator itor = layout->children.begin() + position;
-					layout->children.erase(itor);
-					itor = layout->children.begin() + position - 1;
-					layout->children.insert(itor, widget);
+					std::vector<Widget*>::iterator itor = children.begin() + position;
+					children.erase(itor);
+					itor = children.begin() + position - 1;
+					children.insert(itor, widget);
 				}
 			}
 		}
@@ -279,15 +282,16 @@ void gui::WidgetManager::sendToBack(Widget* widget)
 			if (layout != nullptr)
 			{
 				size_t position = 0U;
-				for (size_t i = 0U; i < layout->children.size(); ++i)
-					if (layout->children[i] == widget)
+				auto children = layout->getChildren();
+				for (size_t i = 0U; i < children.size(); ++i)
+					if (children[i] == widget)
 						position = i;
-				if (position < layout->children.size() - 1)
+				if (position < children.size() - 1)
 				{
-					std::vector<Widget*>::iterator itor = layout->children.begin() + position;
-					layout->children.erase(itor);
-					itor = layout->children.end();
-					layout->children.insert(itor, widget);
+					std::vector<Widget*>::iterator itor = children.begin() + position;
+					children.erase(itor);
+					itor = children.end();
+					children.insert(itor, widget);
 				}
 			}
 		}

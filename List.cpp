@@ -64,7 +64,7 @@ bool gui::List::init(nlohmann::json j, bool ignoreType)
 			}
 
 
-			alignment = ALIGN_LIST;
+			setAlignment(ALIGN_LIST);
 		}
 	}
 	return success;

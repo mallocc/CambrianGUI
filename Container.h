@@ -61,14 +61,6 @@ namespace gui
 	public:
 		DEFINE_WIDGET_TYPE("container");
 
-		ALIGNMENT alignment = ALIGNMENT::ALIGN_NONE;
-		SIZING sizing = SIZING::SIZE_INHERIT;
-		float padding = 0.0f;
-		float spacing = 0.0f;
-		bool childEnvoke = false;
-		std::vector<Widget*> children;
-		std::vector<Widget*> radioChildren;
-		Widget* lastLocalWidgetHandled = nullptr;
 
 		void clearChildren();
 
@@ -99,5 +91,34 @@ namespace gui
 		virtual int32_t getChildIndex(Widget* child);
 
 		virtual std::vector<Widget*> getCheckedChildren();
+
+		void setAlignment(ALIGNMENT alignment);
+		ALIGNMENT getAlignment();
+
+		void setSizing(SIZING sizing);
+		SIZING getSizing();
+
+		void setPadding(float padding);
+		float getPadding();
+
+		void setSpacing(float spacing);
+		float getSpacing();
+
+		void setChildEnvoke(bool childEnvoke = true);
+		bool isChildEnvoke();
+
+		std::vector<Widget*> getRadioChildren();
+		std::vector<Widget*> getChildren();
+
+	private:
+
+		ALIGNMENT alignment = ALIGNMENT::ALIGN_NONE;
+		SIZING sizing = SIZING::SIZE_INHERIT;
+		float padding = 0.0f;
+		float spacing = 0.0f;
+		bool childEnvoke = false;
+		std::vector<Widget*> children;
+		std::vector<Widget*> radioChildren;
+		Widget* lastLocalWidgetHandled = nullptr;
 	};
 }
