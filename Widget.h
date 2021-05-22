@@ -40,7 +40,8 @@ public: \
 	public:
 		DEFINE_WIDGET_TYPE("widget");
 
-		GUI* gui;
+		GUI* m_gui;
+		GUI* getGUI();
 
 		float m_x = 0, m_y = 0;
 		float m_xOffset, m_yOffset = 0;

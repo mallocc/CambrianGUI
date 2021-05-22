@@ -88,7 +88,7 @@ void gui::DropdownWidget::openDropdown()
 {
 	if (icon != nullptr)
 		icon->check();
-	gui->openDropdownIntent(this, this->data);
+	m_gui->openDropdownIntent(this, this->data);
 }
 
 nlohmann::json gui::DropdownWidget::toJson()

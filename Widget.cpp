@@ -37,7 +37,7 @@ Widget* gui::Widget::onMouseEvent(MouseEventData mouseEventData, bool process, b
 		{
 			if (process)
 			{
-				onOver(gui, mouseEventData);
+				onOver(m_gui, mouseEventData);
 			}
 
 			onMoveEvent(mouseEventData, process);
@@ -46,7 +46,7 @@ Widget* gui::Widget::onMouseEvent(MouseEventData mouseEventData, bool process, b
 			{
 				if (process)
 				{
-					onDown(gui, mouseEventData);
+					onDown(m_gui, mouseEventData);
 				}
 				handled = true;
 			}
@@ -55,7 +55,7 @@ Widget* gui::Widget::onMouseEvent(MouseEventData mouseEventData, bool process, b
 			{
 				if (process)
 				{
-					onRightClick(gui, mouseEventData);
+					onRightClick(m_gui, mouseEventData);
 				}
 				handled = true;
 			}
@@ -64,7 +64,7 @@ Widget* gui::Widget::onMouseEvent(MouseEventData mouseEventData, bool process, b
 			{
 				if (process)
 				{
-					onClick(gui, mouseEventData);
+					onClick(m_gui, mouseEventData);
 				}
 				handled = true;
 			}
@@ -73,7 +73,7 @@ Widget* gui::Widget::onMouseEvent(MouseEventData mouseEventData, bool process, b
 			{
 				if (process)
 				{
-					onDrag(gui, mouseEventData);
+					onDrag(m_gui, mouseEventData);
 				}
 				handled = true;
 			}
@@ -82,7 +82,7 @@ Widget* gui::Widget::onMouseEvent(MouseEventData mouseEventData, bool process, b
 			{
 				if (process)
 				{
-					onDoubleClick(gui, mouseEventData);
+					onDoubleClick(m_gui, mouseEventData);
 				}
 				handled = true;
 			}
@@ -91,7 +91,7 @@ Widget* gui::Widget::onMouseEvent(MouseEventData mouseEventData, bool process, b
 			{
 				if (process)
 				{
-					onRelease(gui, mouseEventData);
+					onRelease(m_gui, mouseEventData);
 				}
 				handled = true;
 			}
@@ -100,7 +100,7 @@ Widget* gui::Widget::onMouseEvent(MouseEventData mouseEventData, bool process, b
 			{
 				if (process)
 				{
-					onUp(gui, mouseEventData);
+					onUp(m_gui, mouseEventData);
 				}
 			}
 
@@ -108,21 +108,21 @@ Widget* gui::Widget::onMouseEvent(MouseEventData mouseEventData, bool process, b
 			{
 				if (process)
 				{
-					onMiddleClick(gui, mouseEventData);
+					onMiddleClick(m_gui, mouseEventData);
 				}
 				handled = true;
 			}
 
 			if (process)
 			{
-				gui->setCursor(m_cursor);
+				m_gui->setCursor(m_cursor);
 			}
 		}
 		else if (onLeaveEvent(mouseEventData, process))
 		{
 			if (process)
 			{
-				onLeave(gui, mouseEventData);
+				onLeave(m_gui, mouseEventData);
 			}
 		}
 
@@ -345,7 +345,7 @@ void gui::Widget::revalidate()
 		}
 		else
 		{
-			m_w = gui->w;
+			m_w = m_gui->w;
 		}
 	}
 	if (m_h == 0)
@@ -356,7 +356,7 @@ void gui::Widget::revalidate()
 		}
 		else
 		{
-			m_h = gui->h;
+			m_h = m_gui->h;
 		}
 	}
 
@@ -464,7 +464,7 @@ bool gui::Widget::init(nlohmann::json j, bool ignoreType)
 			}
 			else
 			{
-				m_wTarget = gui->w;
+				m_wTarget = m_gui->w;
 			}
 		}
 		if (m_h == 0)
@@ -475,7 +475,7 @@ bool gui::Widget::init(nlohmann::json j, bool ignoreType)
 			}
 			else
 			{
-				m_hTarget = gui->h;
+				m_hTarget = m_gui->h;
 			}
 		}
 
@@ -520,7 +520,7 @@ void gui::Widget::getAbsolutePosition(float& xPos, float& yPos)
 	}
 }
 
-gui::Widget::Widget(GUI* gui) : gui(gui)/*, debugMode(DebugMode::DBG_BOUNDS)*/
+gui::Widget::Widget(GUI* gui) : m_gui(gui)/*, debugMode(DebugMode::DBG_BOUNDS)*/
 {
 	onUp = [](gui::GUI* gui, MouseEventData mouseEventData) {/* std::cout << "up" << std::endl;*/ };
 	onDown = [](gui::GUI* gui, MouseEventData mouseEventData) {/* std::cout << "down" << std::endl;*/ };
@@ -548,7 +548,7 @@ bool gui::Widget::onClickEvent(MouseEventData mouseEventData, bool process)
 			{
 				system(m_shellExecute.c_str());
 			}
-			gui->fireTriggers(m_onClickJson);
+			m_gui->fireTriggers(m_onClickJson);
 
 			m_config.load(m_onClickJson, true);
 
@@ -558,7 +558,7 @@ bool gui::Widget::onClickEvent(MouseEventData mouseEventData, bool process)
 					toggleCheck();
 				}
 
-			gui->getWidgetManager()->handleDynamicJson(m_onClickExternalJson, m_id);
+			m_gui->getWidgetManager()->handleDynamicJson(m_onClickExternalJson, m_id);
 		}
 		return true;
 	}
@@ -601,7 +601,7 @@ bool gui::Widget::onMoveEvent(MouseEventData mouseEventData, bool process)
 	{
 		if (process)
 		{
-			gui->showHintLabel(m_hint, m_hintShowTime);
+			m_gui->showHintLabel(m_hint, m_hintShowTime);
 		}
 		return true;
 	}
@@ -633,7 +633,7 @@ bool gui::Widget::onReleaseEvent(MouseEventData mouseEventData, bool process)
 					toggleCheck();
 				}
 
-			gui->getWidgetManager()->handleDynamicJson(m_onReleaseExternalJson, m_id);
+			m_gui->getWidgetManager()->handleDynamicJson(m_onReleaseExternalJson, m_id);
 		}
 		return true;
 	}
@@ -677,7 +677,7 @@ bool gui::Widget::onLeaveEvent(MouseEventData mouseEventData, bool process)
 			{
 				if (!m_checked)
 					m_config.load(m_onLeaveJson, true);
-				gui->hideHintLabel();
+				m_gui->hideHintLabel();
 			}
 			m_over = false;
 		}
@@ -742,10 +742,10 @@ void gui::Widget::check(bool updatedRadio, bool force)
 	{
 		if (updatedRadio)
 			radioUp("check");
-		gui->fireTriggers(m_onCheckedJson);
+		m_gui->fireTriggers(m_onCheckedJson);
 		m_config.load(m_onCheckedJson, true);
-		gui->getWidgetManager()->handleDynamicJson(m_onCheckedExternalJson, m_id);
-		onChecked(gui, m_oldMouseEventData);
+		m_gui->getWidgetManager()->handleDynamicJson(m_onCheckedExternalJson, m_id);
+		onChecked(m_gui, m_oldMouseEventData);
 		m_checked = true;
 	}
 }
@@ -754,10 +754,10 @@ void gui::Widget::uncheck(bool updatedRadio, bool force)
 {
 	if (m_checked || force)
 	{
-		gui->fireTriggers(m_onUncheckedJson);
+		m_gui->fireTriggers(m_onUncheckedJson);
 		m_config.load(m_onUncheckedJson, true);
-		gui->getWidgetManager()->handleDynamicJson(m_onUncheckedExternalJson, m_id);
-		onUnchecked(gui, m_oldMouseEventData);
+		m_gui->getWidgetManager()->handleDynamicJson(m_onUncheckedExternalJson, m_id);
+		onUnchecked(m_gui, m_oldMouseEventData);
 		m_checked = false;
 		if (updatedRadio)
 			radioUp("uncheck");
@@ -783,17 +783,17 @@ bool gui::Widget::isChecked()
 
 bool gui::Widget::getColor(std::string colorName, Color& color)
 {
-	return gui->getGUIConfig()->getColor(colorName, color);
+	return m_gui->getGUIConfig()->getColor(colorName, color);
 }
 
 std::string gui::Widget::getColorName(Color& color)
 {
-	return gui->getGUIConfig()->getColorName(color);
+	return m_gui->getGUIConfig()->getColorName(color);
 }
 
 gui::Texture* gui::Widget::requireTexture(std::string path)
 {
-	return  gui->getTextureManager()->requireTexture(path);
+	return  m_gui->getTextureManager()->requireTexture(path);
 }
 
 gui::ShaderProperties gui::Widget::getShaderProperties(std::string value)
@@ -869,6 +869,11 @@ void gui::Widget::setDebugMode(DebugMode debugMode)
 gui::Widget::DebugMode gui::Widget::getDebugMode()
 {
 	return m_debugMode;
+}
+
+gui::GUI* gui::Widget::getGUI()
+{
+	return m_gui;
 }
 
 void gui::Widget::setX(float x, bool force)

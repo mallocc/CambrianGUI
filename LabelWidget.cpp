@@ -39,10 +39,10 @@ void gui::LabelWidget::draw(float tx, float ty, bool editMode)
 		glBegin(GL_LINES);
 		{
 			glVertex2f(tx, 0);
-			glVertex2f(tx, gui->h);
+			glVertex2f(tx, m_gui->h);
 
 			glVertex2f(0, ty);
-			glVertex2f(gui->w, ty);
+			glVertex2f(m_gui->w, ty);
 		}
 		glEnd();
 	}
@@ -59,7 +59,7 @@ bool gui::LabelWidget::init(nlohmann::json j, bool ignoreType)
 			{
 				fields["font"] = {
 				"OpenSans@24",
-				[&](std::string value) { displayFont = gui->getFontManager()->fonts[value] == nullptr ? gui->getFontManager()->defaultFont : gui->getFontManager()->fonts[value]; },
+				[&](std::string value) { displayFont = m_gui->getFontManager()->fonts[value] == nullptr ? m_gui->getFontManager()->defaultFont : m_gui->getFontManager()->fonts[value]; },
 				[&](std::string fieldName) { return nlohmann::json({{ fieldName, displayFont->fontName }}); }
 				};
 				fields["revalidate-size"] = revalidateSize;

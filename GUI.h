@@ -17,6 +17,9 @@ namespace gui
 	{
 	public:
 		GUI(int32_t w, int32_t h);
+
+		GUI* getGUI();
+
 		virtual void draw();
 		virtual void onMouseEvent(MouseEventData mouseEventData);
 		virtual void onMouseLeave();

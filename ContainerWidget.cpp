@@ -38,7 +38,7 @@ void gui::ContainerWidget::clearChildren()
 			ContainerWidget* container = dynamic_cast<ContainerWidget*>(c);
 			if (container != nullptr)
 				container->clearChildren();
-			gui->getWidgetManager()->removeWidget(c->m_id);
+			m_gui->getWidgetManager()->removeWidget(c->m_id);
 		}
 	}
 	children.clear();
@@ -244,7 +244,7 @@ void gui::ContainerWidget::revalidate()
 			}
 			else
 			{
-				m_w = gui->w;
+				m_w = m_gui->w;
 			}
 		}
 		if (m_h == 0)
@@ -255,7 +255,7 @@ void gui::ContainerWidget::revalidate()
 			}
 			else
 			{
-				m_h = gui->h;
+				m_h = m_gui->h;
 			}
 		}
 	}
@@ -278,8 +278,8 @@ void gui::ContainerWidget::expand()
 	{
 		float maxx = 0.0f;
 		float maxy = 0.0f;
-		float minx = gui->w;
-		float miny = gui->h;
+		float minx = m_gui->w;
+		float miny = m_gui->h;
 		for (Widget* widget : visibleChildren)
 		{
 			maxx = std::max(maxx, (float)widget->m_x + (float)widget->m_w);
@@ -294,7 +294,7 @@ void gui::ContainerWidget::expand()
 	case SIZE_EXPAND_WIDTH:
 	{
 		float maxx = 0.0f;
-		float minx = gui->w;
+		float minx = m_gui->w;
 		for (Widget* widget : visibleChildren)
 		{
 			maxx = std::max(maxx, (float)widget->m_x + (float)widget->m_w);
@@ -308,14 +308,14 @@ void gui::ContainerWidget::expand()
 		}
 		else
 		{
-			m_h = gui->h;
+			m_h = m_gui->h;
 		}
 		break;
 	}
 	case SIZE_EXPAND_HEIGHT:
 	{
 		float maxy = 0.0f;
-		float miny = gui->h;
+		float miny = m_gui->h;
 		for (Widget* widget : visibleChildren)
 		{
 			maxy = std::max(maxy, (float)widget->m_y + (float)widget->m_h);
@@ -328,7 +328,7 @@ void gui::ContainerWidget::expand()
 		}
 		else
 		{
-			m_w = gui->w;
+			m_w = m_gui->w;
 		}
 		m_h = maxy - miny;
 		break;

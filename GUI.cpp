@@ -264,7 +264,7 @@ void GUI::init(std::string configOverridePath, bool firstLoad_)
 		//std::string tmp;
 		//bool success = true;
 
-		find_widget_as(LabelWidget, buildDateLabel, "builddatelabel", this)
+		find_widget_as(LabelWidget, buildDateLabel, "builddatelabel")
 		{
 			buildDateLabel->text = "Build Date: " + std::string(__DATE__) + " @ " + std::string(__TIME__);
 		}
@@ -373,6 +373,11 @@ GUI::GUI(int32_t w, int32_t h)
 	registerTriggerCallback("show_credits", [&](GUI* g) { g->displayCredits = true; });
 	registerTriggerCallback("hide_credits", [&](GUI* g) { g->displayCredits = false; });
 	registerTriggerCallback("test", [&](GUI* g) { std::cout << "test" << std::endl; });
+}
+
+GUI* gui::GUI::getGUI()
+{
+	return this;
 }
 
 TextureManager* GUI::getTextureManager()
@@ -524,7 +529,7 @@ void gui::GUI::showHintLabel(std::string text, uint64_t showTime)
 {
 	if (text != "")
 	{
-		find_widget_as(LabelWidget, widget, "hintlabel", this)
+		find_widget_as(LabelWidget, widget, "hintlabel")
 		{
 			currentShowTimeHintLabel = showTime;
 			widget->m_visible = true;
@@ -535,7 +540,7 @@ void gui::GUI::showHintLabel(std::string text, uint64_t showTime)
 
 void gui::GUI::hideHintLabel()
 {
-	find_widget_as(LabelWidget, widget, "hintlabel", this)
+	find_widget_as(LabelWidget, widget, "hintlabel")
 	{
 		widget->m_visible = false;
 		widget->text = "";
