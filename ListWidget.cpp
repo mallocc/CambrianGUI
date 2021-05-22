@@ -19,8 +19,8 @@ bool gui::ListWidget::init(nlohmann::json j, bool ignoreType)
 	{
 		if (checkWidgetType<ListWidget>(ignoreType))
 		{
-			config["data"] = data;
-			config.load(j);
+			m_config["data"] = data;
+			m_config.load(j);
 
 			success = true;
 
@@ -49,11 +49,11 @@ bool gui::ListWidget::init(nlohmann::json j, bool ignoreType)
 							widget->onClick = [=](GUI* gui, MouseEventData mouseEventData) {
 								nlohmann::json intent;
 								intent["intent"] = "childClicked";
-								intent["id"] = widget->id;
+								intent["id"] = widget->m_id;
 								this->onIntent(intent);
 							};
 							addChild(widget);
-							if (widget->radio)
+							if (widget->m_radio)
 								addRadioChild(widget);
 						}
 					}
@@ -70,20 +70,20 @@ void gui::ListWidget::onIntent(nlohmann::json intentData)
 	{
 		json_get_string(intentData, "id", childId)
 		{
-			if (intent == "radio" && this->radio)
+			if (intent == "radio" && this->m_radio)
 			{
 				for (Widget* widget : getVisibleChildren())
 				{
 					if (widget != nullptr)
-						if (widget->radio)
+						if (widget->m_radio)
 							widget->uncheck(false);
 				}
 
 				for (Widget* widget : getVisibleChildren())
 				{
 					if (widget != nullptr)
-						if (widget->radio)
-							if (widget->id == childId)
+						if (widget->m_radio)
+							if (widget->m_id == childId)
 								widget->check(false);
 				}
 			}

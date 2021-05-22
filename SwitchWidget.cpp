@@ -7,7 +7,7 @@ using gui::Widget;
 void gui::SwitchWidget::draw(float tx, float ty, bool editMode)
 {
 	Widget::draw(tx, ty, editMode);
-	tx += x; ty += y;
+	tx += m_x; ty += m_y;
 
 	currentSwitchTex = currentValue > activationValue ? switchOnTex : switchOffTex;
 
@@ -24,7 +24,7 @@ void gui::SwitchWidget::draw(float tx, float ty, bool editMode)
 		glColor4f(1, 1, 1, 1.0f);
 		glPushMatrix();
 		glTranslatef(tx, ty, 0);
-		glScalef(w, h, 1);
+		glScalef(m_w, m_h, 1);
 		glBegin(GL_QUADS);
 		{
 			glTexCoord2f(0, 0);
@@ -51,10 +51,10 @@ bool gui::SwitchWidget::init(nlohmann::json j, bool ignoreType)
 	{
 		if (checkWidgetType<SwitchWidget>(ignoreType))
 		{
-			config["switch-off"] = textureConfigItem(switchOffTex);
-			config["switch-on"] = textureConfigItem(switchOnTex);
-			config["activation-value"] = activationValue;
-			config.load(j);
+			m_config["switch-off"] = textureConfigItem(switchOffTex);
+			m_config["switch-on"] = textureConfigItem(switchOnTex);
+			m_config["activation-value"] = activationValue;
+			m_config.load(j);
 
 			if (currentValue > activationValue)
 				check();
@@ -70,12 +70,12 @@ void gui::SwitchWidget::revalidate()
 {
 	Widget::revalidate();
 
-	if (scaled)
+	if (m_scaled)
 	{
 		if (switchOffTex != nullptr)
 		{
-			w = switchOffTex->width;
-			h = switchOffTex->height;
+			m_w = switchOffTex->width;
+			m_h = switchOffTex->height;
 		}
 	}
 }

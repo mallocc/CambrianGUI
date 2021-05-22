@@ -38,29 +38,29 @@ namespace gui
 
 		GUI* gui;
 
-		float x = 0, y = 0;
-		float xOffset, yOffset = 0;
-		float xTarget = 0, yTarget = 0;
-		float w = 0, h = 0;
-		float wTarget = 0, hTarget = 0;
-		float weight = 0.0f;
-		bool  proportional = false;
-		bool  centered = false;
-		float rotation = 0.0f;
-		float rotationTarget = 0.0f;
-		Texture* background = nullptr;
-		Texture* backgroundTransition = background;
-		float backgroundTransitionValue = 0.0f;
-		float transitionSpeed = 1.0f;
-		bool backgroundTiled = 0;
-		std::string type = "undefined";
-		Widget* parent = nullptr;
-		MouseEventData oldMouseEventData;
-		MouseEventData initialMouseEventData;
-		KeyEventData oldKeyEventData;
-		std::chrono::time_point<std::chrono::steady_clock> oldClickTime;
-		std::chrono::time_point<std::chrono::steady_clock> oldHoverTime;
-		uint64_t hintShowTime = 100UL;
+		float m_x = 0, m_y = 0;
+		float m_xOffset, m_yOffset = 0;
+		float m_xTarget = 0, m_yTarget = 0;
+		float m_w = 0, m_h = 0;
+		float m_wTarget = 0, m_hTarget = 0;
+		float m_weight = 0.0f;
+		bool  m_proportional = false;
+		bool  m_centered = false;
+		float m_rotation = 0.0f;
+		float m_rotationTarget = 0.0f;
+		Texture* m_background = nullptr;
+		Texture* m_backgroundTransition = m_background;
+		float m_backgroundTransitionValue = 0.0f;
+		float m_transitionSpeed = 1.0f;
+		bool m_backgroundTiled = false;
+		std::string m_type = "undefined";
+		Widget* m_parent = nullptr;
+		MouseEventData m_oldMouseEventData;
+		MouseEventData m_initialMouseEventData;
+		KeyEventData m_oldKeyEventData;
+		std::chrono::time_point<std::chrono::steady_clock> m_oldClickTime;
+		std::chrono::time_point<std::chrono::steady_clock> m_oldHoverTime;
+		uint64_t m_hintShowTime = 100UL;
 
 		virtual void setX(float x, bool force = false);
 		virtual float getX();
@@ -122,15 +122,15 @@ namespace gui
 		float getBackgroundTransitionValue();
 		std::string getType();
 
-		std::string id = "widget";
+		std::string m_id = "widget";
 
-		std::string blendMode = "normal";
+		std::string m_blendMode = "normal";
 
-		std::string shellExecute = "";
+		std::string m_shellExecute = "";
 
-		std::string hint = "";
+		std::string m_hint = "";
 
-		float opacity = 1.0f;
+		float m_opacity = 1.0f;
 
 		callback_t onClick;
 		callback_t onRightClick;
@@ -145,34 +145,34 @@ namespace gui
 		callback_t onChecked;
 		callback_t onUnchecked;
 
-		nlohmann::json defaultJson;
-		nlohmann::json onOverJson;
-		nlohmann::json onLeaveJson;
-		nlohmann::json onClickJson;
-		nlohmann::json onReleaseJson;
-		nlohmann::json onCheckedJson;
-		nlohmann::json onUncheckedJson;
-		nlohmann::json onClickExternalJson;
-		nlohmann::json onReleaseExternalJson;
-		nlohmann::json onCheckedExternalJson;
-		nlohmann::json onUncheckedExternalJson;
+		nlohmann::json m_defaultJson;
+		nlohmann::json m_onOverJson;
+		nlohmann::json m_onLeaveJson;
+		nlohmann::json m_onClickJson;
+		nlohmann::json m_onReleaseJson;
+		nlohmann::json m_onCheckedJson;
+		nlohmann::json m_onUncheckedJson;
+		nlohmann::json m_onClickExternalJson;
+		nlohmann::json m_onReleaseExternalJson;
+		nlohmann::json m_onCheckedExternalJson;
+		nlohmann::json m_onUncheckedExternalJson;
 
-		nlohmann::json meta;
+		nlohmann::json m_meta;
 
-		Color color = { 1, 1, 1 };
-		Color colorStart = { 1, 1, 1 };
-		Color colorEnd = { 1, 1, 1 };
-		Color targetColor = color;
+		Color m_color = { 1, 1, 1 };
+		Color m_colorStart = { 1, 1, 1 };
+		Color m_colorEnd = { 1, 1, 1 };
+		Color m_targetColor = m_color;
 
-		bool checkOnClick = false;
-		bool down = false;
-		bool over = false;
+		bool m_checkOnClick = false;
+		bool m_down = false;
+		bool m_over = false;
 
-		bool exclusiveEnvoke = false;
+		bool m_exclusiveEnvoke = false;
 
-		bool visible = true;
-		bool clickable = true;
-		bool clickThrough = true;
+		bool m_visible = true;
+		bool m_clickable = true;
+		bool m_clickThrough = true;
 
 		virtual void setVisible(bool visible = true);
 		virtual void show();
@@ -196,20 +196,20 @@ namespace gui
 		virtual bool isDown();
 		virtual bool isOver();
 
-		bool scaled = false;
+		bool m_scaled = false;
 
-		bool checked = false;
-		bool checkable = false;
+		bool m_checked = false;
+		bool m_checkable = false;
 
-		bool radio = false;
-		Widget* radioParent = nullptr;
+		bool m_radio = false;
+		Widget* m_radioParent = nullptr;
 		virtual void radioUp(std::string event);
 
-		std::string cursor = "";
+		std::string m_cursor = "";
 
-		ShaderProperties shaderProperties;
+		ShaderProperties m_shaderProperties;
 
-		ConfigList config;
+		ConfigList m_config;
 
 		virtual Widget* onMouseEvent(MouseEventData mouseEventData, bool process = true, bool focus = false);
 		virtual Widget* onKeyEvent(KeyEventData keyEventData);
@@ -254,7 +254,7 @@ namespace gui
 		template<typename W>
 		bool checkWidgetType(bool ignoreCheck = false)
 		{
-			return WidgetType<W>::getWidgetType() == type || ignoreCheck;
+			return WidgetType<W>::getWidgetType() == m_type || ignoreCheck;
 		}
 
 
@@ -270,7 +270,7 @@ namespace gui
 		{
 			DBG_OFF,
 			DBG_BOUNDS,
-		} debugMode = DebugMode::DBG_OFF;
+		} m_debugMode = DebugMode::DBG_OFF;
 
 		void setDebugMode(DebugMode debugMode);
 		DebugMode getDebugMode();

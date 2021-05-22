@@ -6,10 +6,10 @@ void gui::LabelWidget::draw(float tx, float ty, bool editMode)
 {
 	Widget::draw(tx, ty, editMode);
 
-	tx += x; ty += y;
+	tx += m_x; ty += m_y;
 
 	// Draw title
-	glColor4f(textColor.r, textColor.g, textColor.b, opacity);
+	glColor4f(textColor.r, textColor.g, textColor.b, m_opacity);
 
 	auto font = displayFont;
 
@@ -20,15 +20,15 @@ void gui::LabelWidget::draw(float tx, float ty, bool editMode)
 	{
 		font->renderText(
 			text,
-			xOffset + w / 2.0f,
-			yOffset + h / 2.0f - font->size / 2.0f + (font->size - 2.0f), 1., bold, italic, 1);
+			m_xOffset + m_w / 2.0f,
+			m_yOffset + m_h / 2.0f - font->size / 2.0f + (font->size - 2.0f), 1., bold, italic, 1);
 	}
 	else
 	{
 		font->renderText(
 			text,
-			xOffset + padding,
-			yOffset + h / 2.0f - font->size / 2.0f + (font->size - 2.0f), 1., bold, italic, 0);
+			m_xOffset + padding,
+			m_yOffset + m_h / 2.0f - font->size / 2.0f + (font->size - 2.0f), 1., bold, italic, 0);
 	}
 	glPopMatrix();
 
@@ -75,7 +75,7 @@ bool gui::LabelWidget::init(nlohmann::json j, bool ignoreType)
 
 			fields.load(j);
 
-			config += fields;
+			m_config += fields;
 
 			textColor = targetTextColor;
 		}
@@ -85,25 +85,25 @@ bool gui::LabelWidget::init(nlohmann::json j, bool ignoreType)
 
 void gui::LabelWidget::revalidate()
 {
-	textColor.r += (targetTextColor.r - textColor.r) * transitionSpeed;
-	textColor.g += (targetTextColor.g - textColor.g) * transitionSpeed;
-	textColor.b += (targetTextColor.b - textColor.b) * transitionSpeed;
+	textColor.r += (targetTextColor.r - textColor.r) * m_transitionSpeed;
+	textColor.g += (targetTextColor.g - textColor.g) * m_transitionSpeed;
+	textColor.b += (targetTextColor.b - textColor.b) * m_transitionSpeed;
 
 	if (revalidateSize)
 	{
 		auto font = displayFont;
 		auto metrics = font->textMetrics(text, 1.0f);
-		wTarget = metrics.x + padding * (center + 1);
-		hTarget = font->size + padding * (center + 1);
+		m_wTarget = metrics.x + padding * (center + 1);
+		m_hTarget = font->size + padding * (center + 1);
 	}
 	else
 	{
 		auto font = displayFont;
 		auto metrics = font->textMetrics(text, 1.0f);
-		if (w == 0)
-			wTarget = metrics.x + padding * (center + 1);
-		if (h == 0)
-			hTarget = font->size + padding * (center + 1);
+		if (m_w == 0)
+			m_wTarget = metrics.x + padding * (center + 1);
+		if (m_h == 0)
+			m_hTarget = font->size + padding * (center + 1);
 	}
 	Widget::revalidate();
 }

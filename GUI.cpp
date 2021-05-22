@@ -42,7 +42,7 @@ void GUI::draw()
 
 		// Draw children
 		Widget* rootWidget = widgetManager->getRootWidget();
-		if (rootWidget != nullptr && rootWidget->visible)
+		if (rootWidget != nullptr && rootWidget->m_visible)
 		{
 			rootWidget->revalidate();
 			rootWidget->draw(0, 0, editMode);
@@ -68,7 +68,7 @@ void GUI::draw()
 		}
 
 		Widget* floatingLabelWidget = widgetManager->getFloatingLabelWidget();
-		if (floatingLabelWidget != nullptr && floatingLabelWidget->visible)
+		if (floatingLabelWidget != nullptr && floatingLabelWidget->m_visible)
 		{
 			floatingLabelWidget->revalidate();
 			floatingLabelWidget->draw(0, 0);
@@ -126,7 +126,7 @@ void GUI::onMouseEvent(MouseEventData mouseEventData)
 		{
 			Widget* dropdownListWidget = widgetManager->getDropDownListWidget();
 			if (dropdownListWidget != nullptr &&
-				focusedWidget != dropdownListWidget->parent)
+				focusedWidget != dropdownListWidget->m_parent)
 			{
 				closeDropdownIntent();
 			}
@@ -435,14 +435,14 @@ void gui::GUI::openDropdownIntent(Widget* parent, nlohmann::json j)
 {
 	DropdownListWidget* dropdownListWidget = dynamic_cast<DropdownListWidget*>(widgetManager->getDropDownListWidget());
 	if (dropdownListWidget != nullptr &&
-		dropdownListWidget->parent != parent)
+		dropdownListWidget->m_parent != parent)
 	{
-		dropdownListWidget->visible = true;
+		dropdownListWidget->m_visible = true;
 
-		if (dropdownListWidget->visible)
+		if (dropdownListWidget->m_visible)
 		{
-			dropdownListWidget->parent = parent;
-			dropdownListWidget->w = parent->w;
+			dropdownListWidget->m_parent = parent;
+			dropdownListWidget->m_w = parent->m_w;
 			dropdownListWidget->initList(j);
 		}
 
@@ -458,18 +458,18 @@ void gui::GUI::openRightClickIntent(Widget* parent, nlohmann::json j)
 {
 	DropdownListWidget* dropdownListWidget = dynamic_cast<DropdownListWidget*>(widgetManager->getDropDownListWidget());
 	if (dropdownListWidget != nullptr &&
-		dropdownListWidget->parent != parent)
+		dropdownListWidget->m_parent != parent)
 	{
-		dropdownListWidget->visible = true;
+		dropdownListWidget->m_visible = true;
 
-		if (dropdownListWidget->visible)
+		if (dropdownListWidget->m_visible)
 		{
-			dropdownListWidget->parent = parent;
+			dropdownListWidget->m_parent = parent;
 			dropdownListWidget->floating = true;
 			dropdownListWidget->initList(j);
-			dropdownListWidget->wTarget = parent->w;
-			dropdownListWidget->xTarget = oldMouseEventData.x;
-			dropdownListWidget->yTarget = oldMouseEventData.y;
+			dropdownListWidget->m_wTarget = parent->m_w;
+			dropdownListWidget->m_xTarget = oldMouseEventData.x;
+			dropdownListWidget->m_yTarget = oldMouseEventData.y;
 		}
 
 		//widgetManager->sendToBack(dropdownListWidget);
@@ -489,9 +489,9 @@ void gui::GUI::closeDropdownIntent()
 		j["intent"] = "dropdown";
 		j["event"] = "close";
 		dropdownListWidget->onIntent(j);
-		dropdownListWidget->visible = false;
+		dropdownListWidget->m_visible = false;
 		dropdownListWidget->floating = false;
-		dropdownListWidget->parent = nullptr;
+		dropdownListWidget->m_parent = nullptr;
 	}
 }
 
@@ -503,10 +503,10 @@ void gui::GUI::showFloatingLabel(int32_t x, int32_t y, std::string text, uint64_
 		std::cout << "Showing floating label: " << text << " " << x << ":" << y << " " << showTime << std::endl;
 		currentShowTimeFloatingLabel = showTime;
 
-		floatingLabelWidget->visible = true;
+		floatingLabelWidget->m_visible = true;
 		floatingLabelWidget->text = text;
-		floatingLabelWidget->xTarget = x;
-		floatingLabelWidget->yTarget = y;
+		floatingLabelWidget->m_xTarget = x;
+		floatingLabelWidget->m_yTarget = y;
 	}
 }
 
@@ -516,7 +516,7 @@ void gui::GUI::hideFloatingLabel()
 	if (floatingLabelWidget != nullptr)
 	{
 		floatingLabelWidget->text = "";
-		floatingLabelWidget->visible = false;
+		floatingLabelWidget->m_visible = false;
 	}
 }
 
@@ -527,7 +527,7 @@ void gui::GUI::showHintLabel(std::string text, uint64_t showTime)
 		find_widget_as(LabelWidget, widget, "hintlabel", this)
 		{
 			currentShowTimeHintLabel = showTime;
-			widget->visible = true;
+			widget->m_visible = true;
 			widget->text = text;
 		}
 	}
@@ -537,7 +537,7 @@ void gui::GUI::hideHintLabel()
 {
 	find_widget_as(LabelWidget, widget, "hintlabel", this)
 	{
-		widget->visible = false;
+		widget->m_visible = false;
 		widget->text = "";
 	}
 }

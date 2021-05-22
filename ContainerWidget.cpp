@@ -38,7 +38,7 @@ void gui::ContainerWidget::clearChildren()
 			ContainerWidget* container = dynamic_cast<ContainerWidget*>(c);
 			if (container != nullptr)
 				container->clearChildren();
-			gui->getWidgetManager()->removeWidget(c->id);
+			gui->getWidgetManager()->removeWidget(c->m_id);
 		}
 	}
 	children.clear();
@@ -48,7 +48,7 @@ std::vector<Widget*> gui::ContainerWidget::getVisibleChildren()
 {
 	std::vector<Widget*> visibleChildren;
 	for (Widget* c : children)
-		if (c->visible)
+		if (c->m_visible)
 			visibleChildren.push_back(c);
 	return visibleChildren;
 }
@@ -57,7 +57,7 @@ void gui::ContainerWidget::addChild(Widget* widget)
 {
 	if (widget != nullptr)
 	{
-		widget->parent = this;
+		widget->m_parent = this;
 		children.push_back(widget);
 	}
 }
@@ -66,7 +66,7 @@ void gui::ContainerWidget::addRadioChild(Widget* component)
 {
 	if (component != nullptr)
 	{
-		component->radioParent = this;
+		component->m_radioParent = this;
 		radioChildren.push_back(component);
 	}
 }
@@ -88,7 +88,7 @@ Widget* gui::ContainerWidget::onMouseEvent(MouseEventData mouseEventData, bool p
 				lastLocalWidgetHandled = handledWidget;
 				if (lastLocalWidgetHandled != nullptr)
 				{
-					if (childEnvoke && !lastLocalWidgetHandled->exclusiveEnvoke)
+					if (childEnvoke && !lastLocalWidgetHandled->m_exclusiveEnvoke)
 						break;
 					return lastLocalWidgetHandled;
 				}
@@ -140,7 +140,7 @@ Widget* ContainerWidget::onKeyEvent(KeyEventData keyEventData)
 void ContainerWidget::draw(float tx, float ty, bool editMode)
 {
 	Widget::draw(tx, ty, false);
-	tx += x; ty += y;
+	tx += m_x; ty += m_y;
 
 	std::vector<Widget*> visibleChildren = getVisibleChildren();
 	for (int i = visibleChildren.size() - 1; i >= 0; --i)
@@ -150,7 +150,7 @@ void ContainerWidget::draw(float tx, float ty, bool editMode)
 
 	bool widgetHandledDown = false;
 	for (Widget* widget : visibleChildren)
-		if (widget->down)
+		if (widget->m_down)
 			widgetHandledDown = true;
 
 	if (editMode)// && gui->editedWidget == this)
@@ -158,7 +158,7 @@ void ContainerWidget::draw(float tx, float ty, bool editMode)
 		glColor3f(1, 0, 0);
 		glPushMatrix();
 		glTranslatef(tx, ty, 0);
-		glScalef(w, h, 1);
+		glScalef(m_w, m_h, 1);
 		glBegin(GL_LINE_LOOP);
 		{
 			glVertex2f(0, 0);
@@ -195,7 +195,7 @@ bool gui::ContainerWidget::init(nlohmann::json j, bool ignoreType)
 			{
 				fields["child-envoke"] = childEnvoke;
 				fields["padding"] = padding;
-				fields["background-tiled"] = backgroundTiled;
+				fields["background-tiled"] = m_backgroundTiled;
 				fields["align"] = {
 					"NONE",
 							[&](std::string value) { for (int i = 0; i < ALIGNMENT::ALIGN_NUMBER; ++i)	if (ALIGN_STRINGS[i] == value) alignment = (ALIGNMENT)i; },
@@ -207,11 +207,11 @@ bool gui::ContainerWidget::init(nlohmann::json j, bool ignoreType)
 							[&](std::string fieldName) { return nlohmann::json({{fieldName, SIZE_STRINGS[sizing]}}); }
 				};
 				fields["spacing"] = spacing;
-				fields["radio"] = radio;
+				fields["radio"] = m_radio;
 			}
 			fields.load(j);
 
-			config += fields;
+			m_config += fields;
 		}
 	}
 
@@ -220,7 +220,7 @@ bool gui::ContainerWidget::init(nlohmann::json j, bool ignoreType)
 
 nlohmann::json gui::ContainerWidget::toJson()
 {
-	nlohmann::json j = config.toJson();
+	nlohmann::json j = m_config.toJson();
 
 	for (Widget* widget : children)
 	{
@@ -236,26 +236,26 @@ void gui::ContainerWidget::revalidate()
 
 	if (sizing == SIZING::SIZE_INHERIT)
 	{
-		if (w == 0)
+		if (m_w == 0)
 		{
-			if (parent != nullptr)
+			if (m_parent != nullptr)
 			{
-				w = parent->w;
+				m_w = m_parent->m_w;
 			}
 			else
 			{
-				w = gui->w;
+				m_w = gui->w;
 			}
 		}
-		if (h == 0)
+		if (m_h == 0)
 		{
-			if (parent != nullptr)
+			if (m_parent != nullptr)
 			{
-				h = parent->h;
+				m_h = m_parent->m_h;
 			}
 			else
 			{
-				h = gui->h;
+				m_h = gui->h;
 			}
 		}
 	}
@@ -282,13 +282,13 @@ void gui::ContainerWidget::expand()
 		float miny = gui->h;
 		for (Widget* widget : visibleChildren)
 		{
-			maxx = std::max(maxx, (float)widget->x + (float)widget->w);
-			maxy = std::max(maxy, (float)widget->y + (float)widget->h);
-			minx = std::min(minx, (float)widget->x);
-			miny = std::min(miny, (float)widget->y);
+			maxx = std::max(maxx, (float)widget->m_x + (float)widget->m_w);
+			maxy = std::max(maxy, (float)widget->m_y + (float)widget->m_h);
+			minx = std::min(minx, (float)widget->m_x);
+			miny = std::min(miny, (float)widget->m_y);
 		}
-		w = maxx - minx;
-		h = maxy - miny;
+		m_w = maxx - minx;
+		m_h = maxy - miny;
 		break;
 	}
 	case SIZE_EXPAND_WIDTH:
@@ -297,18 +297,18 @@ void gui::ContainerWidget::expand()
 		float minx = gui->w;
 		for (Widget* widget : visibleChildren)
 		{
-			maxx = std::max(maxx, (float)widget->x + (float)widget->w);
-			minx = std::min(minx, (float)widget->x);
+			maxx = std::max(maxx, (float)widget->m_x + (float)widget->m_w);
+			minx = std::min(minx, (float)widget->m_x);
 		}
 
-		w = maxx - minx;
-		if (parent != nullptr)
+		m_w = maxx - minx;
+		if (m_parent != nullptr)
 		{
-			h = parent->h;
+			m_h = m_parent->m_h;
 		}
 		else
 		{
-			h = gui->h;
+			m_h = gui->h;
 		}
 		break;
 	}
@@ -318,19 +318,19 @@ void gui::ContainerWidget::expand()
 		float miny = gui->h;
 		for (Widget* widget : visibleChildren)
 		{
-			maxy = std::max(maxy, (float)widget->y + (float)widget->h);
-			miny = std::min(miny, (float)widget->y);
+			maxy = std::max(maxy, (float)widget->m_y + (float)widget->m_h);
+			miny = std::min(miny, (float)widget->m_y);
 		}
 
-		if (parent != nullptr)
+		if (m_parent != nullptr)
 		{
-			w = parent->w;
+			m_w = m_parent->m_w;
 		}
 		else
 		{
-			w = gui->w;
+			m_w = gui->w;
 		}
-		h = maxy - miny;
+		m_h = maxy - miny;
 		break;
 	}
 	}

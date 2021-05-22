@@ -17,7 +17,7 @@ bool gui::DropdownWidget::init(nlohmann::json j, bool ignoreType)
 				fields["default-choice"] = defaultChoice;
 			}
 			fields.load(j);
-			config += fields;
+			m_config += fields;
 
 			create_widget_as(LabelWidget, labelWidget, labelJson)
 			{

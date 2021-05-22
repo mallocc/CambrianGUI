@@ -9,8 +9,8 @@ bool gui::TabMenuWidget::init(nlohmann::json j, bool ignoreType)
 	{
 		if (checkWidgetType<TabMenuWidget>(ignoreType))
 		{
-			config["tabwidget"] = tabLabelTemplate;
-			config.load(j);
+			m_config["tabwidget"] = tabLabelTemplate;
+			m_config.load(j);
 
 			nlohmann::json mainLayoutJ;
 			mainLayoutJ["widget"] = "vlayout";
@@ -44,7 +44,7 @@ bool gui::TabMenuWidget::init(nlohmann::json j, bool ignoreType)
 						{
 							create_widget_as(LabelWidget, child, i)
 							{
-								child->visible = false;
+								child->m_visible = false;
 								tabPane->addChild(child);
 
 								tabLabelTemplate["text"] = child->text;
@@ -65,7 +65,7 @@ bool gui::TabMenuWidget::init(nlohmann::json j, bool ignoreType)
 
 					if (tabPane->children.size() > 0)
 					{
-						tabPane->children[0]->visible = true;
+						tabPane->children[0]->m_visible = true;
 					}
 					if (tabMenu->children.size() > 0)
 					{
@@ -91,9 +91,9 @@ void gui::TabMenuWidget::onIntent(nlohmann::json intent)
 				widget_as(LabelWidget, labelWidget, widget)
 				{
 					if (labelWidget->text == tab)
-						labelWidget->visible = true;
+						labelWidget->m_visible = true;
 					else
-						labelWidget->visible = false;
+						labelWidget->m_visible = false;
 				}
 			}
 	}
