@@ -55,21 +55,27 @@ bool gui::LabelWidget::init(nlohmann::json j, bool ignoreType)
 	{
 		if (checkWidgetType<LabelWidget>(ignoreType))
 		{
-			config["font"] = {
+			ConfigList fields;
+			{
+				fields["font"] = {
 				"OpenSans@24",
 				[&](std::string value) { displayFont = gui->getFontManager()->fonts[value] == nullptr ? gui->getFontManager()->defaultFont : gui->getFontManager()->fonts[value]; },
 				[&](std::string fieldName) { return nlohmann::json({{ fieldName, displayFont->fontName }}); }
-			};
-			config["revalidate-size"]  = revalidateSize;
-			config["center"]           = center;
-			config["bold"]             = bold;
-			config["italic"]           = italic;
-			config["padding"]          = padding;
-			config["text-color"]       = colorConfigItem(targetTextColor);
-			config["text-color-start"] = colorConfigItem(textColorStart);
-			config["text-color-end"]   = colorConfigItem(textColorEnd);
+				};
+				fields["revalidate-size"] = revalidateSize;
+				fields["center"] = center;
+				fields["bold"] = bold;
+				fields["italic"] = italic;
+				fields["padding"] = padding;
+				fields["text-color"] = colorConfigItem(targetTextColor);
+				fields["text-color-start"] = colorConfigItem(textColorStart);
+				fields["text-color-end"] = colorConfigItem(textColorEnd);
+				fields["text"] = text;
+			}
 
-			config.load(j);
+			fields.load(j);
+
+			config += fields;
 
 			textColor = targetTextColor;
 		}

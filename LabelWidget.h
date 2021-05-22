@@ -18,6 +18,7 @@ namespace gui
 		Color targetTextColor = textColor;
 		Color textColorStart = { 1, 1, 1 };
 		Color textColorEnd = { 1, 1, 1 };
+		std::string text = "---";
 
 		virtual void draw(float tx, float ty, bool editMode = false);
 		virtual bool init(nlohmann::json j, bool ignoreType = false);

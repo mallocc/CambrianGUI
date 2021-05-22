@@ -264,7 +264,7 @@ void GUI::init(std::string configOverridePath, bool firstLoad_)
 		//std::string tmp;
 		//bool success = true;
 
-		if (Widget* buildDateLabel = widgetManager->findWidget("builddatelabel"))
+		find_widget_as(LabelWidget, buildDateLabel, "builddatelabel", this)
 		{
 			buildDateLabel->text = "Build Date: " + std::string(__DATE__) + " @ " + std::string(__TIME__);
 		}
@@ -524,8 +524,7 @@ void gui::GUI::showHintLabel(std::string text, uint64_t showTime)
 {
 	if (text != "")
 	{
-		Widget* widget = widgetManager->findWidget("hintlabel");
-		if (widget != nullptr)
+		find_widget_as(LabelWidget, widget, "hintlabel", this)
 		{
 			currentShowTimeHintLabel = showTime;
 			widget->visible = true;
@@ -536,8 +535,7 @@ void gui::GUI::showHintLabel(std::string text, uint64_t showTime)
 
 void gui::GUI::hideHintLabel()
 {
-	Widget* widget = widgetManager->findWidget("hintlabel");
-	if (widget != nullptr)
+	find_widget_as(LabelWidget, widget, "hintlabel", this)
 	{
 		widget->visible = false;
 		widget->text = "";

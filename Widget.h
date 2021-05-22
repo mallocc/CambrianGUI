@@ -54,7 +54,6 @@ namespace gui
 		float transitionSpeed = 1.0f;
 		bool backgroundTiled = 0;
 		std::string type = "undefined";
-		std::string text = "---";
 		Widget* parent = nullptr;
 		MouseEventData oldMouseEventData;
 		MouseEventData initialMouseEventData;
@@ -63,7 +62,67 @@ namespace gui
 		std::chrono::time_point<std::chrono::steady_clock> oldHoverTime;
 		uint64_t hintShowTime = 100UL;
 
-		std::string widgetId = "widget";
+		virtual void setX(float x, bool force = false);
+		virtual float getX();
+		virtual float X();
+		float getTargetX();
+		virtual void setY(float y, bool force = false);
+		virtual float getY();
+		virtual float Y();
+		float getTargetY();
+		virtual void setOffsetX(float x);
+		virtual float getOffsetX();
+		virtual void setOffsetY(float y);
+		virtual float getOffsetY();
+		virtual void setW(float w, bool force = false);
+		virtual float getW();
+		virtual float W();
+		float getTargetW();
+		virtual void setH(float h, bool force = false);
+		virtual float getH();
+		virtual float H();
+		float getTargetH();
+		virtual void setWeight(float weight);
+		virtual float getWeight();
+		virtual void setRotation(float angle, bool force = false);
+		virtual float getRotation();
+		float getTargetRotation();
+		void setProportional(bool proportional = true);
+		bool isProportional();
+		void setCentered(bool centered = true);
+		bool isCentered();
+		virtual void setBackground(Texture* background);
+		virtual Texture* getBackground();
+		void setTransitionSpeed(float speed);
+		float getTransitionSpeed();
+		void setBackgroundTiled(bool tiled = true);
+		bool isBackgroundTiled();
+		virtual void setParent(Widget* parent);
+		virtual Widget* getParent();
+		void setId(std::string id);
+		std::string getId();
+		void setBlendMode(std::string mode);
+		std::string getBlendMode();
+		virtual void setShellExecute(std::string shell);
+		virtual std::string getShellExecute();
+		virtual void setHint(std::string hint);
+		virtual std::string getHint();
+		virtual void setOpacity(float opacity = 1.0f);
+		virtual float getOpacity();
+		virtual void setMeta(nlohmann::json meta);
+		virtual nlohmann::json getMeta();
+		virtual void setColor(Color color, bool force = false);
+		virtual Color getColor();
+		Color getTargetColor();
+		void setCheckOnClick(bool checkOnClick = true);
+		bool isCheckOnClick();
+		void setExclusiveEnvoke(bool exclusiveEnvoke = true);
+		bool isExclusiveEnvoke();
+
+		float getBackgroundTransitionValue();
+		std::string getType();
+
+		std::string id = "widget";
 
 		std::string blendMode = "normal";
 
@@ -98,15 +157,13 @@ namespace gui
 		nlohmann::json onCheckedExternalJson;
 		nlohmann::json onUncheckedExternalJson;
 
-		nlohmann::json metaData;
+		nlohmann::json meta;
 
 		Color color = { 1, 1, 1 };
 		Color colorStart = { 1, 1, 1 };
 		Color colorEnd = { 1, 1, 1 };
 		Color targetColor = color;
 
-		float sensitivity = 300.0f;
-		float sensitivityShift = sensitivity * 10.0f;
 		bool checkOnClick = false;
 		bool down = false;
 		bool over = false;
@@ -116,6 +173,28 @@ namespace gui
 		bool visible = true;
 		bool clickable = true;
 		bool clickThrough = true;
+
+		virtual void setVisible(bool visible = true);
+		virtual void show();
+		virtual void hide();
+		virtual bool isVisible();
+		void setClickable(bool clickable = true);
+		bool isClickable();
+		void setClickThrough(bool clickThrough = true);
+		bool isClickThrough();
+		void setScaled(bool scaled = true);
+		bool isScaled();
+		void setCheckable(bool checkable = true);
+		bool isCheckable();
+		void setRadio(bool radio = true);
+		bool isRadio();
+		virtual void setRadioParent(Widget* radioParent);
+		virtual Widget* getRadioParent();
+		void setCursor(std::string cursor);
+		std::string getCursor();
+
+		virtual bool isDown();
+		virtual bool isOver();
 
 		bool scaled = false;
 
@@ -162,9 +241,9 @@ namespace gui
 
 		void getContextPosition(float& tx, float& ty);
 
-		void check(bool updatedRadio = true, bool force = false);
-		void uncheck(bool updatedRadio = true, bool force = false);
-		void toggleCheck(bool updatedRadio = true, bool force = false);
+		virtual void check(bool updatedRadio = true, bool force = false);
+		virtual void uncheck(bool updatedRadio = true, bool force = false);
+		virtual void toggleCheck(bool updatedRadio = true, bool force = false);
 		virtual bool isChecked();
 
 		bool getColor(std::string colorName, Color& color);
@@ -192,5 +271,8 @@ namespace gui
 			DBG_OFF,
 			DBG_BOUNDS,
 		} debugMode = DebugMode::DBG_OFF;
+
+		void setDebugMode(DebugMode debugMode);
+		DebugMode getDebugMode();
 	};
 }

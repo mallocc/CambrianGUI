@@ -42,22 +42,24 @@ bool gui::TabMenuWidget::init(nlohmann::json j, bool ignoreType)
 						nlohmann::json jc = j.at("tabs");
 						for (auto& i : jc)
 						{
-							Widget* child = gui->getWidgetManager()->createWidget(i);
-							child->visible = false;
-							tabPane->addChild(child);
-
-							tabLabelTemplate["text"] = child->text;
-							LabelWidget* label = dynamic_cast<LabelWidget*>(gui->getWidgetManager()->createWidget(tabLabelTemplate));
-							if (label != nullptr)
+							create_widget_as(LabelWidget, child, i)
 							{
-								label->onClick = [=](GUI* gui, MouseEventData mouseEventData)
+								child->visible = false;
+								tabPane->addChild(child);
+
+								tabLabelTemplate["text"] = child->text;
+
+								create_widget_as(LabelWidget, label, tabLabelTemplate)
 								{
-									nlohmann::json j;
-									j["tab"] = label->text;
-									this->onIntent(j);
-								};
+									label->onClick = [=](GUI* gui, MouseEventData mouseEventData)
+									{
+										nlohmann::json j;
+										j["tab"] = label->text;
+										this->onIntent(j);
+									};
+									tabMenu->addChild(label);
+								}
 							}
-							tabMenu->addChild(label);
 						}
 					}
 
@@ -83,13 +85,16 @@ void gui::TabMenuWidget::onIntent(nlohmann::json intent)
 	readJSON(intent, "tab", tab);
 	if (tabPane != nullptr)
 	{
-		for (Widget* widget : tabPane->children)
+		for (auto& widget : tabPane->children)
 			if (widget != nullptr)
 			{
-				if (widget->text == tab)
-					widget->visible = true;
-				else
-					widget->visible = false;
+				widget_as(LabelWidget, labelWidget, widget)
+				{
+					if (labelWidget->text == tab)
+						labelWidget->visible = true;
+					else
+						labelWidget->visible = false;
+				}
 			}
 	}
 	if (tabMenu != nullptr)
@@ -97,10 +102,13 @@ void gui::TabMenuWidget::onIntent(nlohmann::json intent)
 		for (Widget* widget : tabMenu->children)
 			if (widget != nullptr)
 			{
-				if (widget->text == tab)
-					widget->check();
-				else
-					widget->uncheck();
+				widget_as(LabelWidget, labelWidget, widget)
+				{
+					if (labelWidget->text == tab)
+						labelWidget->check();
+					else
+						labelWidget->uncheck();
+				}
 			}
 	}
 }

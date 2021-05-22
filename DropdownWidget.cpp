@@ -9,14 +9,17 @@ bool gui::DropdownWidget::init(nlohmann::json j, bool ignoreType)
 		{
 			alignment = ALIGN_SPACED;
 			sizing = SIZE_NONE;
+			ConfigList fields;
+			{
+				fields["data"] = data;
+				fields["iconwidget"] = iconJson;
+				fields["labelwidget"] = labelJson;
+				fields["default-choice"] = defaultChoice;
+			}
+			fields.load(j);
+			config += fields;
 
-			config["data"] = data;
-			config["iconwidget"] = iconJson;
-			config["labelwidget"] = labelJson;
-			config["default-choice"] = defaultChoice;
-			config.load(j);
-
-			create_widget(labelWidget, labelJson)
+			create_widget_as(LabelWidget, labelWidget, labelJson)
 			{
 				addChild(labelWidget);
 				label = labelWidget;

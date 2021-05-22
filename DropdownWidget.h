@@ -1,6 +1,7 @@
 #pragma once
 
 #include "HLayoutWidget.h"
+#include "LabelWidget.h"
 
 namespace gui
 {
@@ -9,7 +10,7 @@ namespace gui
 		DEFINE_WIDGET_TYPE("dropdown");
 		Widget* icon;
 		nlohmann::json iconJson;
-		Widget* label;
+		LabelWidget* label;
 		nlohmann::json labelJson;
 		nlohmann::json data;
 		uint32_t defaultChoice = 0U;

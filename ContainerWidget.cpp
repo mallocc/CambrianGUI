@@ -38,7 +38,7 @@ void gui::ContainerWidget::clearChildren()
 			ContainerWidget* container = dynamic_cast<ContainerWidget*>(c);
 			if (container != nullptr)
 				container->clearChildren();
-			gui->getWidgetManager()->removeWidget(c->widgetId);
+			gui->getWidgetManager()->removeWidget(c->id);
 		}
 	}
 	children.clear();

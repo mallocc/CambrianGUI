@@ -20,9 +20,9 @@ void gui::Widget::radioUp(std::string event)
 		{
 			nlohmann::json j;
 			j["intent"] = "radio";
-			j["id"] = widgetId;
+			j["id"] = id;
 			j["event"] = event;
-			j["meta"] = metaData;
+			j["meta"] = meta;
 			radioParent->onIntent(j);
 		}
 }
@@ -400,51 +400,49 @@ bool gui::Widget::init(nlohmann::json j, bool ignoreType)
 	{
 		ConfigList fields;
 		{
-			fields["widget"]                = type;
-			fields["meta"]                  = metaData;
-			fields["shell-execute"]         = shellExecute;
-			fields["blend-mode"]            = { blendMode      , "normal" };
-			fields["opacity"]               = { opacity        , "1.0" };
-			fields["transition-speed"]      = { transitionSpeed, "1.0" };
-			fields["x"]                     = xTarget;
-			fields["y"]                     = yTarget;
-			fields["x-offset"]              = xOffset;
-			fields["y-offset"]              = yOffset;
-			fields["w"]                     = wTarget;
-			fields["h"]                     = hTarget;
-			fields["rotation"]              = rotationTarget;
-			fields["sensitivity"]           = { sensitivity    , "300" };
-			fields["text"]                  = text;
-			fields["hint"]                  = hint;
-			fields["visible"]               = { visible        , "true" };
-			fields["exclusive-envoke"]      = exclusiveEnvoke;
-			fields["clickable"]             = { clickable      , "true" };
-			fields["click-through"]         = clickThrough;
-			fields["scaled"]                = scaled;
-			fields["centered"]              = centered;
-			fields["proportional"]          = proportional;
-			fields["id"]                    = widgetId;
-			fields["weight"]                = weight;
-			fields["on-over"]               = onOverJson;
-			fields["on-leave"]              = onLeaveJson;
-			fields["on-release"]            = onReleaseJson;
-			fields["on-click"]              = onClickJson;
-			fields["on-checked"]            = onCheckedJson;
-			fields["on-unchecked"]          = onUncheckedJson;
-			fields["on-click-external"]     = onClickExternalJson;
-			fields["on-release-external"]   = onReleaseExternalJson;
-			fields["on-checked-external"]   = onCheckedExternalJson;
+			fields["widget"] = type;
+			fields["meta"] = meta;
+			fields["shell-execute"] = shellExecute;
+			fields["blend-mode"] = { blendMode      , "normal" };
+			fields["opacity"] = { opacity        , "1.0" };
+			fields["transition-speed"] = { transitionSpeed, "1.0" };
+			fields["x"] = xTarget;
+			fields["y"] = yTarget;
+			fields["x-offset"] = xOffset;
+			fields["y-offset"] = yOffset;
+			fields["w"] = wTarget;
+			fields["h"] = hTarget;
+			fields["rotation"] = rotationTarget;
+			fields["hint"] = hint;
+			fields["visible"] = { visible        , "true" };
+			fields["exclusive-envoke"] = exclusiveEnvoke;
+			fields["clickable"] = { clickable      , "true" };
+			fields["click-through"] = clickThrough;
+			fields["scaled"] = scaled;
+			fields["centered"] = centered;
+			fields["proportional"] = proportional;
+			fields["id"] = id;
+			fields["weight"] = weight;
+			fields["on-over"] = onOverJson;
+			fields["on-leave"] = onLeaveJson;
+			fields["on-release"] = onReleaseJson;
+			fields["on-click"] = onClickJson;
+			fields["on-checked"] = onCheckedJson;
+			fields["on-unchecked"] = onUncheckedJson;
+			fields["on-click-external"] = onClickExternalJson;
+			fields["on-release-external"] = onReleaseExternalJson;
+			fields["on-checked-external"] = onCheckedExternalJson;
 			fields["on-unchecked-external"] = onUncheckedExternalJson;
-			fields["cursor"]                = cursor;
-			fields["checked"]               = checked;
-			fields["check-on-click"]        = checkOnClick;
-			fields["checkable"]             = checkable;
-			fields["radio"]                 = radio;
-			fields["background"]            = textureConfigItem(background);
-			fields["shader-properties"]     = shaderPropertiesConfigItem(shaderProperties);
-			fields["color"]                 = colorConfigItem(targetColor);
-			fields["color-start"]           = colorConfigItem(colorStart);
-			fields["color-end"]             = colorConfigItem(colorEnd);
+			fields["cursor"] = cursor;
+			fields["checked"] = checked;
+			fields["check-on-click"] = checkOnClick;
+			fields["checkable"] = checkable;
+			fields["radio"] = radio;
+			fields["background"] = textureConfigItem(background);
+			fields["shader-properties"] = shaderPropertiesConfigItem(shaderProperties);
+			fields["color"] = colorConfigItem(targetColor);
+			fields["color-start"] = colorConfigItem(colorStart);
+			fields["color-end"] = colorConfigItem(colorEnd);
 		}
 		fields.load(j);
 
@@ -560,7 +558,7 @@ bool gui::Widget::onClickEvent(MouseEventData mouseEventData, bool process)
 					toggleCheck();
 				}
 
-			gui->getWidgetManager()->handleDynamicJson(onClickExternalJson, widgetId);
+			gui->getWidgetManager()->handleDynamicJson(onClickExternalJson, id);
 		}
 		return true;
 	}
@@ -635,7 +633,7 @@ bool gui::Widget::onReleaseEvent(MouseEventData mouseEventData, bool process)
 					toggleCheck();
 				}
 
-			gui->getWidgetManager()->handleDynamicJson(onReleaseExternalJson, widgetId);
+			gui->getWidgetManager()->handleDynamicJson(onReleaseExternalJson, id);
 		}
 		return true;
 	}
@@ -746,7 +744,7 @@ void gui::Widget::check(bool updatedRadio, bool force)
 			radioUp("check");
 		gui->fireTriggers(onCheckedJson);
 		config.load(onCheckedJson, true);
-		gui->getWidgetManager()->handleDynamicJson(onCheckedExternalJson, widgetId);
+		gui->getWidgetManager()->handleDynamicJson(onCheckedExternalJson, id);
 		onChecked(gui, oldMouseEventData);
 		checked = true;
 	}
@@ -758,7 +756,7 @@ void gui::Widget::uncheck(bool updatedRadio, bool force)
 	{
 		gui->fireTriggers(onUncheckedJson);
 		config.load(onUncheckedJson, true);
-		gui->getWidgetManager()->handleDynamicJson(onUncheckedExternalJson, widgetId);
+		gui->getWidgetManager()->handleDynamicJson(onUncheckedExternalJson, id);
 		onUnchecked(gui, oldMouseEventData);
 		checked = false;
 		if (updatedRadio)
@@ -863,7 +861,419 @@ ConfigItem gui::Widget::shaderPropertiesConfigItem(ShaderProperties& reference, 
 	return tuple;
 }
 
+void gui::Widget::setDebugMode(DebugMode debugMode)
+{
+	this->debugMode = debugMode;
+}
 
+gui::Widget::DebugMode gui::Widget::getDebugMode()
+{
+	return debugMode;
+}
 
+void gui::Widget::setX(float x, bool force)
+{
+	xTarget = x;
+	if (force)
+		this->x = xTarget;
+}
 
+float gui::Widget::getX()
+{
+	return x;
+}
 
+float gui::Widget::X()
+{
+	return x;
+}
+
+float gui::Widget::getTargetX()
+{
+	return xTarget;
+}
+
+void gui::Widget::setY(float y, bool force)
+{
+	yTarget = y;
+	if (force)
+		this->y = yTarget;
+
+}
+
+float gui::Widget::getY()
+{
+	return y;
+}
+
+float gui::Widget::Y()
+{
+	return y;
+}
+
+float gui::Widget::getTargetY()
+{
+	return yTarget;
+}
+
+void gui::Widget::setOffsetX(float x)
+{
+	xOffset = x;
+}
+
+float gui::Widget::getOffsetX()
+{
+	return xOffset;
+}
+
+void gui::Widget::setOffsetY(float y)
+{
+	yOffset = y;
+}
+
+float gui::Widget::getOffsetY()
+{
+	return yOffset;
+}
+
+void gui::Widget::setW(float w, bool force)
+{
+	wTarget = w;
+	if (force)
+		this->w = wTarget;
+
+}
+
+float gui::Widget::getW()
+{
+	return w;
+}
+
+float gui::Widget::W()
+{
+	return w;
+}
+
+float gui::Widget::getTargetW()
+{
+	return wTarget;
+}
+
+void gui::Widget::setH(float h, bool force)
+{
+	hTarget = h;
+	if (force)
+		this->h = hTarget;
+
+}
+
+float gui::Widget::getH()
+{
+	return h;
+}
+
+float gui::Widget::H()
+{
+	return h;
+}
+
+float gui::Widget::getTargetH()
+{
+	return hTarget;
+}
+
+void gui::Widget::setWeight(float weight)
+{
+	this->weight = weight;
+}
+
+float gui::Widget::getWeight()
+{
+	return weight;
+}
+
+void gui::Widget::setRotation(float angle, bool force)
+{
+	rotationTarget = angle;
+	if (force)
+		this->rotation = rotationTarget;
+
+}
+
+float gui::Widget::getRotation()
+{
+	return rotation;
+}
+
+float gui::Widget::getTargetRotation()
+{
+	return rotationTarget;
+}
+
+void gui::Widget::setProportional(bool proportional)
+{
+	this->proportional = proportional;
+}
+
+bool gui::Widget::isProportional()
+{
+	return proportional;
+}
+
+void gui::Widget::setCentered(bool centered)
+{
+	this->centered = centered;
+}
+
+bool gui::Widget::isCentered()
+{
+	return centered;
+}
+
+void gui::Widget::setBackground(Texture* background)
+{
+	this->background = background;
+}
+
+gui::Texture* gui::Widget::getBackground()
+{
+	return background;
+}
+
+void gui::Widget::setTransitionSpeed(float speed)
+{
+	this->transitionSpeed = speed;
+}
+
+float gui::Widget::getTransitionSpeed()
+{
+	return transitionSpeed;
+}
+
+void gui::Widget::setBackgroundTiled(bool tiled)
+{
+	this->backgroundTiled = tiled;
+}
+
+bool gui::Widget::isBackgroundTiled()
+{
+	return backgroundTiled;
+}
+
+void gui::Widget::setParent(Widget* parent)
+{
+	this->parent = parent;
+}
+
+Widget* gui::Widget::getParent()
+{
+	return parent;
+}
+
+void gui::Widget::setId(std::string id)
+{
+	this->id = id;
+}
+
+std::string gui::Widget::getId()
+{
+	return id;
+}
+
+void gui::Widget::setBlendMode(std::string mode)
+{
+	this->blendMode = mode;
+}
+
+std::string gui::Widget::getBlendMode()
+{
+	return blendMode;
+}
+
+void gui::Widget::setShellExecute(std::string shell)
+{
+	this->shellExecute = shell;
+}
+
+std::string gui::Widget::getShellExecute()
+{
+	return shellExecute;
+}
+
+void gui::Widget::setHint(std::string hint)
+{
+	this->hint = hint;
+}
+
+std::string gui::Widget::getHint()
+{
+	return hint;
+}
+
+void gui::Widget::setOpacity(float opacity)
+{
+	this->opacity = opacity;
+}
+
+float gui::Widget::getOpacity()
+{
+	return opacity;
+}
+
+void gui::Widget::setMeta(nlohmann::json meta)
+{
+	this->meta = meta;
+}
+
+nlohmann::json gui::Widget::getMeta()
+{
+	return meta;
+}
+
+void gui::Widget::setColor(Color color, bool force)
+{
+	targetColor = color;
+	if (force)
+		this->color = targetColor;
+
+}
+
+gui::Color gui::Widget::getColor()
+{
+	return color;
+}
+
+gui::Color gui::Widget::getTargetColor()
+{
+	return targetColor;
+}
+
+void gui::Widget::setCheckOnClick(bool checkOnClick)
+{
+	this->checkOnClick = checkOnClick;
+}
+
+bool gui::Widget::isCheckOnClick()
+{
+	return checkOnClick;
+}
+
+void gui::Widget::setExclusiveEnvoke(bool exclusiveEnvoke)
+{
+	this->exclusiveEnvoke = exclusiveEnvoke;
+}
+
+bool gui::Widget::isExclusiveEnvoke()
+{
+	return exclusiveEnvoke;
+}
+
+float gui::Widget::getBackgroundTransitionValue()
+{
+	return backgroundTransitionValue;
+}
+
+std::string gui::Widget::getType()
+{
+	return type;
+}
+
+void gui::Widget::setVisible(bool visible)
+{
+	this->visible = visible;
+}
+
+void gui::Widget::show()
+{
+	visible = true;
+}
+
+void gui::Widget::hide()
+{
+	visible = false;
+}
+
+bool gui::Widget::isVisible()
+{
+	return visible;
+}
+
+void gui::Widget::setClickable(bool clickable)
+{
+	this->clickable = clickable;
+}
+
+bool gui::Widget::isClickable()
+{
+	return clickable;
+}
+
+void gui::Widget::setClickThrough(bool clickThrough)
+{
+	this->clickThrough = clickThrough;
+}
+
+bool gui::Widget::isClickThrough()
+{
+	return clickThrough;
+}
+
+void gui::Widget::setScaled(bool scaled)
+{
+	this->scaled = scaled;
+}
+
+bool gui::Widget::isScaled()
+{
+	return scaled;
+}
+
+void gui::Widget::setCheckable(bool checkable)
+{
+	this->checkable = checkable;
+}
+
+bool gui::Widget::isCheckable()
+{
+	return checkable;
+}
+
+void gui::Widget::setRadio(bool radio)
+{
+	this->radio = radio;
+}
+
+bool gui::Widget::isRadio()
+{
+	return radio;
+}
+
+void gui::Widget::setRadioParent(Widget* radioParent)
+{
+	this->radioParent = radioParent;
+}
+
+Widget* gui::Widget::getRadioParent()
+{
+	return radioParent;
+}
+
+void gui::Widget::setCursor(std::string cursor)
+{
+	this->cursor = cursor;
+}
+
+std::string gui::Widget::getCursor()
+{
+	return cursor;
+}
+
+bool gui::Widget::isDown()
+{
+	return down;
+}
+
+bool gui::Widget::isOver()
+{
+	return over;
+}

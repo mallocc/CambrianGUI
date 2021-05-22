@@ -99,4 +99,8 @@ create_widget_as(TYPE_SYMBOL, WIDGET_SYMBOL, JSON_SYMBOL)
 #define find_widget_as(TYPE_SYMBOL, WIDGET_SYMBOL, ID_SYMBOL) \
 		gui::TYPE_SYMBOL* WIDGET_SYMBOL = dynamic_cast<gui::TYPE_SYMBOL*>(gui->getWidgetManager()->findWidget(ID_SYMBOL)); \
 		if (WIDGET_SYMBOL != nullptr)
+
+#define find_widget_as(TYPE_SYMBOL, WIDGET_SYMBOL, ID_SYMBOL, GUI_SYMBOL) \
+		gui::TYPE_SYMBOL* WIDGET_SYMBOL = dynamic_cast<gui::TYPE_SYMBOL*>(GUI_SYMBOL->getWidgetManager()->findWidget(ID_SYMBOL)); \
+		if (WIDGET_SYMBOL != nullptr)
 }

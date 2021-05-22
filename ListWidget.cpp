@@ -49,7 +49,7 @@ bool gui::ListWidget::init(nlohmann::json j, bool ignoreType)
 							widget->onClick = [=](GUI* gui, MouseEventData mouseEventData) {
 								nlohmann::json intent;
 								intent["intent"] = "childClicked";
-								intent["id"] = widget->widgetId;
+								intent["id"] = widget->id;
 								this->onIntent(intent);
 							};
 							addChild(widget);
@@ -83,7 +83,7 @@ void gui::ListWidget::onIntent(nlohmann::json intentData)
 				{
 					if (widget != nullptr)
 						if (widget->radio)
-							if (widget->widgetId == childId)
+							if (widget->id == childId)
 								widget->check(false);
 				}
 			}

@@ -113,13 +113,13 @@ gui::Widget* gui::WidgetManager::createWidget(nlohmann::json& j)
 	if (widget != nullptr)
 	{
 		// Reset widget id to default if one already exists
-		if (findWidget(widget->widgetId) != nullptr)
+		if (findWidget(widget->id) != nullptr)
 		{
-			widget->widgetId = "";
+			widget->id = "";
 		}
 
 		// If default id, generate a unique id
-		if (widget->widgetId == "")
+		if (widget->id == "")
 		{
 			uint32_t id = 0U;
 			bool found = false;
@@ -129,7 +129,7 @@ gui::Widget* gui::WidgetManager::createWidget(nlohmann::json& j)
 				newId << widget->type << id;
 				if (findWidget(newId.str()) == nullptr)
 				{
-					widget->widgetId = newId.str();
+					widget->id = newId.str();
 					found = true;
 				}
 				id++;
@@ -137,7 +137,7 @@ gui::Widget* gui::WidgetManager::createWidget(nlohmann::json& j)
 		}
 
 		// Add to map
-		widgetMap[widget->widgetId] = widget;
+		widgetMap[widget->id] = widget;
 	}
 
 	return widget;
