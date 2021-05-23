@@ -436,19 +436,18 @@ void gui::GUI::setCursor(std::string cursor)
 	}
 }
 
-void gui::GUI::openDropdownIntent(Widget* parent, nlohmann::json j)
+void gui::GUI::openDropdownIntent(Widget* parent, nlohmann::json j, intentcallback_t selectionCallback)
 {
 	DropdownList* dropdownListWidget = dynamic_cast<DropdownList*>(widgetManager->getDropDownListWidget());
 	if (dropdownListWidget != nullptr &&
 		dropdownListWidget->getParent() != parent)
 	{
 		dropdownListWidget->show();
-
 		dropdownListWidget->floating = false;
 		dropdownListWidget->setParent(parent);
 		dropdownListWidget->setW(parent->W(), FORCE);
 		dropdownListWidget->initList(j);
-
+		dropdownListWidget->onSelection = selectionCallback;
 		widgetManager->bringToFront(dropdownListWidget);
 	}
 	else
@@ -457,21 +456,18 @@ void gui::GUI::openDropdownIntent(Widget* parent, nlohmann::json j)
 	}
 }
 
-void gui::GUI::openRightClickIntent(Widget* parent, nlohmann::json j)
+void gui::GUI::openRightClickIntent(nlohmann::json j, intentcallback_t selectionCallback)
 {
 	DropdownList* dropdownListWidget = dynamic_cast<DropdownList*>(widgetManager->getDropDownListWidget());
-	if (dropdownListWidget != nullptr &&
-		dropdownListWidget->getParent() != parent)
+	if (dropdownListWidget != nullptr)
 	{
 		dropdownListWidget->show();
-
-		dropdownListWidget->setParent(parent);
 		dropdownListWidget->floating = true;
 		dropdownListWidget->initList(j);
-		dropdownListWidget->setW(parent->W());
+		dropdownListWidget->setW(100);
 		dropdownListWidget->setX(oldMouseEventData.x);
 		dropdownListWidget->setY(oldMouseEventData.y);
-
+		dropdownListWidget->onSelection = selectionCallback;
 		widgetManager->sendToBack(dropdownListWidget);
 	}
 	else
@@ -485,13 +481,10 @@ void gui::GUI::closeDropdownIntent()
 	DropdownList* dropdownListWidget = dynamic_cast<DropdownList*>(widgetManager->getDropDownListWidget());
 	if (dropdownListWidget != nullptr)
 	{
-		nlohmann::json j;
-		j["intent"] = "dropdown";
-		j["event"] = "close";
-		dropdownListWidget->onIntent(j);
 		dropdownListWidget->hide();
 		dropdownListWidget->floating = false;
 		dropdownListWidget->setParent(nullptr);
+		dropdownListWidget->onSelection = [](nlohmann::json) {};
 	}
 }
 

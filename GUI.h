@@ -40,10 +40,10 @@ namespace gui
 		virtual void hideCursor();
 		virtual void setCursor(std::string cursor);
 
-		virtual void openDropdownIntent(Widget* parent, nlohmann::json j);
+		virtual void openDropdownIntent(Widget* parent, nlohmann::json j, intentcallback_t selectionCallback);
 		virtual void closeDropdownIntent();
 
-		virtual void openRightClickIntent(Widget* parent, nlohmann::json j);
+		virtual void openRightClickIntent(nlohmann::json j, intentcallback_t selectionCallback);
 
 		virtual void showFloatingLabel(int32_t x, int32_t y, std::string text, uint64_t showTime = 0UL);
 		virtual void hideFloatingLabel();

@@ -17,6 +17,7 @@ namespace gui
 	typedef std::function<void(gui::GUI*, MouseEventData)> callback_t;
 	typedef std::function<void(gui::GUI*, KeyEventData)> keycallback_t;
 
+	typedef std::function<void(nlohmann::json)> intentcallback_t;
 
 
 	template<typename T>

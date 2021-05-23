@@ -4,7 +4,7 @@
 
 bool gui::DropdownList::init(nlohmann::json j, bool ignoreType)
 {
-	if (VLayout::init(j, true))
+	if (List::init(j, true))
 	{
 		if (checkWidgetType<DropdownList>(ignoreType))
 		{
@@ -37,10 +37,7 @@ bool gui::DropdownList::initList(nlohmann::json j)
 			{
 				widget->onClick = [=](GUI* gui, MouseEventData mouseEventData)
 				{
-					nlohmann::json j;
-					j["intent"] = "dropdown";
-					j["data"] = d;
-					this->onIntent(j);
+					this->onSelectionEvent(d);
 				};
 				addChild(widget);
 			}
@@ -60,7 +57,7 @@ void gui::DropdownList::draw(float tx, float ty, bool editMode)
 			ty += getParent()->H();
 		}
 	}
-	VLayout::draw(tx, ty, editMode);
+	List::draw(tx, ty, editMode);
 }
 
 gui::Widget* gui::DropdownList::onMouseEvent(MouseEventData mouseEventData, bool process, bool focus)
@@ -68,17 +65,21 @@ gui::Widget* gui::DropdownList::onMouseEvent(MouseEventData mouseEventData, bool
 	if (!floating)
 		if (getParent() != nullptr)
 			mouseEventData.y -= getParent()->H();
-	return VLayout::onMouseEvent(mouseEventData, process, focus);
+	return List::onMouseEvent(mouseEventData, process, focus);
 }
 
 void gui::DropdownList::onIntent(nlohmann::json intent)
 {
-	if (getParent() != nullptr)
-	{
-		getParent()->onIntent(intent);
-	}
+}
+
+gui::DropdownList::DropdownList(GUI* gui) : List(gui) 
+{
+	onSelection = [](nlohmann::json) {};
+}
+
+void gui::DropdownList::onSelectionEvent(nlohmann::json data)
+{
+	onSelection(data);
 	hide();
 	floating = false;
 }
-
-gui::DropdownList::DropdownList(GUI* gui) : VLayout(gui) {}

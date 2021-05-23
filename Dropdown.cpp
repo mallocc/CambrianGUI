@@ -35,10 +35,7 @@ bool gui::Dropdown::init(nlohmann::json j, bool ignoreType)
 			{
 				if (defaultChoice == count)
 				{
-					nlohmann::json j;
-					j["intent"] = "dropdown";
-					j["data"] = d;
-					onIntent(j);
+					onSelectionEvent(d);
 					defaultChoiceFound = true;
 					break;
 				}
@@ -48,10 +45,7 @@ bool gui::Dropdown::init(nlohmann::json j, bool ignoreType)
 			{
 				for (auto& d : data)
 				{
-					nlohmann::json j;
-					j["intent"] = "dropdown";
-					j["data"] = d;
-					onIntent(j);
+					onSelectionEvent(d);
 					break;
 				}
 			}
@@ -61,27 +55,6 @@ bool gui::Dropdown::init(nlohmann::json j, bool ignoreType)
 	}
 
 	return true;
-}
-
-void gui::Dropdown::onIntent(nlohmann::json intentData)
-{
-	if (icon != nullptr)
-		icon->uncheck();
-
-	json_get_string(intentData, "intent", intent)
-	{
-		if (intent == "dropdown")
-		{
-			json_get_object(intentData, "data", data)
-			{			
-				json_get_string(data, "text", text)
-				{
-					if (label != nullptr)
-						label->text = text;
-				}
-			}
-		}
-	}
 }
 
 bool gui::Dropdown::onClickEvent(MouseEventData mouseEventData, bool process)
@@ -94,11 +67,28 @@ bool gui::Dropdown::onClickEvent(MouseEventData mouseEventData, bool process)
 	return handled;
 }
 
+void gui::Dropdown::onSelectionEvent(nlohmann::json data)
+{
+	if (icon != nullptr)
+		icon->uncheck();
+
+	json_get_string(data, "text", text)
+	{
+		if (label != nullptr)
+			label->text = text;
+	}
+
+	onSelection(data);
+}
+
 void gui::Dropdown::openDropdown()
 {
 	if (icon != nullptr)
 		icon->check();
-	getGUI()->openDropdownIntent(this, this->data);
+	getGUI()->openDropdownIntent(this, this->data, [&](nlohmann::json data)
+		{
+			this->onSelectionEvent(data);
+		});
 }
 
 nlohmann::json gui::Dropdown::toJson()
@@ -106,6 +96,9 @@ nlohmann::json gui::Dropdown::toJson()
 	return Widget::toJson();
 }
 
-gui::Dropdown::Dropdown(GUI* gui) : HLayout(gui) {}
+gui::Dropdown::Dropdown(GUI* gui) : HLayout(gui) 
+{
+	onSelection = [](nlohmann::json) {};
+}
 
 
