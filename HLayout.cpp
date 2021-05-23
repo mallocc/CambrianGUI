@@ -2,7 +2,7 @@
 #include "GUI.h"
 
 gui::HLayout::HLayout(GUI* gui, nlohmann::json j)
-	: Container(gui, j)
+	: Layout(gui, j)
 {
 	if (!init(j))
 	{
@@ -12,7 +12,7 @@ gui::HLayout::HLayout(GUI* gui, nlohmann::json j)
 
 bool gui::HLayout::init(nlohmann::json j, bool ignoreType)
 {
-	if (Container::init(j, true))
+	if (Layout::init(j, true))
 	{
 		if (checkWidgetType<HLayout>(ignoreType))
 		{
@@ -23,7 +23,7 @@ bool gui::HLayout::init(nlohmann::json j, bool ignoreType)
 
 void gui::HLayout::revalidate()
 {
-	Container::revalidate();
+	Layout::revalidate();
 
 	std::vector<Widget*> visibleChildren = getVisibleChildren();
 	if (visibleChildren.size() > 0)

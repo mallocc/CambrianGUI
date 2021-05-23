@@ -5,7 +5,7 @@
 
 bool gui::TabMenu::init(nlohmann::json j, bool ignoreType)
 {
-	if (Container::init(j, true))
+	if (Layout::init(j, true))
 	{
 		if (checkWidgetType<TabMenu>(ignoreType))
 		{
@@ -19,13 +19,13 @@ bool gui::TabMenu::init(nlohmann::json j, bool ignoreType)
 			nlohmann::json mainLayoutJ;
 			mainLayoutJ["widget"] = "vlayout";
 			mainLayoutJ["align"] = "start";
-			Container* mainLayout = dynamic_cast<Container*>(getGUI()->getWidgetManager()->createWidget(mainLayoutJ));
+			Layout* mainLayout = dynamic_cast<Layout*>(getGUI()->getWidgetManager()->createWidget(mainLayoutJ));
 
 			nlohmann::json tabMenuJ;
 			tabMenuJ["widget"] = "hlayout";
 			tabMenuJ["align"] = "start";
 			tabMenuJ["size"] = "expand-height";
-			tabMenu = dynamic_cast<Container*>(getGUI()->getWidgetManager()->createWidget(tabMenuJ));
+			tabMenu = dynamic_cast<Layout*>(getGUI()->getWidgetManager()->createWidget(tabMenuJ));
 
 			if (mainLayout != nullptr && tabMenu != nullptr)
 			{
@@ -34,7 +34,7 @@ bool gui::TabMenu::init(nlohmann::json j, bool ignoreType)
 
 				nlohmann::json tabPaneJ;
 				tabPaneJ["widget"] = "hlayout";
-				tabPane = dynamic_cast<Container*>(getGUI()->getWidgetManager()->createWidget(tabPaneJ));
+				tabPane = dynamic_cast<Layout*>(getGUI()->getWidgetManager()->createWidget(tabPaneJ));
 
 				if (tabPane != nullptr)
 				{
@@ -114,7 +114,7 @@ void gui::TabMenu::onIntent(nlohmann::json intent)
 	}
 }
 
-gui::TabMenu::TabMenu(GUI* gui, nlohmann::json j) : Container(gui, j)
+gui::TabMenu::TabMenu(GUI* gui, nlohmann::json j) : Layout(gui, j)
 {
 	if (!init(j))
 	{

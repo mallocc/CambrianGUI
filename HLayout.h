@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Container.h"
+#include "Layout.h"
 
 namespace gui
 {
-	class HLayout : public Container, public WidgetType<HLayout>
+	class HLayout : public Layout, public WidgetType<HLayout>
 	{
 	public:
 		DEFINE_WIDGET_TYPE("hlayout");

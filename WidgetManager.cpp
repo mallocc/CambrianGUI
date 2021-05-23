@@ -1,6 +1,6 @@
 #include "WidgetManager.h"
 #include "Configuration.h"
-#include "Container.h"
+#include "Layout.h"
 #include "Label.h"
 #include "DropdownList.h"
 
@@ -200,7 +200,7 @@ void gui::WidgetManager::bringForwards(Widget* widget)
 	{
 		if (widget->getParent() != nullptr)
 		{
-			Container* layout = dynamic_cast<Container*>(widget->getParent());
+			Layout* layout = dynamic_cast<Layout*>(widget->getParent());
 			if (layout != nullptr)
 			{
 				size_t position = 0U;
@@ -226,7 +226,7 @@ void gui::WidgetManager::bringToFront(Widget* widget)
 	{
 		if (widget->getParent() != nullptr)
 		{
-			Container* layout = dynamic_cast<Container*>(widget->getParent());
+			Layout* layout = dynamic_cast<Layout*>(widget->getParent());
 			if (layout != nullptr)
 			{
 				size_t position = 0UL;
@@ -252,7 +252,7 @@ void gui::WidgetManager::sendBackwards(Widget* widget)
 	{
 		if (widget->getParent() != nullptr)
 		{
-			Container* layout = dynamic_cast<Container*>(widget->getParent());
+			Layout* layout = dynamic_cast<Layout*>(widget->getParent());
 			if (layout != nullptr)
 			{
 				size_t position = 0UL;
@@ -278,7 +278,7 @@ void gui::WidgetManager::sendToBack(Widget* widget)
 	{
 		if (widget->getParent() != nullptr)
 		{
-			Container* layout = dynamic_cast<Container*>(widget->getParent());
+			Layout* layout = dynamic_cast<Layout*>(widget->getParent());
 			if (layout != nullptr)
 			{
 				size_t position = 0U;
@@ -323,7 +323,7 @@ void gui::WidgetManager::createFloatingLabelWidget()
 		{
 			floatingLabelWidget->revalidate();
 			floatingLabelWidget->hide();
-			Container* widget = dynamic_cast<Container*>(rootWidget);
+			Layout* widget = dynamic_cast<Layout*>(rootWidget);
 			if (widget)
 				widget->addChild(floatingLabelWidget);
 		}
@@ -340,7 +340,7 @@ void gui::WidgetManager::createDropDownListWidget()
 		{
 			dropDownListWidget->revalidate();
 			dropDownListWidget->hide();
-			Container* widget = dynamic_cast<Container*>(rootWidget);
+			Layout* widget = dynamic_cast<Layout*>(rootWidget);
 			if (widget)
 			{
 				widget->addChild(dropDownListWidget);

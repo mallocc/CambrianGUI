@@ -1,12 +1,12 @@
-#include "Container.h"
+#include "Layout.h"
 #include "GUI.h"
 #include "Switch.h"
 #include <GL/glew.h>
 
-using gui::Container;
+using gui::Layout;
 using gui::Widget;
 
-Container::Container(GUI* gui, nlohmann::json j) : Widget(gui)
+Layout::Layout(GUI* gui, nlohmann::json j) : Widget(gui)
 {
 	if (!init(j))
 	{
@@ -14,7 +14,7 @@ Container::Container(GUI* gui, nlohmann::json j) : Widget(gui)
 	}
 }
 
-int32_t gui::Container::getChildIndex(Widget* child)
+int32_t gui::Layout::getChildIndex(Widget* child)
 {
 	std::vector<Widget*> children = getVisibleChildren();
 	int32_t index = -1;
@@ -29,13 +29,13 @@ int32_t gui::Container::getChildIndex(Widget* child)
 	return index;
 }
 
-void gui::Container::clearChildren()
+void gui::Layout::clearChildren()
 {
 	for (Widget* c : children)
 	{
 		if (c != nullptr)
 		{
-			Container* container = dynamic_cast<Container*>(c);
+			Layout* container = dynamic_cast<Layout*>(c);
 			if (container != nullptr)
 				container->clearChildren();
 			getGUI()->getWidgetManager()->removeWidget(c->getId());
@@ -44,7 +44,7 @@ void gui::Container::clearChildren()
 	children.clear();
 }
 
-std::vector<Widget*> gui::Container::getVisibleChildren()
+std::vector<Widget*> gui::Layout::getVisibleChildren()
 {
 	std::vector<Widget*> visibleChildren;
 	for (Widget* c : children)
@@ -53,7 +53,7 @@ std::vector<Widget*> gui::Container::getVisibleChildren()
 	return visibleChildren;
 }
 
-void gui::Container::addChild(Widget* widget)
+void gui::Layout::addChild(Widget* widget)
 {
 	if (widget != nullptr)
 	{
@@ -62,7 +62,7 @@ void gui::Container::addChild(Widget* widget)
 	}
 }
 
-void gui::Container::addRadioChild(Widget* component)
+void gui::Layout::addRadioChild(Widget* component)
 {
 	if (component != nullptr)
 	{
@@ -71,7 +71,7 @@ void gui::Container::addRadioChild(Widget* component)
 	}
 }
 
-Widget* gui::Container::onMouseEvent(MouseEventData mouseEventData, bool process, bool focus)
+Widget* gui::Layout::onMouseEvent(MouseEventData mouseEventData, bool process, bool focus)
 {
 	std::vector<Widget*> visibleChildren = getVisibleChildren();
 
@@ -106,7 +106,7 @@ Widget* gui::Container::onMouseEvent(MouseEventData mouseEventData, bool process
 	return lastLocalWidgetHandled;
 }
 
-bool gui::Container::onLeaveEvent(MouseEventData mouseEventData, bool process)
+bool gui::Layout::onLeaveEvent(MouseEventData mouseEventData, bool process)
 {
 	Widget::onLeaveEvent(mouseEventData, process);
 	std::vector<Widget*> visibleChildren = getVisibleChildren();
@@ -117,7 +117,7 @@ bool gui::Container::onLeaveEvent(MouseEventData mouseEventData, bool process)
 	return true;
 }
 
-Widget* Container::onKeyEvent(KeyEventData keyEventData)
+Widget* Layout::onKeyEvent(KeyEventData keyEventData)
 {
 	std::vector<Widget*> visibleChildren = getVisibleChildren();
 	Widget* widgetHandled = nullptr;
@@ -137,7 +137,7 @@ Widget* Container::onKeyEvent(KeyEventData keyEventData)
 	return widgetHandled;
 }
 
-void Container::draw(float tx, float ty, bool editMode)
+void Layout::draw(float tx, float ty, bool editMode)
 {
 	Widget::draw(tx, ty, false);
 	tx += X(); ty += Y();
@@ -171,13 +171,13 @@ void Container::draw(float tx, float ty, bool editMode)
 	}
 }
 
-bool gui::Container::init(nlohmann::json j, bool ignoreType)
+bool gui::Layout::init(nlohmann::json j, bool ignoreType)
 {
 	std::string tmp;
 
 	if (Widget::init(j, ignoreType))
 	{
-		if (checkWidgetType<Container>(ignoreType))
+		if (checkWidgetType<Layout>(ignoreType))
 		{
 			if (checkJSON(j, "children"))
 			{
@@ -228,7 +228,7 @@ bool gui::Container::init(nlohmann::json j, bool ignoreType)
 	return true;
 }
 
-nlohmann::json gui::Container::toJson()
+nlohmann::json gui::Layout::toJson()
 {
 	nlohmann::json j = m_config.toJson();
 
@@ -240,7 +240,7 @@ nlohmann::json gui::Container::toJson()
 	return j;
 }
 
-void gui::Container::revalidate()
+void gui::Layout::revalidate()
 {
 	Widget::revalidate();
 
@@ -279,7 +279,7 @@ void gui::Container::revalidate()
 	expand();
 }
 
-void gui::Container::expand()
+void gui::Layout::expand()
 {
 	std::vector<Widget*> visibleChildren = getVisibleChildren();
 	switch (sizing)
@@ -355,13 +355,13 @@ void gui::Container::expand()
 	}
 }
 
-void gui::Container::onIntent(nlohmann::json intent)
+void gui::Layout::onIntent(nlohmann::json intent)
 {
 
 }
 
 
-std::vector<gui::Widget*> gui::Container::getCheckedChildren()
+std::vector<gui::Widget*> gui::Layout::getCheckedChildren()
 {
 	std::vector<Widget*> checkedChildren;
 	for (auto& child : children)
@@ -370,62 +370,62 @@ std::vector<gui::Widget*> gui::Container::getCheckedChildren()
 	return checkedChildren;
 }
 
-void gui::Container::setAlignment(ALIGNMENT alignment)
+void gui::Layout::setAlignment(ALIGNMENT alignment)
 {
 	this->alignment = alignment;
 }
 
-gui::ALIGNMENT gui::Container::getAlignment()
+gui::ALIGNMENT gui::Layout::getAlignment()
 {
 	return alignment;
 }
 
-void gui::Container::setSizing(SIZING sizing)
+void gui::Layout::setSizing(SIZING sizing)
 {
 	this->sizing = sizing;
 }
 
-gui::SIZING gui::Container::getSizing()
+gui::SIZING gui::Layout::getSizing()
 {
 	return sizing;
 }
 
-void gui::Container::setPadding(float padding)
+void gui::Layout::setPadding(float padding)
 {
 	this->padding = padding;
 }
 
-float gui::Container::getPadding()
+float gui::Layout::getPadding()
 {
 	return padding;
 }
 
-void gui::Container::setSpacing(float spacing)
+void gui::Layout::setSpacing(float spacing)
 {
 	this->spacing = spacing;
 }
 
-float gui::Container::getSpacing()
+float gui::Layout::getSpacing()
 {
 	return spacing;
 }
 
-void gui::Container::setChildEnvoke(bool childEnvoke)
+void gui::Layout::setChildEnvoke(bool childEnvoke)
 {
 	this->childEnvoke = childEnvoke;
 }
 
-bool gui::Container::isChildEnvoke()
+bool gui::Layout::isChildEnvoke()
 {
 	return childEnvoke;
 }
 
-std::vector<Widget*> gui::Container::getRadioChildren()
+std::vector<Widget*> gui::Layout::getRadioChildren()
 {
 	return radioChildren;
 }
 
-std::vector<Widget*> gui::Container::getChildren()
+std::vector<Widget*> gui::Layout::getChildren()
 {
 	return children;
 }

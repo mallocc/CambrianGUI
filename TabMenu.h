@@ -1,16 +1,16 @@
 #pragma once
 
-#include "Container.h"
+#include "Layout.h"
 
 namespace gui
 {
-	class TabMenu : public Container, public WidgetType<TabMenu>
+	class TabMenu : public Layout, public WidgetType<TabMenu>
 	{
 	public:
 		DEFINE_WIDGET_TYPE("tabmenu");
 
-		Container* tabPane = nullptr;
-		Container* tabMenu = nullptr;
+		Layout* tabPane = nullptr;
+		Layout* tabMenu = nullptr;
 		Texture* tabSelectionTex = nullptr;
 		Texture* tabOverTex = nullptr;
 		nlohmann::json tabLabelTemplate;

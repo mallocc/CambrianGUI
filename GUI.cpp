@@ -368,7 +368,7 @@ GUI::GUI(int32_t w, int32_t h)
 	widgetManager->registerWidget<Dropdown>();
 	widgetManager->registerWidget<DropdownList>();
 	widgetManager->registerWidget<TabMenu>();
-	widgetManager->registerWidget<Container>();
+	widgetManager->registerWidget<Layout>();
 
 	registerTriggerCallback("show_credits", [&](GUI* g) { g->displayCredits = true; });
 	registerTriggerCallback("hide_credits", [&](GUI* g) { g->displayCredits = false; });
