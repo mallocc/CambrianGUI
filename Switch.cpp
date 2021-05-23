@@ -85,6 +85,16 @@ void gui::Switch::revalidate()
 	}
 }
 
+bool gui::Switch::onReleaseEvent(MouseEventData mouseEventData, bool process)
+{
+	bool handled = Widget::onReleaseEvent(mouseEventData, process);
+	if (handled && process)
+	{
+		toggleSwitch();
+	}
+	return handled;
+}
+
 void gui::Switch::toggleSwitch()
 {
 	currentValue = currentValue <= activationValue ? 1.0f : 0.0f;
@@ -103,10 +113,5 @@ void gui::Switch::switchOff()
 
 gui::Switch::Switch(GUI* gui) : Widget(gui)
 {
-	onRelease = [&](GUI* gui, MouseEventData mouseEventData)
-	{
-		toggleSwitch();
-		//radioUp();
-	};
 	currentSwitchTex = switchOffTex;
 }

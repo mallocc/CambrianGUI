@@ -84,6 +84,16 @@ void gui::Dropdown::onIntent(nlohmann::json intentData)
 	}
 }
 
+bool gui::Dropdown::onClickEvent(MouseEventData mouseEventData, bool process)
+{
+	bool handled = HLayout::onClickEvent(mouseEventData, process);
+	if (handled && process)
+	{
+		this->openDropdown();
+	}
+	return handled;
+}
+
 void gui::Dropdown::openDropdown()
 {
 	if (icon != nullptr)
@@ -96,10 +106,6 @@ nlohmann::json gui::Dropdown::toJson()
 	return Widget::toJson();
 }
 
-gui::Dropdown::Dropdown(GUI* gui) : HLayout(gui)
-{
-	onClick = [&](GUI* gui, MouseEventData mouseEventData)
-	{
-		this->openDropdown();
-	};
-}
+gui::Dropdown::Dropdown(GUI* gui) : HLayout(gui) {}
+
+

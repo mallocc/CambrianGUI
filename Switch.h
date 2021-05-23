@@ -4,7 +4,7 @@
 
 namespace gui
 {
-	class Switch : public Widget, public WidgetType<Switch>
+	define_widget_class(Switch, Widget)
 	{
 	public:
 		DEFINE_WIDGET_TYPE("switch");
@@ -17,9 +17,12 @@ namespace gui
 		float currentValue = 0.5f;
 		bool radio = false;
 
-		virtual void draw(float tx, float ty, bool editMode = false);
-		virtual bool init(nlohmann::json j, bool ignoreType = false);
+		virtual void draw(float tx, float ty, bool editMode = false) override;
+		virtual bool init(nlohmann::json j, bool ignoreType = false) override;
 		virtual void revalidate() override;
+
+
+		virtual bool onReleaseEvent(MouseEventData mouseEventData, bool process) override;
 
 		virtual void toggleSwitch();
 		virtual void switchOn();
