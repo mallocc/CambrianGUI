@@ -3,7 +3,6 @@
 #include "HLayout.h"
 #include "DropdownList.h"
 #include "Dropdown.h"
-#include "TabMenu.h"
 #include "Button.h"
 #include "TextEdit.h"
 #include "GridLayout.h"
@@ -383,7 +382,6 @@ GUI::GUI(int32_t w, int32_t h)
 	widgetManager->registerWidget<Dropdown>();
 	widgetManager->registerWidget<List>();
 	widgetManager->registerWidget<DropdownList>();
-	widgetManager->registerWidget<TabMenu>();
 
 	registerTriggerCallback("show_credits", [&](GUI* g) { g->displayCredits = true; });
 	registerTriggerCallback("hide_credits", [&](GUI* g) { g->displayCredits = false; });

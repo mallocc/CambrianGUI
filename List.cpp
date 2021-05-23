@@ -44,10 +44,7 @@ bool gui::List::init(nlohmann::json j, bool ignoreType)
 						create_widget(widget, tempJ)
 						{
 							widget->onClick = [=](GUI* gui, MouseEventData mouseEventData) {
-								nlohmann::json intent;
-								intent["intent"] = "childClicked";
-								intent["id"] = widget->getId();
-								this->onIntent(intent);
+								this->onItemClickedEvent(widget);
 							};
 							addChild(widget);
 							if (widget->isRadio())
@@ -56,37 +53,25 @@ bool gui::List::init(nlohmann::json j, bool ignoreType)
 					}
 				}
 			}
-
-
 			setAlignment(ALIGN_LIST);
 		}
 	}
 	return success;
 }
 
-void gui::List::onIntent(nlohmann::json intentData)
+void gui::List::onItemClickedEvent(Widget* clickedItem)
 {
-	json_get_string(intentData, "intent", intent)
+	if (this->isRadio())
 	{
-		json_get_string(intentData, "id", childId)
-		{
-			if (intent == "radio" && this->isRadio())
-			{
-				for (Widget* widget : getVisibleChildren())
-				{
-					if (widget != nullptr)
-						if (widget->isRadio())
-							widget->uncheck(false);
-				}
+		for (Widget* widget : getVisibleChildren())
+			if (widget != nullptr)
+				if (widget->isRadio())
+					widget->uncheck(false);
 
-				for (Widget* widget : getVisibleChildren())
-				{
-					if (widget != nullptr)
-						if (widget->isRadio())
-							if (widget->getId() == childId)
-								widget->check(false);
-				}
-			}
-		}
+		if (clickedItem != nullptr)
+			if (clickedItem->isRadio())
+				clickedItem->check(false);
 	}
+
+	onItemClicked(clickedItem);
 }

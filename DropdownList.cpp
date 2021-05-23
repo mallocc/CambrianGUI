@@ -68,10 +68,6 @@ gui::Widget* gui::DropdownList::onMouseEvent(MouseEventData mouseEventData, bool
 	return List::onMouseEvent(mouseEventData, process, focus);
 }
 
-void gui::DropdownList::onIntent(nlohmann::json intent)
-{
-}
-
 gui::DropdownList::DropdownList(GUI* gui) : List(gui) 
 {
 	onSelection = [](nlohmann::json) {};

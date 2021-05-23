@@ -11,8 +11,11 @@ namespace gui
 
 		List(GUI* gui);
 
-		virtual bool init(nlohmann::json j, bool ignoreType = false);
-		virtual void onIntent(nlohmann::json intent);
+		virtual bool init(nlohmann::json j, bool ignoreType = false) override;
+
+		virtual void onItemClickedEvent(Widget* clickedItem);
+
+		std::function<void(Widget*)> onItemClicked;
 
 		//std::string dataStr;
 		nlohmann::json data;
