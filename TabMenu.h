@@ -17,6 +17,6 @@ namespace gui
 
 		virtual bool init(nlohmann::json j, bool ignoreType = false);
 		virtual void onIntent(nlohmann::json intent);
-		TabMenu(GUI* gui, nlohmann::json j);
+		TabMenu(GUI* gui);
 	};
 }

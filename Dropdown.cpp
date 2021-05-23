@@ -96,14 +96,10 @@ nlohmann::json gui::Dropdown::toJson()
 	return Widget::toJson();
 }
 
-gui::Dropdown::Dropdown(GUI* gui, nlohmann::json j) : HLayout(gui, j)
+gui::Dropdown::Dropdown(GUI* gui) : HLayout(gui)
 {
 	onClick = [&](GUI* gui, MouseEventData mouseEventData)
 	{
 		this->openDropdown();
 	};
-	if (!init(j))
-	{
-		std::cout << "Failed to init widget: " << getWidgetType() << std::endl;
-	}
 }

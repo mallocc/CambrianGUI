@@ -1,13 +1,7 @@
 #include "VLayout.h"
 #include <algorithm>
 
-gui::VLayout::VLayout(GUI* gui, nlohmann::json j) : Layout(gui, j)
-{
-	if (!init(j))
-	{
-		std::cout << "Failed to init widget: " << getWidgetType() << std::endl;
-	}
-}
+gui::VLayout::VLayout(GUI* gui) : Layout(gui) {}
 
 bool gui::VLayout::init(nlohmann::json j, bool ignoreType)
 {

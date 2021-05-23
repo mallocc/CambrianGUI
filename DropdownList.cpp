@@ -26,7 +26,7 @@ bool gui::DropdownList::initList(nlohmann::json j)
 {
 	clearChildren();
 
-	std::cout << "gui::DropdownListWidget::initList() - j: " << j.dump(2) << std::endl;
+	//std::cout << "gui::DropdownListWidget::initList() - j: " << j.dump(2) << std::endl;
 	for (auto& d : j)
 	{
 		json_get_string(d, "text", text)
@@ -81,10 +81,4 @@ void gui::DropdownList::onIntent(nlohmann::json intent)
 	floating = false;
 }
 
-gui::DropdownList::DropdownList(GUI* gui, nlohmann::json j) : VLayout(gui, j)
-{
-	if (!init(j))
-	{
-		std::cout << "Failed to init widget: " << getWidgetType() << std::endl;
-	}
-}
+gui::DropdownList::DropdownList(GUI* gui) : VLayout(gui) {}

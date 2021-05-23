@@ -19,7 +19,6 @@ bool gui::WidgetManager::init()
 	bool success = true;
 
 	nlohmann::json& j = config->getConfig();
-
 	widgetMap.clear();
 
 	if (success &= checkJSON(j, "root-widget"))
@@ -38,7 +37,6 @@ bool gui::WidgetManager::init()
 
 	createFloatingLabelWidget();
 	createDropDownListWidget();
-	//createRightClickListWidget();
 
 	return success;
 }
@@ -97,7 +95,14 @@ gui::Widget* gui::WidgetManager::createWidget(nlohmann::json& j)
 	{
 		if (stringToWidgetFunctions.find(tmp) != stringToWidgetFunctions.end())
 		{
-			widget = stringToWidgetFunctions.at(tmp)(gui, j);
+			widget = stringToWidgetFunctions.at(tmp)(gui);
+			if (widget != nullptr)
+			{
+				if (!widget->init(j))
+				{
+					std::cout << "Failed to init widget: " << widget->getWidgetType() << std::endl;
+				}
+			}
 			//std::cout << "Found registered widget:" << tmp << std::endl;
 		}
 		else
@@ -204,7 +209,7 @@ void gui::WidgetManager::bringForwards(Widget* widget)
 			if (layout != nullptr)
 			{
 				size_t position = 0U;
-				auto children = layout->getChildren();
+				auto& children = layout->getChildren();
 				for (size_t i = 0U; i < children.size(); ++i)
 					if (children[i] == widget)
 						position = i;
@@ -230,7 +235,7 @@ void gui::WidgetManager::bringToFront(Widget* widget)
 			if (layout != nullptr)
 			{
 				size_t position = 0UL;
-				auto children = layout->getChildren();
+				auto& children = layout->getChildren();
 				for (size_t i = 0UL; i < children.size(); ++i)
 					if (children[i] == widget)
 						position = i;
@@ -256,7 +261,7 @@ void gui::WidgetManager::sendBackwards(Widget* widget)
 			if (layout != nullptr)
 			{
 				size_t position = 0UL;
-				auto children = layout->getChildren();
+				auto& children = layout->getChildren();
 				for (size_t i = 0UL; i < children.size(); ++i)
 					if (children[i] == widget)
 						position = i;
@@ -282,7 +287,7 @@ void gui::WidgetManager::sendToBack(Widget* widget)
 			if (layout != nullptr)
 			{
 				size_t position = 0U;
-				auto children = layout->getChildren();
+				auto& children = layout->getChildren();
 				for (size_t i = 0U; i < children.size(); ++i)
 					if (children[i] == widget)
 						position = i;
@@ -328,6 +333,10 @@ void gui::WidgetManager::createFloatingLabelWidget()
 				widget->addChild(floatingLabelWidget);
 		}
 	}
+	else
+	{
+		std::cout << "Could not location floating-label in config" << std::endl;
+	}
 }
 
 void gui::WidgetManager::createDropDownListWidget()
@@ -347,5 +356,9 @@ void gui::WidgetManager::createDropDownListWidget()
 				bringToFront(dropDownListWidget);
 			}
 		}
+	}
+	else
+	{
+		std::cout << "Could not location dropdown-list in config" << std::endl;
 	}
 }

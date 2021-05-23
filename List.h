@@ -9,7 +9,7 @@ namespace gui
 	public:
 		DEFINE_WIDGET_TYPE("list");
 
-		List(GUI* gui, nlohmann::json j);
+		List(GUI* gui);
 
 		virtual bool init(nlohmann::json j, bool ignoreType = false);
 		virtual void onIntent(nlohmann::json intent);

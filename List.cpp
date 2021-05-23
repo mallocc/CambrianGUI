@@ -1,13 +1,7 @@
 #include "List.h"
 #include <GUI.h>
 
-gui::List::List(GUI* gui, nlohmann::json j) : VLayout(gui, j)
-{
-	if (!init(j))
-	{
-		std::cout << "Failed to init widget: " << getWidgetType() << std::endl;
-	}
-}
+gui::List::List(GUI* gui) : VLayout(gui) {}
 
 bool gui::List::init(nlohmann::json j, bool ignoreType)
 {

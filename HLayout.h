@@ -8,7 +8,7 @@ namespace gui
 	{
 	public:
 		DEFINE_WIDGET_TYPE("hlayout");
-		HLayout(GUI* gui, nlohmann::json j);
+		HLayout(GUI* gui);
 		virtual bool init(nlohmann::json j, bool ignoreType = false);
 		virtual void revalidate();
 	};

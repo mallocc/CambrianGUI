@@ -1,14 +1,7 @@
 #include "HLayout.h"
 #include "GUI.h"
 
-gui::HLayout::HLayout(GUI* gui, nlohmann::json j)
-	: Layout(gui, j)
-{
-	if (!init(j))
-	{
-		std::cout << "Failed to init widget: " << getWidgetType() << std::endl;
-	}
-}
+gui::HLayout::HLayout(GUI* gui) : Layout(gui) {}
 
 bool gui::HLayout::init(nlohmann::json j, bool ignoreType)
 {

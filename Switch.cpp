@@ -101,16 +101,12 @@ void gui::Switch::switchOff()
 }
 
 
-gui::Switch::Switch(GUI* gui, nlohmann::json j) : Widget(gui)
+gui::Switch::Switch(GUI* gui) : Widget(gui)
 {
 	onRelease = [&](GUI* gui, MouseEventData mouseEventData)
 	{
 		toggleSwitch();
 		//radioUp();
 	};
-	if (!init(j))
-	{
-		std::cout << "Failed to init widget: " << getWidgetType() << std::endl;
-	}
 	currentSwitchTex = switchOffTex;
 }

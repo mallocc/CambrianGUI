@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Widget.h"
+#include "Container.h"
 
 namespace gui
 {
@@ -56,42 +56,19 @@ namespace gui
 		"list",
 	};
 
-	class Layout : public Widget, public WidgetType<Layout>
+	class Layout : public Container, public WidgetType<Layout>
 	{
 	public:
 		DEFINE_WIDGET_TYPE("layout");
-
-
-		void clearChildren();
-
-		std::vector<Widget*> getVisibleChildren();
-
-		void addChild(Widget* component);
-		void addRadioChild(Widget* component);
-
-		virtual Widget* onMouseEvent(MouseEventData mouseEventData, bool process, bool focus);
-
-		virtual bool onLeaveEvent(MouseEventData mouseEventData, bool process);
-		virtual Widget* onKeyEvent(KeyEventData keyEventData);
-
-		virtual void draw(float tx, float ty, bool editMode = false);
-
-		virtual bool init(nlohmann::json j, bool ignoreType = false);
-
-		virtual nlohmann::json toJson();
+		
+		virtual bool init(nlohmann::json j, bool ignoreType = false);		
 
 		virtual void revalidate();
 
 		virtual void expand();
-
-		virtual void onIntent(nlohmann::json intent) override;
-
-		Layout(GUI* gui, nlohmann::json j);
-
-		virtual int32_t getChildIndex(Widget* child);
-
-		virtual std::vector<Widget*> getCheckedChildren();
-
+	
+		Layout(GUI* gui);
+		
 		void setAlignment(ALIGNMENT alignment);
 		ALIGNMENT getAlignment();
 
@@ -104,11 +81,6 @@ namespace gui
 		void setSpacing(float spacing);
 		float getSpacing();
 
-		void setChildEnvoke(bool childEnvoke = true);
-		bool isChildEnvoke();
-
-		std::vector<Widget*> getRadioChildren();
-		std::vector<Widget*> getChildren();
 
 	private:
 
@@ -116,9 +88,5 @@ namespace gui
 		SIZING sizing = SIZING::SIZE_INHERIT;
 		float padding = 0.0f;
 		float spacing = 0.0f;
-		bool childEnvoke = false;
-		std::vector<Widget*> children;
-		std::vector<Widget*> radioChildren;
-		Widget* lastLocalWidgetHandled = nullptr;
 	};
 }

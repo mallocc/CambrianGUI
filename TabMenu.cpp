@@ -114,10 +114,4 @@ void gui::TabMenu::onIntent(nlohmann::json intent)
 	}
 }
 
-gui::TabMenu::TabMenu(GUI* gui, nlohmann::json j) : Layout(gui, j)
-{
-	if (!init(j))
-	{
-		std::cout << "Failed to init widget: " << getWidgetType() << std::endl;
-	}
-}
+gui::TabMenu::TabMenu(GUI* gui) : Layout(gui) {}

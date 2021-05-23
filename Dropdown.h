@@ -19,6 +19,6 @@ namespace gui
 		virtual void onIntent(nlohmann::json intent);
 		virtual void openDropdown();
 		virtual nlohmann::json toJson();
-		Dropdown(GUI* gui, nlohmann::json j);
+		Dropdown(GUI* gui);
 	};
 }

@@ -25,6 +25,6 @@ namespace gui
 		virtual void switchOn();
 		virtual void switchOff();
 
-		Switch(GUI* gui, nlohmann::json j);
+		Switch(GUI* gui);
 	};
 }

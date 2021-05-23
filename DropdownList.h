@@ -16,7 +16,7 @@ namespace gui
 		virtual void draw(float tx, float ty, bool editMode = false);
 		virtual Widget* onMouseEvent(MouseEventData mouseEventData, bool process = true, bool focus = false);
 		virtual void onIntent(nlohmann::json intent = nlohmann::json());
-		DropdownList(GUI* gui, nlohmann::json j);
+		DropdownList(GUI* gui);
 
 		bool floating = false;
 	};

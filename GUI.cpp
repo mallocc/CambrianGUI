@@ -444,14 +444,12 @@ void gui::GUI::openDropdownIntent(Widget* parent, nlohmann::json j)
 	{
 		dropdownListWidget->show();
 
-		if (dropdownListWidget->isVisible())
-		{
-			dropdownListWidget->setParent(parent);
-			dropdownListWidget->setW(parent->W(), FORCE);
-			dropdownListWidget->initList(j);
-		}
+		dropdownListWidget->floating = false;
+		dropdownListWidget->setParent(parent);
+		dropdownListWidget->setW(parent->W(), FORCE);
+		dropdownListWidget->initList(j);
 
-		//widgetManager->bringToFront(dropdownListWidget);
+		widgetManager->bringToFront(dropdownListWidget);
 	}
 	else
 	{
@@ -467,17 +465,14 @@ void gui::GUI::openRightClickIntent(Widget* parent, nlohmann::json j)
 	{
 		dropdownListWidget->show();
 
-		if (dropdownListWidget->isVisible())
-		{
-			dropdownListWidget->setParent(parent);
-			dropdownListWidget->floating = true;
-			dropdownListWidget->initList(j);
-			dropdownListWidget->setW(parent->W());
-			dropdownListWidget->setX(oldMouseEventData.x);
-			dropdownListWidget->setY(oldMouseEventData.y);
-		}
+		dropdownListWidget->setParent(parent);
+		dropdownListWidget->floating = true;
+		dropdownListWidget->initList(j);
+		dropdownListWidget->setW(parent->W());
+		dropdownListWidget->setX(oldMouseEventData.x);
+		dropdownListWidget->setY(oldMouseEventData.y);
 
-		//widgetManager->sendToBack(dropdownListWidget);
+		widgetManager->sendToBack(dropdownListWidget);
 	}
 	else
 	{

@@ -108,11 +108,6 @@ void gui::Label::revalidate()
 	Widget::revalidate();
 }
 
-gui::Label::Label(GUI* gui, nlohmann::json j)
+gui::Label::Label(GUI* gui)
 	: Widget(gui), displayFont(gui->getFontManager()->defaultFont)
-{
-	if (!init(j))
-	{
-		std::cout << "Failed to init widget: " << getWidgetType() << std::endl;
-	}
-}
+{}

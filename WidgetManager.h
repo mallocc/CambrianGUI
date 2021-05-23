@@ -5,7 +5,7 @@
 
 namespace gui
 {
-	typedef std::function<Widget* (GUI*, nlohmann::json)> StringToWidgetFunction;
+	typedef std::function<Widget* (GUI*)> StringToWidgetFunction;
 
 	class WidgetManager
 	{
@@ -46,8 +46,8 @@ namespace gui
 	template <typename T>
 	void gui::WidgetManager::registerWidget()
 	{
-		StringToWidgetFunction allocate = [](GUI* a, nlohmann::json b) {
-			return new T(a, b); 
+		StringToWidgetFunction allocate = [](GUI* a) {
+			return new T(a); 
 		};
 		stringToWidgetFunctions[T::getWidgetType()] = allocate;
 		std::cout << "Registered new widget class: " << T::getWidgetType() << std::endl;
