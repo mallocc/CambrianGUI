@@ -6,8 +6,8 @@ namespace gui
 {
 	class TabMenu : public Layout, public WidgetType<TabMenu>
 	{
-	public:
 		DEFINE_WIDGET_TYPE("tabmenu");
+	public:
 
 		Layout* tabPane = nullptr;
 		Layout* tabMenu = nullptr;

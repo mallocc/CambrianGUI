@@ -7,6 +7,7 @@ namespace gui
 	class VLayout : public Layout, public WidgetType<VLayout>
 	{
 		DEFINE_WIDGET_TYPE("vlayout");
+	public:
 
 		VLayout(GUI* gui);
 

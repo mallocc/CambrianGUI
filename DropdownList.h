@@ -7,8 +7,8 @@ namespace gui
 {
 	class DropdownList : public WidgetType<DropdownList>, public List
 	{
-	public:
 		DEFINE_WIDGET_TYPE("dropdownlist");
+	public:
 		std::map<std::string, Label*> data;
 		nlohmann::json labelTemplate;
 		virtual bool init(nlohmann::json j, bool ignoreType = false);

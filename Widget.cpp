@@ -592,7 +592,7 @@ bool gui::Widget::onDoubleClickEvent(MouseEventData mouseEventData, bool process
 		{
 			// Do stuff for double click
 			m_oldClickTime = {};
-			return true;;
+			return true;
 		}
 	}
 	return false;
@@ -615,6 +615,8 @@ bool gui::Widget::onDragEvent(MouseEventData mouseEventData, bool process)
 	if (mouseEventData.leftDown && m_oldMouseEventData.leftDown &&
 		(mouseEventData.x != m_oldMouseEventData.x || mouseEventData.y != m_oldMouseEventData.y))
 	{
+		// Cancel waiting double click
+		m_oldClickTime = {};
 		return true;
 	}
 	return false;

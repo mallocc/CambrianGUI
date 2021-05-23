@@ -4,6 +4,13 @@
 #include "DropdownList.h"
 #include "Dropdown.h"
 #include "TabMenu.h"
+#include "Button.h"
+#include "TextEdit.h"
+#include "GridLayout.h"
+#include "ScrollLayout.h"
+#include "TabLayout.h"
+#include "VSlider.h"
+#include "HSlider.h"
 
 #include <sstream>
 #include <fstream>
@@ -362,13 +369,21 @@ GUI::GUI(int32_t w, int32_t h)
 	config = new Configuration(&filesys);
 	widgetManager = new WidgetManager(this, config);
 
+	widgetManager->registerWidget<Layout>();
 	widgetManager->registerWidget<HLayout>();
+	widgetManager->registerWidget<HSlider>();
 	widgetManager->registerWidget<VLayout>();
+	widgetManager->registerWidget<VSlider>();
+	widgetManager->registerWidget<GridLayout>();
+	widgetManager->registerWidget<ScrollLayout>();
+	widgetManager->registerWidget<TabLayout>();
+	widgetManager->registerWidget<Button>();
 	widgetManager->registerWidget<Label>();
+	widgetManager->registerWidget<TextEdit>();
 	widgetManager->registerWidget<Dropdown>();
+	widgetManager->registerWidget<List>();
 	widgetManager->registerWidget<DropdownList>();
 	widgetManager->registerWidget<TabMenu>();
-	widgetManager->registerWidget<Layout>();
 
 	registerTriggerCallback("show_credits", [&](GUI* g) { g->displayCredits = true; });
 	registerTriggerCallback("hide_credits", [&](GUI* g) { g->displayCredits = false; });

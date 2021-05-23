@@ -1,6 +1,5 @@
 #include "Layout.h"
 #include "GUI.h"
-#include "Switch.h"
 #include <GL/glew.h>
 
 using gui::Layout;

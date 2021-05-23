@@ -33,8 +33,6 @@ namespace gui
 #define FORCE true
 #define LERP false
 
-#define define_widget_class(CLASS_SYMBOL, BASE_CLASS_SYMBOL) \
-	class CLASS_SYMBOL : public BASE_CLASS_SYMBOL, public WidgetType<CLASS_SYMBOL>
 
 #define DEFINE_WIDGET_TYPE(WIDGET_TYPENAME_SYMBOL) \
 public: \
@@ -42,8 +40,8 @@ public: \
 
 	class Widget : public WidgetType<Widget>
 	{
-	public:
 		DEFINE_WIDGET_TYPE("widget");
+	public:
 
 		GUI* getGUI();
 

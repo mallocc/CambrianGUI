@@ -7,8 +7,8 @@ namespace gui
 {
 	class Dropdown : public WidgetType<Dropdown>, public HLayout
 	{
-	public:
 		DEFINE_WIDGET_TYPE("dropdown");
+	public:
 		Widget* icon = nullptr;
 		nlohmann::json iconJson;
 		Label* label = nullptr;

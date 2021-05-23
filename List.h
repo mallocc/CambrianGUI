@@ -4,10 +4,10 @@
 
 namespace gui
 {
-	class List : public VLayout, public WidgetType<List>
+	class List : public WidgetType<List>, public VLayout
 	{
-	public:
 		DEFINE_WIDGET_TYPE("list");
+	public:
 
 		List(GUI* gui);
 

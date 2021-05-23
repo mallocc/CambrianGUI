@@ -7,8 +7,8 @@ namespace gui
 {
 	class Label : public Widget, public WidgetType<Label>
 	{
-	public:
 		DEFINE_WIDGET_TYPE("label");
+	public:
 		Font* displayFont = nullptr;
 		bool center = false;
 		bool revalidateSize = false;
