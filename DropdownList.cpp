@@ -26,7 +26,7 @@ bool gui::DropdownList::initList(nlohmann::json j)
 {
 	clearChildren();
 
-	std::cout << "gui::DropdownListWidget::initList() - j: " << j.dump(2) << std::endl;
+	//std::cout << "gui::DropdownListWidget::initList() - j: " << j.dump(2) << std::endl;
 	for (auto& d : j)
 	{
 		json_get_string(d, "text", text)

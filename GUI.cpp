@@ -8,8 +8,9 @@
 #include "GridLayout.h"
 #include "ScrollLayout.h"
 #include "TabLayout.h"
-#include "VSlider.h"
+#include "Slider.h"
 #include "HSlider.h"
+#include "VSlider.h"
 
 #include <sstream>
 #include <fstream>
@@ -119,7 +120,7 @@ void GUI::onMouseEvent(MouseEventData mouseEventData)
 {
 	//std::cout << mouseEventData.x << " " << mouseEventData.y << " left: " << mouseEventData.leftDown << " middle: " << mouseEventData.middleDown << " right: " << mouseEventData.rightDown << std::endl;
 
-	hCursor = LoadCursor(NULL, IDC_ARROW);
+	//hCursor = LoadCursor(NULL, IDC_ARROW);
 	// Look for a new focused widget in children
 	if (focusedWidget == nullptr)
 	{
@@ -383,8 +384,9 @@ GUI::GUI(int32_t w, int32_t h)
 	widgetManager->registerWidget<Layout>();
 	widgetManager->registerWidget<HLayout>();
 	widgetManager->registerWidget<HSlider>();
-	widgetManager->registerWidget<VLayout>();
 	widgetManager->registerWidget<VSlider>();
+	widgetManager->registerWidget<VLayout>();
+	widgetManager->registerWidget<Slider>();
 	widgetManager->registerWidget<GridLayout>();
 	widgetManager->registerWidget<ScrollLayout>();
 	widgetManager->registerWidget<TabLayout>();
@@ -457,6 +459,8 @@ void gui::GUI::setCursor(std::string cursor)
 		}
 
 		hCursor = LoadCursor(NULL, idc);
+
+		//std::cout << " changed to cursor: " << cursor << std::endl;
 		SetCursor(hCursor);
 	}
 }
@@ -468,8 +472,8 @@ void gui::GUI::openDropdownIntent(Widget* parent, nlohmann::json j, intentcallba
 	{
 		dropdownListWidget->show();
 		dropdownListWidget->floating = false;
-		dropdownListWidget->setParent(parent);
 		dropdownListWidget->setW(parent->W(), FORCE);
+		dropdownListWidget->setParent(parent);
 		dropdownListWidget->initList(j);
 		dropdownListWidget->onSelection = selectionCallback;
 		widgetManager->bringToFront(dropdownListWidget);
@@ -485,10 +489,10 @@ void gui::GUI::openRightClickIntent(nlohmann::json j, intentcallback_t selection
 	DropdownList* dropdownListWidget = dynamic_cast<DropdownList*>(widgetManager->getDropDownListWidget());
 	if (dropdownListWidget != nullptr)
 	{
-		dropdownListWidget->show();
 		dropdownListWidget->floating = true;
-		dropdownListWidget->initList(j);
+		dropdownListWidget->show();
 		dropdownListWidget->setW(100);
+		dropdownListWidget->initList(j);
 		dropdownListWidget->setX(oldMouseEventData.x);
 		dropdownListWidget->setY(oldMouseEventData.y);
 		dropdownListWidget->onSelection = selectionCallback;
@@ -502,7 +506,7 @@ void gui::GUI::openRightClickIntent(nlohmann::json j, intentcallback_t selection
 
 void gui::GUI::closeDropdownIntent()
 {
-	std::cout << "Closing dropdown list" << std::endl;
+	//std::cout << "Closing dropdown list" << std::endl;
 	DropdownList* dropdownListWidget = dynamic_cast<DropdownList*>(widgetManager->getDropDownListWidget());
 	if (dropdownListWidget != nullptr)
 	{
@@ -529,6 +533,7 @@ void gui::GUI::showFloatingLabel(int32_t x, int32_t y, std::string text, uint64_
 		floatingLabelWidget->text = text;
 		floatingLabelWidget->setX(x);
 		floatingLabelWidget->setY(y);
+		widgetManager->bringToFront(floatingLabelWidget);
 	}
 }
 

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "HLayout.h"
+#include "Slider.h"
 
 namespace gui
 {
-	class HSlider : public WidgetType<HSlider>, public HLayout
+	class HSlider : public WidgetType<HSlider>, public Slider
 	{
 		DEFINE_WIDGET_TYPE("hslider");
 	public:
