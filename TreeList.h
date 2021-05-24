@@ -33,13 +33,13 @@ namespace gui
 
 		virtual void onExpandEvent(bool expanded);
 		virtual void onItemClickedEvent(Widget* clickedItem);
+		virtual void onItemRightClickedEvent(Widget* clickedItem);
 
 		std::function<void(bool)> onExpand;
 		std::function<void(Widget*)> onItemClicked;
+		std::function<void(Widget*)> onItemRightClicked;
 			
 		void initRootNode(TreeNode* root, Widget* radioParent);
-
-		virtual std::vector<Widget*> getChildren();
 
 		virtual bool isChecked() override;
 

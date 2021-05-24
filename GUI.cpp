@@ -124,17 +124,29 @@ void GUI::onMouseEvent(MouseEventData mouseEventData)
 	if (focusedWidget == nullptr)
 	{
 		Widget* rootWidget = widgetManager->getRootWidget();
-		// Check for event
-		if (rootWidget != nullptr)
-			focusedWidget = rootWidget->onMouseEvent(mouseEventData, /*!editMode*/ true, false);
 
-		if (focusedWidget != nullptr)
+		Widget* dropdownListWidget = widgetManager->getDropDownListWidget();
+		if (dropdownListWidget != nullptr)
 		{
-			Widget* dropdownListWidget = widgetManager->getDropDownListWidget();
-			if (dropdownListWidget != nullptr &&
-				focusedWidget != dropdownListWidget->getParent())
+			if (dropdownListWidget->isVisible())
 			{
-				closeDropdownIntent();
+				if (!(dropdownListWidget->onClickEvent(mouseEventData, false) &&
+					dropdownListWidget->onOverEvent(mouseEventData, false)) &&
+					rootWidget->onMouseEvent(mouseEventData, false) != nullptr)
+				{
+					closeDropdownIntent();
+				}
+				dropdownListWidget->onMouseEvent(mouseEventData, true);
+				if (dropdownListWidget->getParent() != nullptr)
+				{
+					dropdownListWidget->getParent()->onMouseEvent(mouseEventData, true);
+				}
+			}
+			else
+			{
+				// Check for event
+				if (rootWidget != nullptr)
+					focusedWidget = rootWidget->onMouseEvent(mouseEventData, true, false);
 			}
 		}
 	}
@@ -452,8 +464,7 @@ void gui::GUI::setCursor(std::string cursor)
 void gui::GUI::openDropdownIntent(Widget* parent, nlohmann::json j, intentcallback_t selectionCallback)
 {
 	DropdownList* dropdownListWidget = dynamic_cast<DropdownList*>(widgetManager->getDropDownListWidget());
-	if (dropdownListWidget != nullptr &&
-		dropdownListWidget->getParent() != parent)
+	if (dropdownListWidget != nullptr)
 	{
 		dropdownListWidget->show();
 		dropdownListWidget->floating = false;
@@ -481,7 +492,7 @@ void gui::GUI::openRightClickIntent(nlohmann::json j, intentcallback_t selection
 		dropdownListWidget->setX(oldMouseEventData.x);
 		dropdownListWidget->setY(oldMouseEventData.y);
 		dropdownListWidget->onSelection = selectionCallback;
-		widgetManager->sendToBack(dropdownListWidget);
+		widgetManager->bringToFront(dropdownListWidget);
 	}
 	else
 	{
@@ -491,11 +502,12 @@ void gui::GUI::openRightClickIntent(nlohmann::json j, intentcallback_t selection
 
 void gui::GUI::closeDropdownIntent()
 {
+	std::cout << "Closing dropdown list" << std::endl;
 	DropdownList* dropdownListWidget = dynamic_cast<DropdownList*>(widgetManager->getDropDownListWidget());
 	if (dropdownListWidget != nullptr)
 	{
 		dropdownListWidget->hide();
-		dropdownListWidget->floating = false;		
+		dropdownListWidget->floating = false;
 		widget_as(Dropdown, dropdown, dropdownListWidget->getParent())
 		{
 			dropdown->closeDropdown();

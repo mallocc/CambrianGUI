@@ -70,35 +70,71 @@ Widget* Container::onMouseEvent(MouseEventData mouseEventData, bool process, boo
 {
 	std::vector<Widget*> visibleChildren = getVisibleChildren();
 
-	Widget* oldLastLocalWidgetHandled = m_lastLocalWidgetHandled;
-	m_lastLocalWidgetHandled = nullptr;
-	// Handle children widgets
-	if (oldLastLocalWidgetHandled != this)
+	if (process)
 	{
-		for (Widget* widget : visibleChildren)
+		Widget* oldLastLocalWidgetHandled = m_lastLocalWidgetHandled;
+		m_lastLocalWidgetHandled = nullptr;
+		// Handle children widgets
+		if (oldLastLocalWidgetHandled != this)
 		{
-			Widget* handledWidget = widget->onMouseEvent(mouseEventData, process, focus);
-			if (m_lastLocalWidgetHandled == nullptr)
+			for (Widget* widget : visibleChildren)
 			{
-				m_lastLocalWidgetHandled = handledWidget;
-				if (m_lastLocalWidgetHandled != nullptr)
+				Widget* handledWidget = widget->onMouseEvent(mouseEventData, process, focus);
+				if (m_lastLocalWidgetHandled == nullptr)
 				{
-					if (m_childEnvoke && !m_lastLocalWidgetHandled->isExclusiveEnvoke())
-						break;
-					return m_lastLocalWidgetHandled;
+					m_lastLocalWidgetHandled = handledWidget;
+					if (m_lastLocalWidgetHandled != nullptr)
+					{
+						if (m_childEnvoke && !m_lastLocalWidgetHandled->isExclusiveEnvoke())
+							break;
+						return m_lastLocalWidgetHandled;
+					}
 				}
 			}
 		}
-	}
-	if (m_lastLocalWidgetHandled == nullptr)
-	{
-		m_lastLocalWidgetHandled = Widget::onMouseEvent(mouseEventData, process, focus);
+		if (m_lastLocalWidgetHandled == nullptr)
+		{
+			m_lastLocalWidgetHandled = Widget::onMouseEvent(mouseEventData, process, focus);
+		}
+		else
+		{
+			Widget::onMouseEvent(mouseEventData, process, true);
+		}
+		return m_lastLocalWidgetHandled;
 	}
 	else
 	{
-		Widget::onMouseEvent(mouseEventData, process, true);
+		Widget* lastLocalWidgetHandled = m_lastLocalWidgetHandled;
+		Widget* oldLastLocalWidgetHandled = lastLocalWidgetHandled;
+		lastLocalWidgetHandled = nullptr;
+		// Handle children widgets
+		if (oldLastLocalWidgetHandled != this)
+		{
+			for (Widget* widget : visibleChildren)
+			{
+				Widget* handledWidget = widget->onMouseEvent(mouseEventData, process, focus);
+				if (lastLocalWidgetHandled == nullptr)
+				{
+					lastLocalWidgetHandled = handledWidget;
+					if (lastLocalWidgetHandled != nullptr)
+					{
+						if (m_childEnvoke && !lastLocalWidgetHandled->isExclusiveEnvoke())
+							break;
+						return lastLocalWidgetHandled;
+					}
+				}
+			}
+		}
+		if (lastLocalWidgetHandled == nullptr)
+		{
+			lastLocalWidgetHandled = Widget::onMouseEvent(mouseEventData, process, focus);
+		}
+		else
+		{
+			Widget::onMouseEvent(mouseEventData, process, true);
+		}
+		return lastLocalWidgetHandled;
 	}
-	return m_lastLocalWidgetHandled;
 }
 
 bool Container::onLeaveEvent(MouseEventData mouseEventData, bool process)

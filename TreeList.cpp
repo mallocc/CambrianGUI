@@ -73,6 +73,7 @@ gui::TreeList::TreeList(GUI* gui)
 {
 	onExpand = [](bool) {};
 	onItemClicked = [](Widget*) {};
+	onItemRightClicked = [](Widget*) {};
 }
 
 bool gui::TreeList::init(nlohmann::json j, bool ignoreType)
@@ -114,6 +115,11 @@ void gui::TreeList::onExpandEvent(bool expanded)
 	onExpand(expanded);
 }
 
+void gui::TreeList::onItemRightClickedEvent(Widget* clickedItem)
+{
+	onItemRightClicked(clickedItem);
+}
+
 void gui::TreeList::onItemClickedEvent(Widget* clickedItem)
 {
 	for (auto& widget : getRadioChildren())
@@ -132,10 +138,6 @@ void gui::TreeList::onItemClickedEvent(Widget* clickedItem)
 	onItemClicked(clickedItem);
 }
 
-std::vector<gui::Widget*> gui::TreeList::getChildren()
-{
-	return getRadioChildren();
-}
 
 bool gui::TreeList::isChecked()
 {
@@ -184,6 +186,10 @@ void gui::TreeList::initRootNode(TreeNode* root, Widget* radioParent)
 				newLayout->onRelease = [=](GUI* gui, MouseEventData mouseEventData)
 				{
 					rootNode->onItemClickedEvent(this);
+				};
+				newLayout->onRightClick = [=](GUI* gui, MouseEventData mouseEventData)
+				{
+					rootNode->onItemRightClickedEvent(this);
 				};
 			}
 		}
