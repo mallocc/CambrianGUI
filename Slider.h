@@ -36,6 +36,8 @@ namespace gui
 		virtual float getMaxValue();
 		virtual bool isFloatingLabel();
 
+		inline std::string roundNumber(float number);
+
 	private:
 		Texture* m_foreground = nullptr;
 		float m_defaultVal = 0.0f;

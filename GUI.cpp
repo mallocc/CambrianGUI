@@ -11,6 +11,7 @@
 #include "Slider.h"
 #include "HSlider.h"
 #include "VSlider.h"
+#include "Spinner.h"
 
 #include <sstream>
 #include <fstream>
@@ -396,6 +397,7 @@ GUI::GUI(int32_t w, int32_t h)
 	widgetManager->registerWidget<Dropdown>();
 	widgetManager->registerWidget<List>();
 	widgetManager->registerWidget<DropdownList>();
+	widgetManager->registerWidget<Spinner>();
 
 	registerTriggerCallback("show_credits", [&](GUI* g) { g->displayCredits = true; });
 	registerTriggerCallback("hide_credits", [&](GUI* g) { g->displayCredits = false; });
@@ -539,9 +541,12 @@ void gui::GUI::showFloatingLabel(int32_t x, int32_t y, std::string text, uint64_
 
 void gui::GUI::hideFloatingLabel()
 {
+	std::cout << "Hiding floating label" << std::endl;
+
 	Label* floatingLabelWidget = dynamic_cast<Label*>(widgetManager->getFloatingLabelWidget());
 	if (floatingLabelWidget != nullptr)
 	{
+		currentShowTimeFloatingLabel = 0;
 		floatingLabelWidget->text = "";
 		floatingLabelWidget->hide();
 	}

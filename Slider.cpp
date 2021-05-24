@@ -7,6 +7,14 @@ gui::Slider::Slider(GUI* gui) : Widget(gui)
 	onValueChanged = [](float) {};
 }
 
+inline std::string gui::Slider::roundNumber(float number)
+{
+	std::stringstream ss;
+	ss.precision(3);
+	ss << number;
+	return ss.str();
+}
+
 bool gui::Slider::init(nlohmann::json j, bool ignoreType)
 {
 	if (Widget::init(j, true))
@@ -17,10 +25,10 @@ bool gui::Slider::init(nlohmann::json j, bool ignoreType)
 			{
 				fields["foreground"] = textureConfigItem(m_foreground);
 				fields["value"] = { m_val, "0.0" };
-				fields["default-value"] = { m_defaultVal, "0.0" };
-				fields["min-value"] = { m_minVal, "0.0" };
-				fields["max-value"] = { m_maxVal, "1.0" };
-				fields["floating-label"] = m_floatingLabel;
+				fields["default"] = { m_defaultVal, "0.0" };
+				fields["min"] = { m_minVal, "0.0" };
+				fields["max"] = { m_maxVal, "1.0" };
+				fields["label"] = m_floatingLabel;
 				fields["vertical"] = m_vertical;
 			}
 			fields.load(j);
@@ -138,17 +146,22 @@ bool gui::Slider::onDownEvent(MouseEventData mouseEventData, bool process)
 
 		if (m_floatingLabel)
 		{
-			std::stringstream ss;
-			ss.precision(3);
-			ss << m_val;
-
 			if (m_vertical)
 			{
-				getGUI()->showFloatingLabel(tx + W(), ty + (1.0f - getValToRatio()) * (H() - W()), ss.str());
+				getGUI()->showFloatingLabel(
+					tx + W(), 
+					ty + (1.0f - getValToRatio()) * (H() - W()), 
+					roundNumber(m_val), 100);
 			}
 			else
 			{
-				getGUI()->showFloatingLabel(tx + getValToRatio() * (W() - H()) - getGUI()->getWidgetManager()->getFloatingLabelWidget()->W() / 2.0 + H() / 2.0f, ty - getGUI()->getWidgetManager()->getFloatingLabelWidget()->H(), ss.str());
+				getGUI()->showFloatingLabel(
+					tx 
+					+ getValToRatio() * (W() - H()) 
+					- getGUI()->getWidgetManager()->getFloatingLabelWidget()->W() / 2.0 
+					+ H() / 2.0f, 
+					ty - getGUI()->getWidgetManager()->getFloatingLabelWidget()->H(),
+					roundNumber(m_val), 100);
 			}
 		}
 	}
