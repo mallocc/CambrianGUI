@@ -495,7 +495,11 @@ void gui::GUI::closeDropdownIntent()
 	if (dropdownListWidget != nullptr)
 	{
 		dropdownListWidget->hide();
-		dropdownListWidget->floating = false;
+		dropdownListWidget->floating = false;		
+		widget_as(Dropdown, dropdown, dropdownListWidget->getParent())
+		{
+			dropdown->closeDropdown();
+		}
 		dropdownListWidget->setParent(nullptr);
 		dropdownListWidget->onSelection = [](nlohmann::json) {};
 	}

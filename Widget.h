@@ -220,6 +220,8 @@ public: \
 			DBG_OFF,
 			DBG_BOUNDS,
 		} m_debugMode = DebugMode::DBG_OFF;
+		void setDebugMode(DebugMode debugMode);
+		DebugMode getDebugMode();
 
 		ConfigList& getConfig();
 		nlohmann::json& getDefaultJson();
@@ -233,8 +235,6 @@ public: \
 		ConfigList m_config;
 
 	private:
-		void setDebugMode(DebugMode debugMode);
-		DebugMode getDebugMode();
 		GUI* m_gui;
 		float m_x = 0, m_y = 0;
 		float m_xOffset, m_yOffset = 0;

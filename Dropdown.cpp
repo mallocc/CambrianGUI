@@ -91,6 +91,12 @@ void gui::Dropdown::openDropdown()
 		});
 }
 
+void gui::Dropdown::closeDropdown()
+{
+	if (icon != nullptr)
+		icon->uncheck();
+}
+
 nlohmann::json gui::Dropdown::toJson()
 {
 	return Widget::toJson();

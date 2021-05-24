@@ -25,6 +25,7 @@ namespace gui
 		intentcallback_t onSelection;
 
 		virtual void openDropdown();
+		virtual void closeDropdown();
 		virtual nlohmann::json toJson();
 		Dropdown(GUI* gui);
 	};
