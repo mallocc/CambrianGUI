@@ -1079,7 +1079,7 @@ void gui::Widget::setLayoutOmit(bool layoutOmit)
 	this->m_layoutOmit = layoutOmit;
 }
 
-bool gui::Widget::isLayoutOmit()
+bool gui::Widget::isOmitFromLayout()
 {
 	return m_layoutOmit;
 }

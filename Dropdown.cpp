@@ -50,7 +50,7 @@ bool gui::Dropdown::init(nlohmann::json j, bool ignoreType)
 				}
 			}
 			setAlignment(ALIGN_SPACED);
-			setSizing(SIZE_NONE);
+			setExpandFlags(ExpandFlags::EXPAND_RESET);
 		}
 	}
 

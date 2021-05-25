@@ -35,6 +35,10 @@ namespace gui
 		void setChildEnvoke(bool childEnvoke = true);
 		bool isChildEnvoke();
 
+		void setForAllWidgets(std::function<void(Widget*)> set);
+		Widget* searchForAllWidgets(std::function<Widget*(Widget*)> search);
+		void getForAllWidgets(std::function <nlohmann::json(Widget*, nlohmann::json& data)> get, nlohmann::json& data);
+
 		virtual std::vector<Widget*>& getCheckedChildren();
 		std::vector<Widget*>& getVisibleChildren();
 		virtual int32_t getChildIndex(Widget* child);

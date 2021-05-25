@@ -261,6 +261,38 @@ void Container::onIntent(nlohmann::json intent)
 
 }
 
+Widget* gui::Container::searchForAllWidgets(std::function<Widget* (Widget*)> search)
+{
+	Widget* foundWidget = search(this);
+	for (auto& widget : m_children)
+	{
+		widget_as(Container, container, widget)
+		{
+			container->searchForAllWidgets(search);
+		}
+		else
+		{
+			foundWidget = search(widget);
+		}
+	}
+	return foundWidget;
+}
+
+void gui::Container::getForAllWidgets(std::function<nlohmann::json(Widget*, nlohmann::json& data)> get, nlohmann::json& data)
+{
+	get(this, data);
+	for (auto& widget : m_children)
+	{
+		widget_as(Container, container, widget)
+		{
+			container->getForAllWidgets(get, data);
+		}
+		else
+		{
+			get(widget, data);
+		}
+	}
+}
 
 std::vector<gui::Widget*>& Container::getCheckedChildren()
 {
@@ -279,6 +311,22 @@ void Container::setChildEnvoke(bool childEnvoke)
 bool Container::isChildEnvoke()
 {
 	return m_childEnvoke;
+}
+
+void gui::Container::setForAllWidgets(std::function<void(Widget*)> set)
+{
+	set(this);
+	for (auto& widget : m_children)
+	{
+		widget_as(Container, container, widget)
+		{
+			container->setForAllWidgets(set);
+		}
+		else
+		{
+			set(widget);
+		}
+	}
 }
 
 std::vector<Widget*>& Container::getRadioChildren()

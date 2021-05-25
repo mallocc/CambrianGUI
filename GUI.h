@@ -20,6 +20,7 @@ namespace gui
 
 		GUI* getGUI();
 
+		void resize(float w, float h);
 		virtual void draw();
 		virtual void onMouseEvent(MouseEventData mouseEventData);
 		virtual void onMouseLeave();

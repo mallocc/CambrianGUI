@@ -48,7 +48,7 @@ nlohmann::json gui::TreeNode::getJson(nlohmann::json nodeTemplate)
 	nlohmann::json k;
 	k["widget"] = "vlayout";
 	k["align"] = "list";
-	k["size"] = "expand";
+	k["expand"] = "prefered";
 	k["x"] = 10;
 
 	nlohmann::json l = nodeTemplate;
@@ -227,7 +227,7 @@ void gui::TreeList::initRootNode(TreeNode* root, Widget* radioParent)
 		{
 			nlohmann::json j;
 			j["widget"] = "list";
-			j["size"] = "expand";
+			j["expand"] = "prefered";
 			j["x"] = 10;
 			create_widget_as(VLayout, layout, j)
 			{
@@ -235,7 +235,7 @@ void gui::TreeList::initRootNode(TreeNode* root, Widget* radioParent)
 				nlohmann::json k;
 				k["widget"] = "treelist";
 				k["align"] = "list";
-				k["size"] = "expand";
+				k["expand"] = "prefered";
 				k["node"] = nodeTemplate;
 				k["layout"] = layoutTemplate;
 				k["icon"] = iconTemplate;

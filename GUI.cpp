@@ -12,6 +12,7 @@
 #include "HSlider.h"
 #include "VSlider.h"
 #include "Spinner.h"
+#include "FormLayout.h"
 
 #include <sstream>
 #include <fstream>
@@ -40,6 +41,18 @@ namespace gui
 		{"wait", IDC_WAIT},
 		{"no", IDC_NO}
 	};
+}
+
+void gui::GUI::resize(float w, float h)
+{
+	this->w = w;
+	this->h = h;
+	// Draw children
+	Widget* rootWidget = widgetManager->getRootWidget();
+	if (rootWidget != nullptr && rootWidget->isVisible())
+	{
+		rootWidget->revalidate();
+	}
 }
 
 void GUI::draw()
@@ -398,6 +411,7 @@ GUI::GUI(int32_t w, int32_t h)
 	widgetManager->registerWidget<List>();
 	widgetManager->registerWidget<DropdownList>();
 	widgetManager->registerWidget<Spinner>();
+	widgetManager->registerWidget<FormLayout>();
 
 	registerTriggerCallback("show_credits", [&](GUI* g) { g->displayCredits = true; });
 	registerTriggerCallback("hide_credits", [&](GUI* g) { g->displayCredits = false; });

@@ -76,7 +76,7 @@ public: \
 		void setCentered(bool centered = true);
 		bool isCentered();
 		void setLayoutOmit(bool layoutOmit = true);
-		bool isLayoutOmit();
+		bool isOmitFromLayout();
 		virtual void setBackground(Texture* background);
 		virtual Texture* getBackground();
 		void setTransitionSpeed(float speed);

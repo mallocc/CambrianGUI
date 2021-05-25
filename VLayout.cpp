@@ -36,7 +36,7 @@ void gui::VLayout::revalidate()
 		{
 		case ALIGNMENT::ALIGN_LIST:
 		{
-			float start = 0.0f;
+			float start = getPadding();
 			for (int i = 0; i < visibleChildren.size(); ++i)
 			{
 				visibleChildren[i]->setY(start, FORCE);
@@ -122,12 +122,12 @@ void gui::VLayout::revalidate()
 		}
 		case ALIGNMENT::ALIGN_START:
 		{
-			float start = 0.0f;
+			float start = getPadding();
 			for (int i = 0; i < visibleChildren.size(); ++i)
 			{
 				visibleChildren[i]->setY(start, FORCE);
-				visibleChildren[i]->setX(0.0f, FORCE);
-				start += visibleChildren[i]->H() + visibleChildren[i]->getWeight() * (visibleChildren[i]->isProportional() ? H() : 1);
+				visibleChildren[i]->setX(getPadding(), FORCE);
+				start += visibleChildren[i]->H() + visibleChildren[i]->getWeight() * (visibleChildren[i]->isProportional() ? H() : 1) + getSpacing();
 				if (visibleChildren[i]->isCentered())
 					start -= visibleChildren[i]->H() / 2.0f;
 			}
@@ -135,13 +135,13 @@ void gui::VLayout::revalidate()
 		}
 		case ALIGNMENT::ALIGN_END:
 		{
-			float leftOver = H() - size;
+			float leftOver = H() - size - getPadding();
 			float start = leftOver;
 			for (int i = 0; i < visibleChildren.size(); ++i)
 			{
-				visibleChildren[i]->setX(W() - visibleChildren[i]->W(), FORCE);
+				visibleChildren[i]->setX(W() - visibleChildren[i]->W() - getPadding(), FORCE);
 				visibleChildren[i]->setY(start, FORCE);
-				start += visibleChildren[i]->H() + visibleChildren[i]->getWeight() * (visibleChildren[i]->isProportional() ? H() : 1);
+				start += visibleChildren[i]->H() + visibleChildren[i]->getWeight() * (visibleChildren[i]->isProportional() ? H() : 1) + getSpacing();
 				if (visibleChildren[i]->isCentered())
 					start -= visibleChildren[i]->H() / 2.0f;
 			}
