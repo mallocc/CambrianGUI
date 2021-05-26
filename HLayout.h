@@ -11,5 +11,6 @@ namespace gui
 		HLayout(GUI* gui);
 		virtual bool init(nlohmann::json j, bool ignoreType = false);
 		virtual void revalidate();
+		virtual float getPreferedHeight(Widget* child);
 	};
 }

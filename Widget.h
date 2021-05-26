@@ -241,7 +241,7 @@ public: \
 		float m_xTarget = 0, m_yTarget = 0;
 		float m_w = 0, m_h = 0;
 		float m_wTarget = 0, m_hTarget = 0;
-		float m_weight = 0.0f;
+		float m_weight = 1.0f;
 		bool  m_proportional = false;
 		bool  m_centered = false;
 		bool  m_layoutOmit = false;

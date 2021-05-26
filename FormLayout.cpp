@@ -15,7 +15,8 @@ bool gui::FormLayout::initList(nlohmann::json j)
 	{
 		nlohmann::json rowLayoutJson;
 		rowLayoutJson["widget"] = "hlayout";
-		rowLayoutJson["align"] = "stacked";
+		rowLayoutJson["align"].push_back("stacked");
+		rowLayoutJson["align"].push_back("center");
 		rowLayoutJson["expand"] = "prefered";
 		create_widget_as(HLayout, rowLayout, rowLayoutJson)
 		{

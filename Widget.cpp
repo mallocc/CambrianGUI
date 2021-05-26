@@ -337,6 +337,26 @@ void gui::Widget::draw(float tx, float ty, bool editMode)
 
 void gui::Widget::revalidate()
 {
+
+	//if (getParent() != nullptr)
+	//{
+	//	widget_as(Layout, parentContainer, getParent())
+	//	{
+	//		m_w = parentContainer->getPreferedWidth(this);
+	//		m_h = parentContainer->getPreferedHeight(this);
+	//	}
+	//}
+
+	//if (m_w == 0)
+	//{
+	//	m_w = m_gui->w;
+	//}
+	//if (m_h == 0)
+	//{
+	//	m_h = m_gui->h;
+	//}
+
+
 	if (m_w == 0)
 	{
 		if (m_parent != nullptr)
@@ -422,7 +442,7 @@ bool gui::Widget::init(nlohmann::json j, bool ignoreType)
 			fields["centered"] = m_centered;
 			fields["proportional"] = m_proportional;
 			fields["id"] = m_id;
-			fields["weight"] = m_weight;
+			fields["weight"] = { m_weight, "0.0" };
 			fields["on-over"] = m_onOverJson;
 			fields["on-leave"] = m_onLeaveJson;
 			fields["on-release"] = m_onReleaseJson;

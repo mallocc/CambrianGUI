@@ -39,6 +39,10 @@ namespace gui
 		Widget* searchForAllWidgets(std::function<Widget*(Widget*)> search);
 		void getForAllWidgets(std::function <nlohmann::json(Widget*, nlohmann::json& data)> get, nlohmann::json& data);
 
+		bool isChild(Widget* possibleChild);
+
+		float getTotalWeightOfChildren();
+
 		virtual std::vector<Widget*>& getCheckedChildren();
 		std::vector<Widget*>& getVisibleChildren();
 		virtual int32_t getChildIndex(Widget* child);

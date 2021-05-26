@@ -294,6 +294,26 @@ void gui::Container::getForAllWidgets(std::function<nlohmann::json(Widget*, nloh
 	}
 }
 
+bool gui::Container::isChild(Widget* possibleChild)
+{
+	for (auto& child : m_children)
+		if (child == possibleChild)
+			return true;
+	return false;
+}
+
+float gui::Container::getTotalWeightOfChildren()
+{
+	float total = 0.0f;
+	for (auto& child : m_children)
+	{
+		if (!child->isOmitFromLayout())
+			total += child->getWeight();
+	}
+	return total;
+}
+
+
 std::vector<gui::Widget*>& Container::getCheckedChildren()
 {
 	std::vector<Widget*> checkedChildren;

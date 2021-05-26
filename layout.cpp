@@ -2,6 +2,7 @@
 #include "GUI.h"
 #include <GL/glew.h>
 #include "Utilities.h"
+#include <bitset>
 
 using gui::Layout;
 using gui::Widget;
@@ -19,7 +20,7 @@ bool gui::Layout::init(nlohmann::json j, bool ignoreType)
 			{
 				fields["padding"] = padding;
 				fields["spacing"] = spacing;
-				fields["align"] = { "none",
+				fields["alignment"] = { "none",
 					[&](std::string value)
 					{
 						for (int i = 0; i < ALIGNMENT::ALIGN_NUMBER; ++i)
@@ -28,79 +29,77 @@ bool gui::Layout::init(nlohmann::json j, bool ignoreType)
 					},
 					[&](std::string fieldName) { return nlohmann::json({{fieldName, ALIGN_STRINGS[alignment]}}); }
 				};
-				fields["expand"] = { "default", 
+				fields["expand"] = { "default",
 					[&](std::string value)
 					{
-						nlohmann::json flagsJson;
-						flagsJson["flags"] = value;
-						json_get_object(flagsJson, "flags", flags)
+						if (!nlohmann::json::accept(value))
 						{
-							if (flags.is_string())
-							{
-								if (EXPAND_FLAGS.contains(flags.get<std::string>()))
-									if (EXPAND_FLAGS.at(flags.get<std::string>()) == ExpandFlags::EXPAND_RESET)
-									{
-										expandFlags = ExpandFlags::EXPAND_RESET;
-									}
-									else
-									{
-										expandFlags |= EXPAND_FLAGS.at(flags.get<std::string>());
-									}
-							}
-							else if (flags.is_array())
-							{
-								for (auto& flag : flags)
+							if (EXPAND_FLAGS.contains(value))
+								if (EXPAND_FLAGS.at(value) == ExpandFlags::EXPAND_RESET)
 								{
-									if (EXPAND_FLAGS.contains(flags.get<std::string>()))
-										if (EXPAND_FLAGS.at(flags.get<std::string>()) == ExpandFlags::EXPAND_RESET)
+									expandFlags = ExpandFlags::EXPAND_RESET;
+								}
+								else
+								{
+									uint8_t flag = EXPAND_FLAGS.at(value);
+									if ((flag & ExpandFlags::EXPAND_WIDTH_MASK))
+										expandFlags = (expandFlags & ~ExpandFlags::EXPAND_WIDTH_MASK) | (flag & ExpandFlags::EXPAND_WIDTH_MASK);
+									if ((flag & ExpandFlags::EXPAND_HEIGHT_MASK))
+										expandFlags = (expandFlags & ~ExpandFlags::EXPAND_HEIGHT_MASK) | (flag & ExpandFlags::EXPAND_HEIGHT_MASK);
+								}
+						}
+						else if (false)
+						{
+							nlohmann::json flagsJson = nlohmann::json::parse(value);
+							if (flagsJson.is_array())
+							{
+								for (auto& flagJson : flagsJson)
+								{
+									if (EXPAND_FLAGS.contains(flagJson))
+										if (EXPAND_FLAGS.at(flagJson) == ExpandFlags::EXPAND_RESET)
 										{
 											expandFlags = ExpandFlags::EXPAND_RESET;
 										}
 										else
 										{
-											expandFlags |= EXPAND_FLAGS.at(flags.get<std::string>());
+											uint8_t flag = EXPAND_FLAGS.at(flagJson);
+											if ((flag & ExpandFlags::EXPAND_WIDTH_MASK))
+												expandFlags = (expandFlags & ~ExpandFlags::EXPAND_WIDTH_MASK) | (flag & ExpandFlags::EXPAND_WIDTH_MASK);
+											if ((flag & ExpandFlags::EXPAND_HEIGHT_MASK))
+												expandFlags = (expandFlags & ~ExpandFlags::EXPAND_HEIGHT_MASK) | (flag & ExpandFlags::EXPAND_HEIGHT_MASK);
 										}
 								}
 							}
 						}
 					},
-					[&](std::string fieldName) 
+					[&](std::string fieldName)
 					{
 						return nlohmann::json({{fieldName, "TODO"}});
 					}
 				};
-				fields["alignment"] = { "default",
+				fields["align"] = { "default",
 					[&](std::string value)
 					{
-						nlohmann::json flagsJson;
-						flagsJson["flags"] = value;
-						json_get_object(flagsJson, "flags", flags)
+						if (!nlohmann::json::accept(value))
 						{
-							if (flags.is_string())
+							alignFlags = AlignFlags::ALIGN_FLAGS_RESET;
+							if (ALIGN_FLAGS.contains(value))
 							{
-								if (ALIGN_FLAGS.contains(flags.get<std::string>()))
-									if (ALIGN_FLAGS.at(flags.get<std::string>()) == AlignFlags::ALIGN_FLAGS_RESET)
-									{
-										expandFlags = AlignFlags::ALIGN_FLAGS_RESET;
-									}
-									else
-									{
-										expandFlags |= ALIGN_FLAGS.at(flags.get<std::string>());
-									}
-							}
-							else if (flags.is_array())
+								alignFlags = ALIGN_FLAGS.at(value);
+							}								
+						}
+						else
+						{
+							nlohmann::json flagsJson = nlohmann::json::parse(value);
+							if (flagsJson.is_array())
 							{
-								for (auto& flag : flags)
+								alignFlags = AlignFlags::ALIGN_FLAGS_RESET;
+								for (auto& flag : flagsJson)
 								{
-									if (ALIGN_FLAGS.contains(flags.get<std::string>()))
-										if (ALIGN_FLAGS.at(flags.get<std::string>()) == AlignFlags::ALIGN_FLAGS_RESET)
-										{
-											expandFlags = AlignFlags::ALIGN_FLAGS_RESET;
-										}
-										else
-										{
-											expandFlags |= ALIGN_FLAGS.at(flags.get<std::string>());
-										}
+									if (ALIGN_FLAGS.contains(flag))										
+									{
+										alignFlags |= ALIGN_FLAGS.at(flag);
+									}
 								}
 							}
 						}
@@ -113,6 +112,8 @@ bool gui::Layout::init(nlohmann::json j, bool ignoreType)
 			}
 			fields.load(j);
 
+			std::cout << "Align: " << std::bitset<8>(alignFlags) << " expand: " << std::bitset<8>(expandFlags) << std::endl;
+
 			m_config += fields;
 		}
 	}
@@ -124,59 +125,26 @@ void gui::Layout::revalidate()
 {
 	Widget::revalidate();
 
-	//if (sizing == SIZING::SIZE_INHERIT)
-	//{
-	//	// No point?
-	//	if (W() == 0)
-	//	{
-	//		if (getParent() != nullptr)
-	//		{
-	//			setW(getParent()->W(), FORCE);
-	//		}
-	//		else
-	//		{
-	//			setW(getGUI()->w, FORCE);
-	//		}
-	//	}
-	//	if (H() == 0)
-	//	{
-	//		if (getParent() != nullptr)
-	//		{
-	//			setH(getParent()->H(), FORCE);
-	//		}
-	//		else
-	//		{
-	//			setH(getGUI()->h, FORCE);
-	//		}
-	//	}
-	//}
-
-	if ((getExpandFlags() & ExpandFlags::EXPAND_FILL_WIDTH) == ExpandFlags::EXPAND_FILL_WIDTH)
+	if (isExpand(ExpandFlags::EXPAND_FILL_WIDTH))
 	{
-		if (W() == 0)
+		if (getParent() != nullptr)
 		{
-			if (getParent() != nullptr)
-			{
-				setW(getParent()->W(), FORCE);
-			}
-			else
-			{
-				setW(getGUI()->w, FORCE);
-			}
+			setW(getParent()->W(), FORCE);
+		}
+		else
+		{
+			setW(getGUI()->w, FORCE);
 		}
 	}
-	if ((getExpandFlags() & ExpandFlags::EXPAND_FILL_HEIGHT) == ExpandFlags::EXPAND_FILL_HEIGHT)
+	if (isExpand(ExpandFlags::EXPAND_FILL_HEIGHT))
 	{
-		if (H() == 0)
+		if (getParent() != nullptr)
 		{
-			if (getParent() != nullptr)
-			{
-				setH(getParent()->H(), FORCE);
-			}
-			else
-			{
-				setH(getGUI()->h, FORCE);
-			}
+			setH(getParent()->H(), FORCE);
+		}
+		else
+		{
+			setH(getGUI()->h, FORCE);
 		}
 	}
 
@@ -277,11 +245,11 @@ void gui::Layout::expand()
 				miny = std::min(miny, (float)widget->Y());
 			}
 		}
-		if ((getExpandFlags() & ExpandFlags::EXPAND_PREFERED_WIDTH) == ExpandFlags::EXPAND_PREFERED_WIDTH)
+		if (isExpand(ExpandFlags::EXPAND_PREFERED_WIDTH))
 			setW(maxx - minx, FORCE);
-		if ((getExpandFlags() & ExpandFlags::EXPAND_PREFERED_HEIGHT) == ExpandFlags::EXPAND_PREFERED_HEIGHT)
+		if (isExpand(ExpandFlags::EXPAND_PREFERED_HEIGHT))
 			setH(maxy - miny, FORCE);
-	}	
+	}
 }
 
 void gui::Layout::setAlignment(ALIGNMENT alignment)
@@ -322,4 +290,36 @@ void gui::Layout::setExpandFlags(uint8_t flags)
 uint8_t gui::Layout::getExpandFlags()
 {
 	return this->expandFlags;
+}
+
+uint8_t gui::Layout::getAlignFlags()
+{
+	return alignFlags;
+}
+
+
+bool gui::Layout::isAlign(uint8_t flag)
+{
+	return (alignFlags & flag) == flag;
+}
+
+bool gui::Layout::isExpand(uint8_t flag)
+{
+	return (expandFlags & flag) == flag;
+}
+
+float gui::Layout::getPreferedWidth(Widget* child)
+{
+	if (child == nullptr || !isChild(child))
+		return 0.0f;
+
+	return W() * child->getWeight() / getTotalWeightOfChildren();
+}
+
+float gui::Layout::getPreferedHeight(Widget* child)
+{
+	if (child == nullptr || !isChild(child))
+		return 0.0f;
+
+	return H() * child->getWeight() / getTotalWeightOfChildren();
 }
