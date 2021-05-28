@@ -49,8 +49,6 @@ bool gui::Dropdown::init(nlohmann::json j, bool ignoreType)
 					break;
 				}
 			}
-			setAlignment(ALIGN_SPACED);
-			setExpandFlags(ExpandFlags::EXPAND_RESET);
 		}
 	}
 

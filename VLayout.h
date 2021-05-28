@@ -13,6 +13,5 @@ namespace gui
 
 		virtual bool init(nlohmann::json j, bool ignoreType = false);
 		virtual void revalidate();
-		virtual float getPreferedWidth(Widget* child);
 	};
 }

@@ -64,9 +64,9 @@ bool gui::Layout::init(nlohmann::json j, bool ignoreType)
 										{
 											uint8_t flag = EXPAND_FLAGS.at(flagJson);
 											if ((flag & ExpandFlags::EXPAND_WIDTH_MASK))
-												expandFlags = (expandFlags & ~ExpandFlags::EXPAND_WIDTH_MASK) | (flag & ExpandFlags::EXPAND_WIDTH_MASK);
+												expandFlags |= (expandFlags & ~ExpandFlags::EXPAND_WIDTH_MASK) | (flag & ExpandFlags::EXPAND_WIDTH_MASK);
 											if ((flag & ExpandFlags::EXPAND_HEIGHT_MASK))
-												expandFlags = (expandFlags & ~ExpandFlags::EXPAND_HEIGHT_MASK) | (flag & ExpandFlags::EXPAND_HEIGHT_MASK);
+												expandFlags |= (expandFlags & ~ExpandFlags::EXPAND_HEIGHT_MASK) | (flag & ExpandFlags::EXPAND_HEIGHT_MASK);
 										}
 								}
 							}
@@ -86,7 +86,7 @@ bool gui::Layout::init(nlohmann::json j, bool ignoreType)
 							if (ALIGN_FLAGS.contains(value))
 							{
 								alignFlags = ALIGN_FLAGS.at(value);
-							}								
+							}
 						}
 						else
 						{
@@ -96,7 +96,7 @@ bool gui::Layout::init(nlohmann::json j, bool ignoreType)
 								alignFlags = AlignFlags::ALIGN_FLAGS_RESET;
 								for (auto& flag : flagsJson)
 								{
-									if (ALIGN_FLAGS.contains(flag))										
+									if (ALIGN_FLAGS.contains(flag))
 									{
 										alignFlags |= ALIGN_FLAGS.at(flag);
 									}
@@ -112,7 +112,7 @@ bool gui::Layout::init(nlohmann::json j, bool ignoreType)
 			}
 			fields.load(j);
 
-			std::cout << "Align: " << std::bitset<8>(alignFlags) << " expand: " << std::bitset<8>(expandFlags) << std::endl;
+			//std::cout << "Align: " << std::bitset<8>(alignFlags) << " expand: " << std::bitset<8>(expandFlags) << " inflate? " << isExpand(ExpandFlags::EXPAND_INFLATE_WIDTH) << std::endl;
 
 			m_config += fields;
 		}
@@ -145,6 +145,22 @@ void gui::Layout::revalidate()
 		else
 		{
 			setH(getGUI()->h, FORCE);
+		}
+	}
+
+	if (isExpand(ExpandFlags::EXPAND_INFLATE_WIDTH))
+	{
+		widget_as(Layout, parentLayout, getParent())
+		{
+			setW(parentLayout->getPreferedWidth(this), FORCE);
+			//std::cout << "inflate width: " << W() << std::endl;
+		}
+	}
+	if (isExpand(ExpandFlags::EXPAND_INFLATE_HEIGHT))
+	{
+		widget_as(Layout, parentLayout, getParent())
+		{
+			setH(parentLayout->getPreferedHeight(this), FORCE);
 		}
 	}
 
@@ -249,6 +265,7 @@ void gui::Layout::expand()
 			setW(maxx - minx, FORCE);
 		if (isExpand(ExpandFlags::EXPAND_PREFERED_HEIGHT))
 			setH(maxy - miny, FORCE);
+
 	}
 }
 
@@ -313,7 +330,14 @@ float gui::Layout::getPreferedWidth(Widget* child)
 	if (child == nullptr || !isChild(child))
 		return 0.0f;
 
-	return W() * child->getWeight() / getTotalWeightOfChildren();
+	float width = 0.0f;
+	for (auto& c : getVisibleChildren())
+		if (!c->isOmitFromLayout() && c != child)
+		{
+			width += c->W();
+		}
+
+	return W() - width;
 }
 
 float gui::Layout::getPreferedHeight(Widget* child)
@@ -321,5 +345,12 @@ float gui::Layout::getPreferedHeight(Widget* child)
 	if (child == nullptr || !isChild(child))
 		return 0.0f;
 
-	return H() * child->getWeight() / getTotalWeightOfChildren();
+	float height = 0.0f;
+	for (auto& c : getVisibleChildren())
+		if (!c->isOmitFromLayout() && c != child)
+		{
+			height += c->H();
+		}
+
+	return H() - height;
 }
