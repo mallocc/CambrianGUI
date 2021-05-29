@@ -13,7 +13,7 @@ namespace gui
 		WidgetManager(GUI* gui, Configuration* config);
 		bool init();
 		Widget* findWidget(std::string id);
-		Widget* createWidget(nlohmann::json& j);
+		Widget* createWidget(nlohmann::json j);
 		bool removeWidget(std::string id);
 		void handleDynamicJson(nlohmann::json j, std::string id);
 		void bringForwards(Widget* widget);

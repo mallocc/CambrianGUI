@@ -61,3 +61,25 @@ bool gui::FormLayout::init(nlohmann::json j, bool ignoreType)
 	}
 	return true;
 }
+
+bool gui::FormLayout::addItem(std::string labelText, Widget* inputWidget)
+{
+	nlohmann::json rowLayoutJson;
+	rowLayoutJson["widget"] = "hlayout";
+	rowLayoutJson["align"] = "center";
+	rowLayoutJson["expand"] = "prefered";
+	rowLayoutJson["spacing"] = 20;
+	create_widget_as(HLayout, rowLayout, rowLayoutJson)
+	{
+		nlohmann::json labelJson = labelTemplate;
+		labelJson["text"] = labelText;
+		create_widget(label, labelJson)
+		{
+			rowLayout->addChild(label);
+		}
+		rowLayout->addChild(inputWidget);
+		addChild(rowLayout);
+	}
+
+	return true;
+}

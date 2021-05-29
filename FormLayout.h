@@ -14,6 +14,8 @@ namespace gui
 
 		virtual bool initList(nlohmann::json j);
 
+		virtual bool addItem(std::string labelText, Widget* inputWidget);
+
 		nlohmann::json data;
 		nlohmann::json labelTemplate;
 	};

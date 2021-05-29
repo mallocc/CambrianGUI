@@ -94,7 +94,7 @@ void gui::Label::revalidate()
 		auto font = displayFont;
 		auto metrics = font->textMetrics(text, 1.0f);
 		setW(metrics.x + padding * (center + 1));
-		setH(font->size + padding * (center + 1));
+		setH(metrics.y + padding * (center + 1));
 	}
 	else
 	{
@@ -103,7 +103,7 @@ void gui::Label::revalidate()
 		if (W() == 0)
 			setW(metrics.x + padding * (center + 1));
 		if (H() == 0)
-			setH(font->size + padding * (center + 1));
+			setH(metrics.y + padding * (center + 1));
 	}
 	Widget::revalidate();
 }

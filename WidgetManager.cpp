@@ -49,7 +49,7 @@ gui::Widget* gui::WidgetManager::findWidget(std::string id)
 	return nullptr;
 }
 
-gui::Widget* gui::WidgetManager::createWidget(nlohmann::json& j)
+gui::Widget* gui::WidgetManager::createWidget(nlohmann::json j)
 {
 	Widget* widget = nullptr;
 	std::string tmp;
