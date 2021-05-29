@@ -50,7 +50,7 @@ void gui::VLayout::revalidate()
 			if (isExpand(ExpandFlags::EXPAND_PREFERED_WIDTH))
 				newWidth = (isAlign(AlignFlags::ALIGN_FLAGS_COLLAPSE) ? maxw : std::fabs(maxx - minx)) + totalPadding;
 			if (isExpand(ExpandFlags::EXPAND_PREFERED_HEIGHT))
-				newHeight = (isAlign(AlignFlags::ALIGN_FLAGS_COLLAPSE) ? maxh : std::fabs(maxy - miny) + totalSpacing) + totalPadding;
+				newHeight = (isAlign(AlignFlags::ALIGN_FLAGS_COLLAPSE) ? maxh : std::fabs(maxy - miny)) + totalPadding;
 		}
 
 		{
@@ -115,6 +115,7 @@ void gui::VLayout::revalidate()
 					if (!isAlign(AlignFlags::ALIGN_FLAGS_COLLAPSE))
 					{
 						y += child->H();
+						if (isAlign(AlignFlags::ALIGN_FLAGS_SPACED))
 						y += dEmptySpace;
 						if (!isAlign(AlignFlags::ALIGN_FLAGS_SPACED))
 							y += getSpacing();
