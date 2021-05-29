@@ -5,24 +5,6 @@
 
 namespace gui
 {
-	enum ALIGNMENT
-	{
-		ALIGN_NONE,
-		ALIGN_TOP,
-		ALIGN_BOTTOM,
-		ALIGN_LEFT,
-		ALIGN_RIGHT,
-		ALIGN_START,
-		ALIGN_END,
-		ALIGN_RSTART,
-		ALIGN_REND,
-		ALIGN_STACKED,
-		ALIGN_SPACED,
-		ALIGN_CENTERED,
-		ALIGN_LIST,
-		ALIGN_NUMBER,
-	};
-
 	enum AlignFlags
 	{
 		ALIGN_FLAGS_RESET	= 0b00000000,
@@ -93,22 +75,6 @@ namespace gui
 	};
 
 
-	const static std::string ALIGN_STRINGS[static_cast<size_t>(ALIGNMENT::ALIGN_NUMBER)] = {
-		"none",
-		"top",
-		"bottom",
-		"left",
-		"right",
-		"start",
-		"end",
-		"rstart",
-		"rend",
-		"stacked",
-		"spaced",
-		"centered",
-		"list",
-	};
-
 	class Layout : public Container, public WidgetType<Layout>
 	{
 		DEFINE_WIDGET_TYPE("layout");
@@ -121,9 +87,6 @@ namespace gui
 		virtual void expand();
 
 		Layout(GUI* gui);
-
-		void setAlignment(ALIGNMENT alignment);
-		ALIGNMENT getAlignment();
 
 		void setPadding(float padding);
 		float getPadding();
@@ -145,7 +108,6 @@ namespace gui
 
 	private:
 
-		ALIGNMENT alignment = ALIGNMENT::ALIGN_NONE;
 		uint8_t expandFlags = ExpandFlags::EXPAND_DEFAULT;
 		uint8_t alignFlags = AlignFlags::ALIGN_FLAGS_DEFAULT;
 		float padding = 0.0f;

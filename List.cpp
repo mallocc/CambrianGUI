@@ -53,7 +53,6 @@ bool gui::List::init(nlohmann::json j, bool ignoreType)
 					}
 				}
 			}
-			setAlignment(ALIGN_LIST);
 		}
 	}
 	return success;

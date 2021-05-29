@@ -357,28 +357,28 @@ void gui::Widget::revalidate()
 	//}
 
 
-	if (m_w == 0)
-	{
-		if (m_parent != nullptr)
-		{
-			m_w = m_parent->m_w;
-		}
-		else
-		{
-			m_w = m_gui->w;
-		}
-	}
-	if (m_h == 0)
-	{
-		if (m_parent != nullptr)
-		{
-			m_h = m_parent->m_h;
-		}
-		else
-		{
-			m_h = m_gui->h;
-		}
-	}
+	//if (m_w == 0)
+	//{
+	//	if (m_parent != nullptr)
+	//	{
+	//		m_w = m_parent->m_w;
+	//	}
+	//	else
+	//	{
+	//		m_w = m_gui->w;
+	//	}
+	//}
+	//if (m_h == 0)
+	//{
+	//	if (m_parent != nullptr)
+	//	{
+	//		m_h = m_parent->m_h;
+	//	}
+	//	else
+	//	{
+	//		m_h = m_gui->h;
+	//	}
+	//}
 
 	if (m_scaled)
 	{
@@ -478,28 +478,28 @@ bool gui::Widget::init(nlohmann::json j, bool ignoreType)
 		m_rotation = m_rotationTarget;
 		m_color = m_targetColor;
 
-		if (m_w == 0)
-		{
-			if (m_parent != nullptr)
-			{
-				m_wTarget = m_parent->m_w;
-			}
-			else
-			{
-				m_wTarget = m_gui->w;
-			}
-		}
-		if (m_h == 0)
-		{
-			if (m_parent != nullptr)
-			{
-				m_hTarget = m_parent->m_h;
-			}
-			else
-			{
-				m_hTarget = m_gui->h;
-			}
-		}
+		//if (m_w == 0)
+		//{
+		//	if (m_parent != nullptr)
+		//	{
+		//		m_wTarget = m_parent->m_w;
+		//	}
+		//	else
+		//	{
+		//		m_wTarget = m_gui->w;
+		//	}
+		//}
+		//if (m_h == 0)
+		//{
+		//	if (m_parent != nullptr)
+		//	{
+		//		m_hTarget = m_parent->m_h;
+		//	}
+		//	else
+		//	{
+		//		m_hTarget = m_gui->h;
+		//	}
+		//}
 
 		if (m_scaled)
 		{

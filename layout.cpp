@@ -20,54 +20,33 @@ bool gui::Layout::init(nlohmann::json j, bool ignoreType)
 			{
 				fields["padding"] = padding;
 				fields["spacing"] = spacing;
-				fields["alignment"] = { "none",
-					[&](std::string value)
-					{
-						for (int i = 0; i < ALIGNMENT::ALIGN_NUMBER; ++i)
-							if (ALIGN_STRINGS[i] == value)
-								alignment = (ALIGNMENT)i;
-					},
-					[&](std::string fieldName) { return nlohmann::json({{fieldName, ALIGN_STRINGS[alignment]}}); }
-				};
 				fields["expand"] = { "default",
 					[&](std::string value)
 					{
 						if (!nlohmann::json::accept(value))
 						{
+							expandFlags = ExpandFlags::EXPAND_RESET;
 							if (EXPAND_FLAGS.contains(value))
-								if (EXPAND_FLAGS.at(value) == ExpandFlags::EXPAND_RESET)
-								{
-									expandFlags = ExpandFlags::EXPAND_RESET;
-								}
-								else
-								{
-									uint8_t flag = EXPAND_FLAGS.at(value);
-									if ((flag & ExpandFlags::EXPAND_WIDTH_MASK))
-										expandFlags = (expandFlags & ~ExpandFlags::EXPAND_WIDTH_MASK) | (flag & ExpandFlags::EXPAND_WIDTH_MASK);
-									if ((flag & ExpandFlags::EXPAND_HEIGHT_MASK))
-										expandFlags = (expandFlags & ~ExpandFlags::EXPAND_HEIGHT_MASK) | (flag & ExpandFlags::EXPAND_HEIGHT_MASK);
-								}
+							{
+								expandFlags = EXPAND_FLAGS.at(value);
+							}
 						}
-						else if (false)
+						else
 						{
 							nlohmann::json flagsJson = nlohmann::json::parse(value);
 							if (flagsJson.is_array())
 							{
+								expandFlags = ExpandFlags::EXPAND_RESET;
 								for (auto& flagJson : flagsJson)
 								{
 									if (EXPAND_FLAGS.contains(flagJson))
-										if (EXPAND_FLAGS.at(flagJson) == ExpandFlags::EXPAND_RESET)
-										{
-											expandFlags = ExpandFlags::EXPAND_RESET;
-										}
-										else
-										{
-											uint8_t flag = EXPAND_FLAGS.at(flagJson);
-											if ((flag & ExpandFlags::EXPAND_WIDTH_MASK))
-												expandFlags |= (expandFlags & ~ExpandFlags::EXPAND_WIDTH_MASK) | (flag & ExpandFlags::EXPAND_WIDTH_MASK);
-											if ((flag & ExpandFlags::EXPAND_HEIGHT_MASK))
-												expandFlags |= (expandFlags & ~ExpandFlags::EXPAND_HEIGHT_MASK) | (flag & ExpandFlags::EXPAND_HEIGHT_MASK);
-										}
+									{
+										uint8_t flag = EXPAND_FLAGS.at(flagJson);
+										if ((flag & ExpandFlags::EXPAND_WIDTH_MASK))
+											expandFlags |= (expandFlags & ~ExpandFlags::EXPAND_WIDTH_MASK) | (flag & ExpandFlags::EXPAND_WIDTH_MASK);
+										if ((flag & ExpandFlags::EXPAND_HEIGHT_MASK))
+											expandFlags |= (expandFlags & ~ExpandFlags::EXPAND_HEIGHT_MASK) | (flag & ExpandFlags::EXPAND_HEIGHT_MASK);
+									}
 								}
 							}
 						}
@@ -176,81 +155,13 @@ void gui::Layout::revalidate()
 void gui::Layout::expand()
 {
 	std::vector<Widget*> visibleChildren = getVisibleChildren();
-	//switch (sizing)
-	//{
-	//case SIZE_EXPAND:
-	//{
-	//	float maxx = 0.0f;
-	//	float maxy = 0.0f;
-	//	float minx = getParent() != nullptr ? getParent()->W() : getGUI()->w;
-	//	float miny = getParent() != nullptr ? getParent()->H() : getGUI()->h;
-	//	for (Widget* widget : visibleChildren)
-	//	{
-	//		if (!widget->isOmitFromLayout())
-	//		{
-	//			maxx = std::max(maxx, (float)widget->X() + (float)widget->W());
-	//			maxy = std::max(maxy, (float)widget->Y() + (float)widget->H());
-	//			minx = std::min(minx, (float)widget->X());
-	//			miny = std::min(miny, (float)widget->Y());
-	//		}
-	//	}
-	//	setW(maxx - minx, FORCE);
-	//	setH(maxy - miny, FORCE);
-	//	break;
-	//}
-	//case SIZE_EXPAND_WIDTH:
-	//{
-	//	float maxx = 0.0f;
-	//	float minx = getParent() != nullptr ? getParent()->W() : getGUI()->w;
-	//	for (Widget* widget : visibleChildren)
-	//	{
-	//		if (!widget->isOmitFromLayout())
-	//		{
-	//			maxx = std::max(maxx, (float)widget->X() + (float)widget->W());
-	//			minx = std::min(minx, (float)widget->X());
-	//		}
-	//	}
-	//	setW(maxx - minx, FORCE);
-	//	//if (getParent() != nullptr)
-	//	//{
-	//	//	setH(getParent()->H(), FORCE);
-	//	//}
-	//	//else
-	//	//{
-	//	//	setH(getGUI()->h, FORCE);
-	//	//}
-	//	break;
-	//}
-	//case SIZE_EXPAND_HEIGHT:
-	//{
-	//	float maxy = 0.0f;
-	//	float miny = getParent() != nullptr ? getParent()->H() : getGUI()->h;
-	//	for (Widget* widget : visibleChildren)
-	//	{
-	//		if (!widget->isOmitFromLayout())
-	//		{
-	//			maxy = std::max(maxy, (float)widget->Y() + (float)widget->H());
-	//			miny = std::min(miny, (float)widget->Y());
-	//		}
-	//	}
-	//	//if (getParent() != nullptr)
-	//	//{
-	//	//	setW(getParent()->W(), FORCE);
-	//	//}
-	//	//else
-	//	//{
-	//	//	setW(getGUI()->w, FORCE);
-	//	//}
-	//	setH(maxy - miny, FORCE);
-	//	break;
-	//}
-	//}
-
+	float totalPadding = getPadding() * 2.0f;
+	float totalSpacing = getSpacing() * (visibleChildren.size() - 1);
 	{
 		float maxx = 0.0f;
 		float maxy = 0.0f;
-		float minx = getParent() != nullptr ? getParent()->W() : getGUI()->w;
-		float miny = getParent() != nullptr ? getParent()->H() : getGUI()->h;
+		float minx = getGUI()->w;
+		float miny = getGUI()->h;
 		for (Widget* widget : visibleChildren)
 		{
 			if (!widget->isOmitFromLayout())
@@ -262,21 +173,10 @@ void gui::Layout::expand()
 			}
 		}
 		if (isExpand(ExpandFlags::EXPAND_PREFERED_WIDTH))
-			setW(maxx - minx, FORCE);
+			setW(std::fabs(maxx - minx) + totalPadding, FORCE);
 		if (isExpand(ExpandFlags::EXPAND_PREFERED_HEIGHT))
-			setH(maxy - miny, FORCE);
-
+			setH(std::fabs(maxy - miny) + totalPadding, FORCE);
 	}
-}
-
-void gui::Layout::setAlignment(ALIGNMENT alignment)
-{
-	this->alignment = alignment;
-}
-
-gui::ALIGNMENT gui::Layout::getAlignment()
-{
-	return alignment;
 }
 
 void gui::Layout::setPadding(float padding)
@@ -327,30 +227,10 @@ bool gui::Layout::isExpand(uint8_t flag)
 
 float gui::Layout::getPreferedWidth(Widget* child)
 {
-	if (child == nullptr || !isChild(child))
-		return 0.0f;
-
-	float width = 0.0f;
-	for (auto& c : getVisibleChildren())
-		if (!c->isOmitFromLayout() && c != child)
-		{
-			width += c->W();
-		}
-
-	return W() - width;
+	return W() - getPadding() * 2.0f;
 }
 
 float gui::Layout::getPreferedHeight(Widget* child)
 {
-	if (child == nullptr || !isChild(child))
-		return 0.0f;
-
-	float height = 0.0f;
-	for (auto& c : getVisibleChildren())
-		if (!c->isOmitFromLayout() && c != child)
-		{
-			height += c->H();
-		}
-
-	return H() - height;
+	return H() - getPadding() * 2.0f;
 }
