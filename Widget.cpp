@@ -570,7 +570,7 @@ bool gui::Widget::onClickEvent(MouseEventData mouseEventData, bool process)
 			{
 				system(m_shellExecute.c_str());
 			}
-			m_gui->fireTriggers(m_onClickJson);
+			m_gui->fireTriggers(m_onClickJson, this);
 
 			m_config.load(m_onClickJson, true);
 
@@ -766,7 +766,7 @@ void gui::Widget::check(bool updatedRadio, bool force)
 	{
 		if (updatedRadio)
 			radioUp("check");
-		m_gui->fireTriggers(m_onCheckedJson);
+		m_gui->fireTriggers(m_onCheckedJson, this);
 		m_config.load(m_onCheckedJson, true);
 		m_gui->getWidgetManager()->handleDynamicJson(m_onCheckedExternalJson, m_id);
 		onChecked(m_gui, m_oldMouseEventData);
@@ -778,7 +778,7 @@ void gui::Widget::uncheck(bool updatedRadio, bool force)
 {
 	if (m_checked || force)
 	{
-		m_gui->fireTriggers(m_onUncheckedJson);
+		m_gui->fireTriggers(m_onUncheckedJson, this);
 		m_config.load(m_onUncheckedJson, true);
 		m_gui->getWidgetManager()->handleDynamicJson(m_onUncheckedExternalJson, m_id);
 		onUnchecked(m_gui, m_oldMouseEventData);
@@ -1011,6 +1011,11 @@ void gui::Widget::setW(float w, bool force)
 float gui::Widget::getW()
 {
 	return m_w;
+}
+
+float* gui::Widget::getTargetWRef()
+{
+	return &m_wTarget;
 }
 
 float gui::Widget::W()

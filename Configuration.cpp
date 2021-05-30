@@ -39,8 +39,8 @@ namespace gui
 				fonts = j.at("fonts");
 				for (auto& i : fonts)
 				{
-
-					gui.getFontManager()->addFont(i["name"], i["font"], i["size"], i["weight"], i["outline"]);
+					if (!gui.getFontManager()->fonts.contains(i["name"]));
+						gui.getFontManager()->addFont(i["name"], i["font"], i["size"], i["weight"], i["outline"]);
 				}
 			}
 		}

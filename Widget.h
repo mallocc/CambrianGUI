@@ -62,6 +62,7 @@ public: \
 		virtual float getW();
 		virtual float W();
 		float getTargetW();
+		virtual float* getTargetWRef();
 		virtual void setH(float h, bool force = false);
 		virtual float getH();
 		virtual float H();

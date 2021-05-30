@@ -285,7 +285,7 @@ void Font::renderText(std::string text_, float x, float y, float scale, bool bol
 			x -= width - bdims.x;
 
 
-		y = initialY + q * size * lineHeight;
+		y = initialY + (q+1) * size * lineHeight;
 
 		for (int c = 0; c < text.length(); ++c)
 		{
@@ -436,7 +436,7 @@ gui::coord_t Font::textMetrics(std::string text, float scale, float lineHeight, 
 			maxWidth = i.width;
 	}
 
-	return {maxWidth, layout.size() * size * lineHeight};
+	return {maxWidth, layout.size() * (1+size) * lineHeight};
 }
 
 inline int getIndex(int x, int y, int width)

@@ -27,6 +27,7 @@ namespace gui
 		std::function<void(float)> onValueChanged;
 
 		virtual void setValue(float value);
+		virtual void setValueRef(float* valueRef);
 		virtual void setInitialValue(float value);
 
 		virtual float getValue();
@@ -38,6 +39,7 @@ namespace gui
 
 		inline std::string roundNumber(float number);
 
+
 	private:
 		Texture* m_foreground = nullptr;
 		float m_defaultVal = 0.0f;
@@ -47,5 +49,7 @@ namespace gui
 		float m_maxVal = 1.0f;
 		bool m_floatingLabel = false;
 		bool m_vertical = false;
+
+		float* m_valRef = nullptr;
 	};
 }

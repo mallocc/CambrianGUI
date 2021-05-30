@@ -24,7 +24,15 @@ bool gui::Slider::init(nlohmann::json j, bool ignoreType)
 			ConfigList fields;
 			{
 				fields["foreground"] = textureConfigItem(m_foreground);
-				fields["value"] = { m_val, "0.0" };
+				fields["value"] = { 
+					"0.0", 
+					[&](std::string value) {
+						setValue(std::atof(value.c_str()));
+					},
+					[&](std::string value) {
+						return nlohmann::json({ {value, getValue() } });
+					}					 
+				};
 				fields["default"] = { m_defaultVal, "0.0" };
 				fields["min"] = { m_minVal, "0.0" };
 				fields["max"] = { m_maxVal, "1.0" };
@@ -34,7 +42,7 @@ bool gui::Slider::init(nlohmann::json j, bool ignoreType)
 			fields.load(j);
 			m_config += fields;
 
-			m_initialVal = m_val;
+			m_initialVal = getValue();
 		}
 	}
 	return true;
@@ -42,7 +50,7 @@ bool gui::Slider::init(nlohmann::json j, bool ignoreType)
 
 float gui::Slider::getValToRatio()
 {
-	return (m_val - m_minVal) / std::fabs(m_maxVal - m_minVal);
+	return (getValue() - m_minVal) / std::fabs(m_maxVal - m_minVal);
 }
 
 float gui::Slider::getRatioToVal(float ratio)
@@ -104,7 +112,7 @@ gui::Widget* gui::Slider::onKeyEvent(KeyEventData keyEventData)
 {
 	if (keyUp(VK_LSHIFT, &keyEventData) || keyDown(VK_LSHIFT, &keyEventData))
 	{
-		this->m_initialVal = m_val;
+		this->m_initialVal = getValue();
 		setInitialMouseEventData(getMouseEventData());
 	}
 
@@ -117,8 +125,8 @@ bool gui::Slider::onMiddleClickEvent(MouseEventData mouseEventData, bool process
 	bool handled = Widget::onMiddleClickEvent(mouseEventData, process);
 	if (handled && process)
 	{
-		m_val = m_defaultVal;
-		onValueChanged(m_val);
+		setValue(m_defaultVal);
+		onValueChanged(getValue());
 	}
 	return handled;
 }
@@ -131,19 +139,6 @@ bool gui::Slider::onDownEvent(MouseEventData mouseEventData, bool process)
 		float tx = 0, ty = 0;
 		getAbsolutePosition(tx, ty);
 
-		if (m_vertical)
-		{
-			m_val = getRatioToVal(1.0f - (mouseEventData.y - ty - W() / 2.0f) / (float)(H() - W()));
-			m_val = std::min(m_maxVal, std::max(m_minVal, m_val));
-		}
-		else
-		{
-			m_val = (mouseEventData.x - tx - H() / 2.0f) / (float)(W() - H());
-			m_val = std::min(1.0f, std::max(0.0f, m_val));
-		}
-
-		onValueChanged(m_val);
-
 		if (m_floatingLabel)
 		{
 			if (m_vertical)
@@ -151,7 +146,7 @@ bool gui::Slider::onDownEvent(MouseEventData mouseEventData, bool process)
 				getGUI()->showFloatingLabel(
 					tx + W(), 
 					ty + (1.0f - getValToRatio()) * (H() - W()), 
-					roundNumber(m_val), 100);
+					roundNumber(getValue()), 100);
 			}
 			else
 			{
@@ -161,9 +156,23 @@ bool gui::Slider::onDownEvent(MouseEventData mouseEventData, bool process)
 					- getGUI()->getWidgetManager()->getFloatingLabelWidget()->W() / 2.0 
 					+ H() / 2.0f, 
 					ty - getGUI()->getWidgetManager()->getFloatingLabelWidget()->H(),
-					roundNumber(m_val), 100);
+					roundNumber(getValue()), 100);
 			}
 		}
+
+		if (m_vertical)
+		{
+			setValue(getRatioToVal(1.0f - (mouseEventData.y - ty - W() / 2.0f) / (float)(H() - W())));
+			setValue(std::min(m_maxVal, std::max(m_minVal, getValue())));
+		}
+		else
+		{
+			setValue(getRatioToVal(mouseEventData.x - tx - H() / 2.0f) / (float)(W() - H()));
+			setValue(std::min(m_maxVal, std::max(m_minVal, getValue())));
+		}
+
+		onValueChanged(getValue());
+
 	}
 	return handled;
 }
@@ -196,6 +205,13 @@ bool& gui::Slider::getVertical()
 void gui::Slider::setValue(float value)
 {
 	this->m_val = value;
+	if (this->m_valRef != nullptr)
+		*this->m_valRef = value;
+}
+
+void gui::Slider::setValueRef(float* valueRef)
+{
+	this->m_valRef = valueRef;
 }
 
 void gui::Slider::setInitialValue(float value)
@@ -205,6 +221,8 @@ void gui::Slider::setInitialValue(float value)
 
 float gui::Slider::getValue()
 {
+	if (this->m_valRef != nullptr)
+		return *this->m_valRef;
 	return m_val;
 }
 

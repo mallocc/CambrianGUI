@@ -144,8 +144,9 @@ void gui::Layout::revalidate()
 	}
 
 	std::vector<Widget*> visibleChildren = getVisibleChildren();
-	for (Widget* widget : visibleChildren)
+	for (auto& widget : visibleChildren)
 	{
+		if (widget != nullptr)
 		widget->revalidate();
 	}
 

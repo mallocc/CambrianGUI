@@ -66,7 +66,7 @@ bool gui::FormLayout::addItem(std::string labelText, Widget* inputWidget)
 {
 	nlohmann::json rowLayoutJson;
 	rowLayoutJson["widget"] = "hlayout";
-	rowLayoutJson["align"] = "center";
+	rowLayoutJson["align"] = "start";
 	rowLayoutJson["expand"] = "prefered";
 	rowLayoutJson["spacing"] = 20;
 	create_widget_as(HLayout, rowLayout, rowLayoutJson)

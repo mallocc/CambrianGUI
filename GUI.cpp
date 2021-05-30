@@ -353,14 +353,16 @@ void gui::GUI::loadDimensions(std::string configOverridePath)
 	}
 }
 
-void gui::GUI::fireTriggers(nlohmann::json triggerJson)
+void gui::GUI::fireTriggers(nlohmann::json triggerJson, Widget* from)
 {
 	for (auto& i : triggerJson.items())
 	{
 		if (i.key() == "trigger")
 		{
 			if (triggerCallbacks.find(i.value()) != triggerCallbacks.end())
-				triggerCallbacks.at(i.value())(this);
+			{
+				triggerCallbacks.at(i.value())(this, from);
+			}
 			break;
 		}
 	}
@@ -413,9 +415,9 @@ GUI::GUI(int32_t w, int32_t h)
 	widgetManager->registerWidget<Spinner>();
 	widgetManager->registerWidget<FormLayout>();
 
-	registerTriggerCallback("show_credits", [&](GUI* g) { g->displayCredits = true; });
-	registerTriggerCallback("hide_credits", [&](GUI* g) { g->displayCredits = false; });
-	registerTriggerCallback("test", [&](GUI* g) { std::cout << "test" << std::endl; });
+	registerTriggerCallback("show_credits", [&](GUI* gui, Widget*) { gui->displayCredits = true; });
+	registerTriggerCallback("hide_credits", [&](GUI* gui, Widget*) { gui->displayCredits = false; });
+	registerTriggerCallback("test", [&](GUI*, Widget* from) { std::cout << "Triggered from widget: " << from->getId() << std::endl; });
 }
 
 GUI* gui::GUI::getGUI()

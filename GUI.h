@@ -11,7 +11,7 @@ namespace gui
 {
 	extern const std::map<std::string, LPSTR> cursors;
 
-	typedef std::function<void(GUI*)> TriggerCallback;
+	typedef std::function<void(GUI*, Widget*)> TriggerCallback;
 
 	class GUI
 	{
@@ -29,7 +29,7 @@ namespace gui
 		virtual bool keyUp(int virtualKey, KeyEventData* keys);
 		virtual void init(std::string configOverridePath = "", bool firstLoad = 1);
 		virtual void loadDimensions(std::string configOverridePath);
-		virtual void fireTriggers(nlohmann::json triggerJson);
+		virtual void fireTriggers(nlohmann::json triggerJson, Widget* from);
 		virtual void free();
 		TextureManager* getTextureManager();
 		FontManager* getFontManager();
