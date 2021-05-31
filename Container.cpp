@@ -176,12 +176,13 @@ void Container::draw(float tx, float ty, bool editMode)
 	std::vector<Widget*> visibleChildren = getVisibleChildren();
 	for (int i = visibleChildren.size() - 1; i >= 0; --i)
 	{
-		visibleChildren[i]->draw(tx, ty, editMode);
+		if (visibleChildren[i] != nullptr)
+			visibleChildren[i]->draw(tx, ty, editMode);
 	}
 
 	bool widgetHandledDown = false;
 	for (Widget* widget : visibleChildren)
-		if (widget->isDown())
+		if (widget != nullptr && widget->isDown())
 			widgetHandledDown = true;
 
 	if (editMode)// && gui->editedWidget == this)
@@ -202,7 +203,7 @@ void Container::draw(float tx, float ty, bool editMode)
 	}
 }
 
-bool Container::init(nlohmann::json j, bool ignoreType)
+bool Container::init(const nlohmann::json& j, bool ignoreType)
 {
 	if (Widget::init(j, ignoreType))
 	{

@@ -15,7 +15,7 @@ namespace gui
 		nlohmann::json labelJson;
 		nlohmann::json data;
 		uint32_t defaultChoice = 0U;
-		virtual bool init(nlohmann::json j, bool ignoreType = false) override;
+		virtual bool init(const nlohmann::json& j, bool ignoreType = false) override;
 
 		virtual bool onClickEvent(MouseEventData mouseEventData, bool process) override;
 

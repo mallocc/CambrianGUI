@@ -4,7 +4,7 @@ gui::GridLayout::GridLayout(GUI* gui) : Layout(gui)
 {
 }
 
-bool gui::GridLayout::init(nlohmann::json j, bool ignoreType)
+bool gui::GridLayout::init(const nlohmann::json& j, bool ignoreType)
 {
 	if (Layout::init(j, true))
 	{

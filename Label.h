@@ -22,7 +22,7 @@ namespace gui
 		std::string text = "---";
 
 		virtual void draw(float tx, float ty, bool editMode = false);
-		virtual bool init(nlohmann::json j, bool ignoreType = false);
+		virtual bool init(const nlohmann::json& j, bool ignoreType = false);
 		virtual void revalidate();
 		Label(GUI* gui);
 	};

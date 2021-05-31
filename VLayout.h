@@ -11,7 +11,7 @@ namespace gui
 
 		VLayout(GUI* gui);
 
-		virtual bool init(nlohmann::json j, bool ignoreType = false) override;
+		virtual bool init(const nlohmann::json& j, bool ignoreType = false) override;
 		virtual void revalidate() override;
 
 		virtual float getPreferedHeight(Widget* child) override;

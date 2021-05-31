@@ -4,7 +4,7 @@ gui::ScrollLayout::ScrollLayout(GUI* gui) : Layout(gui)
 {
 }
 
-bool gui::ScrollLayout::init(nlohmann::json j, bool ignoreType)
+bool gui::ScrollLayout::init(const nlohmann::json& j, bool ignoreType)
 {
 	if (Layout::init(j, true))
 	{

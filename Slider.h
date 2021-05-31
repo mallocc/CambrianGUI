@@ -11,7 +11,7 @@ namespace gui
 		Slider(GUI* gui);
 
 		virtual void draw(float tx, float ty, bool editMode = false) override;
-		virtual bool init(nlohmann::json j, bool ignoreType = false) override;
+		virtual bool init(const nlohmann::json& j, bool ignoreType = false) override;
 		float getValToRatio();
 		float getRatioToVal(float ratio);
 		virtual Widget* onKeyEvent(KeyEventData keyEventData) override;

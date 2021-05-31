@@ -42,7 +42,7 @@ bool gui::FormLayout::initList(nlohmann::json j)
 	return true;
 }
 
-bool gui::FormLayout::init(nlohmann::json j, bool ignoreType)
+bool gui::FormLayout::init(const nlohmann::json& j, bool ignoreType)
 {
 	if (VLayout::init(j, true))
 	{

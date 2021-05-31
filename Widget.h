@@ -166,7 +166,7 @@ public: \
 		virtual Widget* onKeyEvent(KeyEventData keyEventData);
 		virtual void draw(float tx, float ty, bool editMode = false);
 		virtual void revalidate();
-		virtual bool init(nlohmann::json j, bool ignoreType = false);
+		virtual bool init(const nlohmann::json& j, bool ignoreType = false);
 		virtual nlohmann::json toJson();
 
 		bool keyDown(int virtualKey, KeyEventData* keys);

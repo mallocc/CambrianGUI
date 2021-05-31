@@ -4,7 +4,7 @@ gui::TabLayout::TabLayout(GUI* gui) : Layout(gui)
 {
 }
 
-bool gui::TabLayout::init(nlohmann::json j, bool ignoreType)
+bool gui::TabLayout::init(const nlohmann::json& j, bool ignoreType)
 {
 	if (Layout::init(j, true))
 	{

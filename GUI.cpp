@@ -134,8 +134,7 @@ void GUI::onMouseEvent(MouseEventData mouseEventData)
 {
 	//std::cout << mouseEventData.x << " " << mouseEventData.y << " left: " << mouseEventData.leftDown << " middle: " << mouseEventData.middleDown << " right: " << mouseEventData.rightDown << std::endl;
 
-	//hCursor = LoadCursor(NULL, IDC_ARROW);
-	// Look for a new focused widget in children
+	// Look for a new focused widget in UI
 	if (focusedWidget == nullptr)
 	{
 		Widget* rootWidget = widgetManager->getRootWidget();
@@ -143,21 +142,27 @@ void GUI::onMouseEvent(MouseEventData mouseEventData)
 		Widget* dropdownListWidget = widgetManager->getDropDownListWidget();
 		if (dropdownListWidget != nullptr)
 		{
+			// If there is a current dropdown open: 
+			//		this make the rest of the UI disabled until finsihed with the dropdown
 			if (dropdownListWidget->isVisible())
 			{
-				if (!(dropdownListWidget->onClickEvent(mouseEventData, false) &&
-					dropdownListWidget->onOverEvent(mouseEventData, false)) &&
-					rootWidget->onMouseEvent(mouseEventData, false) != nullptr)
-				{
-					closeDropdownIntent();
-				}
+				// Process dropdown list anyway for hover animation etc
 				dropdownListWidget->onMouseEvent(mouseEventData, true);
+				// Now trigger callbacks for the parent that the dropdown opened for
 				if (dropdownListWidget->getParent() != nullptr)
 				{
 					dropdownListWidget->getParent()->onMouseEvent(mouseEventData, true);
 				}
+				// If the dropdown wasnt clicked but something else was: close the dropdown
+				if (!(dropdownListWidget->onOverEvent(mouseEventData, false) &&
+					!dropdownListWidget->onClickEvent(mouseEventData, false)) &&
+					rootWidget->onMouseEvent(mouseEventData, false) != nullptr)
+				{
+					closeDropdownIntent();
+				}
+			
 			}
-			else
+			else // If there is no currnet dropdown open, carry on as usual
 			{
 				// Check for event
 				if (rootWidget != nullptr)
@@ -165,33 +170,22 @@ void GUI::onMouseEvent(MouseEventData mouseEventData)
 			}
 		}
 	}
-	else
+	else // Theres already a widget being focuced/interacted with, so only process it and freeze disable everything else
 	{
 		focusedWidget->onMouseEvent(mouseEventData, /*!editMode*/ true, true);
 	}
-
-	//if (editMode)
-	//{
-	//	setCursor("cross");
-	//	if (focusedWidget != nullptr)
-	//	{
-	//		if (focusedWidget->onClickEvent(mouseEventData, false))
-	//		{
-	//			editedWidget = focusedWidget;
-	//		}
-	//	}
-	//}
 
 	// Reset focused widget when mouse released
 	if ((!mouseEventData.leftDown) && focusedWidget != nullptr)
 	{
 		focusedWidget = nullptr;
-		//hideFloatingLabel();
 	}
 
+	// Update last handled widget
 	if (focusedWidget != nullptr)
 		lastHandledWidget = focusedWidget;
 
+	// Update last mouse state
 	oldMouseEventData = mouseEventData;
 }
 

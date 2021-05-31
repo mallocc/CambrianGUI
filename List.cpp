@@ -3,7 +3,7 @@
 
 gui::List::List(GUI* gui) : VLayout(gui) {}
 
-bool gui::List::init(nlohmann::json j, bool ignoreType)
+bool gui::List::init(const nlohmann::json& j, bool ignoreType)
 {
 	bool success = false;
 

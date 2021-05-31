@@ -53,7 +53,7 @@ void gui::Label::draw(float tx, float ty, bool editMode)
 	glColor4f(1, 1, 1, 1);
 }
 
-bool gui::Label::init(nlohmann::json j, bool ignoreType)
+bool gui::Label::init(const nlohmann::json& j, bool ignoreType)
 {
 	if (Widget::init(j, ignoreType))
 	{

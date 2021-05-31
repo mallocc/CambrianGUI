@@ -3,7 +3,7 @@
 
 gui::HLayout::HLayout(GUI* gui) : Layout(gui) {}
 
-bool gui::HLayout::init(nlohmann::json j, bool ignoreType)
+bool gui::HLayout::init(const nlohmann::json& j, bool ignoreType)
 {
 	if (Layout::init(j, true))
 	{

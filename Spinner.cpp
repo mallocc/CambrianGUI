@@ -67,7 +67,7 @@ bool gui::Spinner::onDragEvent(MouseEventData mouseEventData, bool process)
 	return handled;
 }
 
-bool gui::Spinner::init(nlohmann::json j, bool ignoreType)
+bool gui::Spinner::init(const nlohmann::json& j, bool ignoreType)
 {
 	if (Label::init(j, true))
 	{

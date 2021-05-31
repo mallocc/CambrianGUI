@@ -9,7 +9,7 @@ namespace gui
 		DEFINE_WIDGET_TYPE("hlayout");
 	public:
 		HLayout(GUI* gui);
-		virtual bool init(nlohmann::json j, bool ignoreType = false) override;
+		virtual bool init(const nlohmann::json& j, bool ignoreType = false) override;
 		virtual void revalidate() override;
 
 		virtual float getPreferedWidth(Widget* child) override;

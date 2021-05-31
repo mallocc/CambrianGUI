@@ -4,7 +4,7 @@ gui::HSlider::HSlider(GUI* gui) : Slider(gui)
 {
 }
 
-bool gui::HSlider::init(nlohmann::json j, bool ignoreType)
+bool gui::HSlider::init(const nlohmann::json& j, bool ignoreType)
 {
 	if (Slider::init(j, true))
 	{

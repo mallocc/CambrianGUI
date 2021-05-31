@@ -10,7 +10,7 @@ using gui::Widget;
 Layout::Layout(GUI* gui) : Container(gui) {}
 
 
-bool gui::Layout::init(nlohmann::json j, bool ignoreType)
+bool gui::Layout::init(const nlohmann::json& j, bool ignoreType)
 {
 	if (Container::init(j, true))
 	{
@@ -147,7 +147,7 @@ void gui::Layout::revalidate()
 	for (auto& widget : visibleChildren)
 	{
 		if (widget != nullptr)
-		widget->revalidate();
+			widget->revalidate();
 	}
 
 	expand();
@@ -165,6 +165,7 @@ void gui::Layout::expand()
 		float miny = getGUI()->h;
 		for (Widget* widget : visibleChildren)
 		{
+			if (widget!=nullptr)
 			if (!widget->isOmitFromLayout())
 			{
 				maxx = std::max(maxx, (float)widget->X() + (float)widget->W());

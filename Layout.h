@@ -80,7 +80,7 @@ namespace gui
 		DEFINE_WIDGET_TYPE("layout");
 	public:
 
-		virtual bool init(nlohmann::json j, bool ignoreType = false);
+		virtual bool init(const nlohmann::json& j, bool ignoreType = false);
 
 		virtual void revalidate();
 

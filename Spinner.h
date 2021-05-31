@@ -10,7 +10,7 @@ namespace gui
 	public:
 		Spinner(GUI* gui);
 
-		virtual bool init(nlohmann::json j, bool ignoreType = false) override;
+		virtual bool init(const nlohmann::json& j, bool ignoreType = false) override;
 		virtual Widget* onKeyEvent(KeyEventData keyEventData) override;
 
 		std::function<void(float)> onValueChanged;

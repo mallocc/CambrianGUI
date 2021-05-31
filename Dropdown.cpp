@@ -1,7 +1,7 @@
 #include "Dropdown.h"
 #include "GUI.h"
 
-bool gui::Dropdown::init(nlohmann::json j, bool ignoreType)
+bool gui::Dropdown::init(const nlohmann::json& j, bool ignoreType)
 {
 	if (HLayout::init(j, true))
 	{

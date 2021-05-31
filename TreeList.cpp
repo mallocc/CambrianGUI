@@ -76,7 +76,7 @@ gui::TreeList::TreeList(GUI* gui)
 	onItemRightClicked = [](Widget*) {};
 }
 
-bool gui::TreeList::init(nlohmann::json j, bool ignoreType)
+bool gui::TreeList::init(const nlohmann::json& j, bool ignoreType)
 {
 	bool success = false;
 	if (VLayout::init(j, true))

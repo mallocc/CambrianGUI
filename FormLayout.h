@@ -10,7 +10,7 @@ namespace gui
 	public:
 		FormLayout(GUI* gui);
 
-		virtual bool init(nlohmann::json j, bool ignoreType = false) override;
+		virtual bool init(const nlohmann::json& j, bool ignoreType = false) override;
 
 		virtual bool initList(nlohmann::json j);
 

@@ -2,7 +2,7 @@
 #include "GUI.h"
 
 
-bool gui::DropdownList::init(nlohmann::json j, bool ignoreType)
+bool gui::DropdownList::init(const nlohmann::json& j, bool ignoreType)
 {
 	if (List::init(j, true))
 	{

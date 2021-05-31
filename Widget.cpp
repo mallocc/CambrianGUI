@@ -412,7 +412,7 @@ void gui::Widget::revalidate()
 	m_color.b += (m_targetColor.b - m_color.b) * m_transitionSpeed;
 }
 
-bool gui::Widget::init(nlohmann::json j, bool ignoreType)
+bool gui::Widget::init(const nlohmann::json& j, bool ignoreType)
 {
 	m_defaultJson = j;
 	bool success = true;

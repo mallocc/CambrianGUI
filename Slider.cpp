@@ -15,7 +15,7 @@ inline std::string gui::Slider::roundNumber(float number)
 	return ss.str();
 }
 
-bool gui::Slider::init(nlohmann::json j, bool ignoreType)
+bool gui::Slider::init(const nlohmann::json& j, bool ignoreType)
 {
 	if (Widget::init(j, true))
 	{

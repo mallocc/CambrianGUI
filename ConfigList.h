@@ -155,7 +155,7 @@ public:
 		return (*this) + additions;
 	}
 
-	void load(nlohmann::json& j, bool onlyOverrides = false, bool debugPrint = false)
+	void load(const nlohmann::json& j, bool onlyOverrides = false, bool debugPrint = false)
 	{
 		load(j, *this, onlyOverrides, debugPrint);
 	}
@@ -165,7 +165,7 @@ public:
 		return toJson(*this);
 	}
 
-	static bool readJSONAsString(nlohmann::json j, std::string fieldName, std::string& field, bool debugPrint = false)
+	static bool readJSONAsString(const nlohmann::json& j, std::string fieldName, std::string& field, bool debugPrint = false)
 	{
 		if (debugPrint)
 		{
@@ -200,7 +200,7 @@ public:
 		}
 	}
 
-	static void load(nlohmann::json& j, std::map<std::string, ConfigItem>& fields, bool onlyOverrides = false, bool debugPrint = false)
+	static void load(const nlohmann::json& j, std::map<std::string, ConfigItem>& fields, bool onlyOverrides = false, bool debugPrint = false)
 	{
 		for (auto& i : fields)
 		{

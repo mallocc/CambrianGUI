@@ -29,7 +29,7 @@ namespace gui
 
 		TreeList(GUI* gui);
 
-		virtual bool init(nlohmann::json j, bool ignoreType = false) override;
+		virtual bool init(const nlohmann::json& j, bool ignoreType = false) override;
 
 		virtual void onExpandEvent(bool expanded);
 		virtual void onItemClickedEvent(Widget* clickedItem);
