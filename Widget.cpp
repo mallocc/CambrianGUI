@@ -206,65 +206,197 @@ void gui::Widget::draw(float tx, float ty, bool editMode)
 	}
 #endif
 
-	if (m_background != nullptr)
+	if (m_shape == "image")
+		if (m_background != nullptr)
+		{
+			glEnable(GL_TEXTURE_2D);
+			glEnable(GL_BLEND);
+			if (m_blendMode == "screen")
+			{
+				glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
+			}
+			else
+			{
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			}
+			glBindTexture(GL_TEXTURE_2D, m_background->id);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glColor4f(m_color.r, m_color.g, m_color.b, m_opacity *
+				((m_background != m_backgroundTransition) ? m_backgroundTransitionValue : 1.0f));
+			glPushMatrix();
+			glTranslatef(tx, ty, 0);
+			glTranslatef(m_w / 2.0f, m_h / 2.0f, 0);
+			glRotatef(m_rotation, 0, 0, 1);
+			glTranslatef(-m_w / 2.0f, -m_h / 2.0f, 0);
+			glScalef(m_w, m_h, 1);
+			glBegin(GL_QUADS);
+			{
+				glTexCoord2f(0, 0);
+				glVertex2f(0, 0);
+				glTexCoord2f(1, 0);
+				glVertex2f(1, 0);
+				glTexCoord2f(1, 1);
+				glVertex2f(1, 1);
+				glTexCoord2f(0, 1);
+				glVertex2f(0, 1);
+			}
+			glEnd();
+			glPopMatrix();
+
+			glBindTexture(GL_TEXTURE_2D, NULL);
+			glDisable(GL_TEXTURE_2D);
+			glDisable(GL_BLEND);
+		}
+
+	if (m_shape == "rect")
 	{
-		glEnable(GL_TEXTURE_2D);
-		glEnable(GL_BLEND);
-		if (m_blendMode == "screen")
-		{
-			glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
-		}
-		else
-		{
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		}
-		glBindTexture(GL_TEXTURE_2D, m_background->id);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glColor4f(m_color.r, m_color.g, m_color.b, m_opacity *
-			((m_background != m_backgroundTransition) ? m_backgroundTransitionValue : 1.0f));
+		glColor4f(m_color.r, m_color.g, m_color.b, m_color.a);
+
 		glPushMatrix();
+
 		glTranslatef(tx, ty, 0);
-		glTranslatef(m_w / 2.0f, m_h / 2.0f, 0);
-		glRotatef(m_rotation, 0, 0, 1);
-		glTranslatef(-m_w / 2.0f, -m_h / 2.0f, 0);
-		glScalef(m_w, m_h, 1);
+		glScalef(W(), H(), 1);
+
 		glBegin(GL_QUADS);
 		{
-			glTexCoord2f(0, 0);
 			glVertex2f(0, 0);
-			glTexCoord2f(1, 0);
 			glVertex2f(1, 0);
-			glTexCoord2f(1, 1);
 			glVertex2f(1, 1);
-			glTexCoord2f(0, 1);
 			glVertex2f(0, 1);
 		}
 		glEnd();
-		glPopMatrix();
 
-		glBindTexture(GL_TEXTURE_2D, NULL);
-		glDisable(GL_TEXTURE_2D);
-		glDisable(GL_BLEND);
+		glColor4f(m_borderColor.r, m_borderColor.g, m_borderColor.b, m_borderColor.a);
+
+		glLineWidth(m_borderWidth);
+		glBegin(GL_LINE_LOOP);
+		{
+			glVertex2f(0, 0);
+			glVertex2f(1, 0);
+			glVertex2f(1, 1);
+			glVertex2f(0, 1);
+		}
+		glEnd();
+		glLineWidth(1.0f);
+
+		glPopMatrix();
 	}
-	//else
-	//{
-	//	glColor4f(color.r, color.g, color.b, opacity);
-	//	glPushMatrix();
-	//	glTranslatef(tx, ty, 0);
-	//	glScalef(w, h, 1);
-	//	glBegin(GL_QUADS);
-	//	{
-	//		glVertex2f(0, 0);
-	//		glVertex2f(1, 0);
-	//		glVertex2f(1, 1);
-	//		glVertex2f(0, 1);
-	//	}
-	//	glEnd();
-	//	glPopMatrix();
-	//}
+
+	if (m_shape == "rounded")
+	{
+		if (m_color.a > 0.0f)
+		{
+			glPushMatrix();
+			{
+				glColor4f(m_color.r, m_color.g, m_color.b, m_color.a);
+				glTranslatef(tx, ty, 0);
+
+				glBegin(GL_POLYGON);
+				{
+					glVertex2f(m_roundedRadius, 0);
+					glVertex2f(W() - m_roundedRadius, 0);
+
+					constexpr float quarterCircle = 3.14159f / 2.0f;
+					constexpr float inc = quarterCircle / 8;
+
+					float offsetRad = quarterCircle * 3.0f;
+					for (float rad = offsetRad; rad <= quarterCircle + offsetRad; rad += inc)
+						glVertex2f(
+							cos(rad) * m_roundedRadius + W() - m_roundedRadius,
+							sin(rad) * m_roundedRadius + m_roundedRadius);
+
+					glVertex2f(W(), m_roundedRadius);
+					glVertex2f(W(), H() - m_roundedRadius);
+
+					offsetRad = 0.0f;
+					for (float rad = offsetRad + quarterCircle; rad > 0.0f; rad -= inc)
+						glVertex2f(
+							sin(rad) * m_roundedRadius + W() - m_roundedRadius,
+							cos(rad) * m_roundedRadius + H() - m_roundedRadius);
+
+					glVertex2f(W() - m_roundedRadius, H());
+					glVertex2f(m_roundedRadius, H());
+
+					offsetRad = quarterCircle * 3.0f;
+					for (float rad = offsetRad + quarterCircle; rad > offsetRad; rad -= inc)
+						glVertex2f(
+							sin(rad) * m_roundedRadius + m_roundedRadius,
+							cos(rad) * m_roundedRadius + H() - m_roundedRadius);
+
+					glVertex2f(0, H() - m_roundedRadius);
+					glVertex2f(0, m_roundedRadius);
+
+					offsetRad = quarterCircle * 2.0f;
+					for (float rad = offsetRad + quarterCircle; rad > offsetRad; rad -= inc)
+						glVertex2f(
+							sin(rad) * m_roundedRadius + m_roundedRadius,
+							cos(rad) * m_roundedRadius + m_roundedRadius);
+				}
+				glEnd();
+			}
+			glPopMatrix();
+		}
+
+		if (m_borderColor.a > 0.0f)
+		{
+			glPushMatrix();
+			{
+				glColor4f(m_borderColor.r, m_borderColor.g, m_borderColor.b, m_borderColor.a);
+				glLineWidth(m_borderWidth);
+
+				glTranslatef(tx, ty, 0);
+
+				glBegin(GL_LINE_LOOP);
+				{
+					glVertex2f(m_roundedRadius, 0);
+					glVertex2f(W() - m_roundedRadius, 0);
+
+					constexpr float quarterCircle = 3.14159f / 2.0f;
+					constexpr float inc = quarterCircle / 8;
+
+					float offsetRad = quarterCircle * 3.0f;
+					for (float rad = offsetRad; rad <= quarterCircle + offsetRad; rad += inc)
+						glVertex2f(
+							cos(rad) * m_roundedRadius + W() - m_roundedRadius,
+							sin(rad) * m_roundedRadius + m_roundedRadius);
+
+					glVertex2f(W(), m_roundedRadius);
+					glVertex2f(W(), H() - m_roundedRadius);
+
+					offsetRad = 0.0f;
+					for (float rad = offsetRad + quarterCircle; rad > 0.0f; rad -= inc)
+						glVertex2f(
+							sin(rad) * m_roundedRadius + W() - m_roundedRadius,
+							cos(rad) * m_roundedRadius + H() - m_roundedRadius);
+
+					glVertex2f(W() - m_roundedRadius, H());
+					glVertex2f(m_roundedRadius, H());
+
+					offsetRad = quarterCircle * 3.0f;
+					for (float rad = offsetRad + quarterCircle; rad > offsetRad; rad -= inc)
+						glVertex2f(
+							sin(rad) * m_roundedRadius + m_roundedRadius,
+							cos(rad) * m_roundedRadius + H() - m_roundedRadius);
+
+					glVertex2f(0, H() - m_roundedRadius);
+					glVertex2f(0, m_roundedRadius);
+
+					offsetRad = quarterCircle * 2.0f;
+					for (float rad = offsetRad + quarterCircle; rad > offsetRad; rad -= inc)
+						glVertex2f(
+							sin(rad) * m_roundedRadius + m_roundedRadius,
+							cos(rad) * m_roundedRadius + m_roundedRadius);
+				}
+				glEnd();
+
+				glLineWidth(1.0f);
+			}
+			glPopMatrix();
+		}
+	}
 
 	if (m_background != m_backgroundTransition)
 		if (m_backgroundTransition != nullptr)
@@ -337,49 +469,6 @@ void gui::Widget::draw(float tx, float ty, bool editMode)
 
 void gui::Widget::revalidate()
 {
-
-	//if (getParent() != nullptr)
-	//{
-	//	widget_as(Layout, parentContainer, getParent())
-	//	{
-	//		m_w = parentContainer->getPreferedWidth(this);
-	//		m_h = parentContainer->getPreferedHeight(this);
-	//	}
-	//}
-
-	//if (m_w == 0)
-	//{
-	//	m_w = m_gui->w;
-	//}
-	//if (m_h == 0)
-	//{
-	//	m_h = m_gui->h;
-	//}
-
-
-	//if (m_w == 0)
-	//{
-	//	if (m_parent != nullptr)
-	//	{
-	//		m_w = m_parent->m_w;
-	//	}
-	//	else
-	//	{
-	//		m_w = m_gui->w;
-	//	}
-	//}
-	//if (m_h == 0)
-	//{
-	//	if (m_parent != nullptr)
-	//	{
-	//		m_h = m_parent->m_h;
-	//	}
-	//	else
-	//	{
-	//		m_h = m_gui->h;
-	//	}
-	//}
-
 	if (m_scaled)
 	{
 		if (m_background != nullptr)
@@ -407,9 +496,9 @@ void gui::Widget::revalidate()
 		}
 	}
 
-	m_color.r += (m_targetColor.r - m_color.r) * m_transitionSpeed;
-	m_color.g += (m_targetColor.g - m_color.g) * m_transitionSpeed;
-	m_color.b += (m_targetColor.b - m_color.b) * m_transitionSpeed;
+	lerpColor(m_targetColor, m_color, m_transitionSpeed);
+	lerpColor(m_borderColor, m_borderColor, m_transitionSpeed);
+
 }
 
 bool gui::Widget::init(const nlohmann::json& j, bool ignoreType)
@@ -460,16 +549,22 @@ bool gui::Widget::init(const nlohmann::json& j, bool ignoreType)
 			fields["radio"] = m_radio;
 			fields["background"] = textureConfigItem(m_background);
 			fields["shader-properties"] = shaderPropertiesConfigItem(m_shaderProperties);
-			fields["color"] = colorConfigItem(m_targetColor);
-			fields["color-start"] = colorConfigItem(m_colorStart);
-			fields["color-end"] = colorConfigItem(m_colorEnd);
+			fields["color"] = colorConfigItem(m_targetColor, "#0000");
+			fields["color-start"] = colorConfigItem(m_colorStart, "#0000");
+			fields["color-end"] = colorConfigItem(m_colorEnd, "#0000");
 			fields["background-tiled"] = m_backgroundTiled;
 			fields["omit"] = m_layoutOmit;
+			fields["border-color"] = colorConfigItem(m_targetBorderColor, "#0000");
+			fields["border-width"] = { m_borderWidth, "1" };
+			fields["shape"] = m_shape;
+			fields["radius"] = { m_roundedRadius, "10" };
 		}
 		fields.load(j);
 
 		m_config += fields;
 
+		if (m_background != nullptr)
+			m_shape = "image";
 		m_backgroundTransition = m_background;
 		m_x = m_xTarget;
 		m_y = m_yTarget;
@@ -477,29 +572,7 @@ bool gui::Widget::init(const nlohmann::json& j, bool ignoreType)
 		m_h = m_hTarget;
 		m_rotation = m_rotationTarget;
 		m_color = m_targetColor;
-
-		//if (m_w == 0)
-		//{
-		//	if (m_parent != nullptr)
-		//	{
-		//		m_wTarget = m_parent->m_w;
-		//	}
-		//	else
-		//	{
-		//		m_wTarget = m_gui->w;
-		//	}
-		//}
-		//if (m_h == 0)
-		//{
-		//	if (m_parent != nullptr)
-		//	{
-		//		m_hTarget = m_parent->m_h;
-		//	}
-		//	else
-		//	{
-		//		m_hTarget = m_gui->h;
-		//	}
-		//}
+		m_borderColor = m_targetBorderColor;
 
 		if (m_scaled)
 		{

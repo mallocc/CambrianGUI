@@ -33,13 +33,13 @@ void Container::clearChildren()
 			Container* container = dynamic_cast<Container*>(c);
 			if (container != nullptr)
 				container->clearChildren();
-			getGUI()->removeWidget(c->getId());
+			getGUI()->getWidgetManager()->removeWidget(c->getId());
 		}
 	}
 	m_children.clear();
 }
 
-std::vector<Widget*>& Container::getVisibleChildren()
+std::vector<Widget*> Container::getVisibleChildren()
 {
 	std::vector<Widget*> visibleChildren;
 	for (Widget* c : m_children)
@@ -180,7 +180,8 @@ void Container::draw(float tx, float ty, bool editMode)
 	Widget::draw(tx, ty, false);
 	tx += X(); ty += Y();
 
-	auto visibleChildren = getVisibleChildren();	
+	auto visibleChildren = getVisibleChildren();
+	
 	for (auto itor = visibleChildren.rbegin(); itor != visibleChildren.rend(); ++itor)
 	{
 		if (*itor != nullptr)
@@ -331,7 +332,7 @@ float gui::Container::getTotalWeightOfChildren()
 }
 
 
-std::vector<gui::Widget*>& Container::getCheckedChildren()
+std::vector<gui::Widget*> Container::getCheckedChildren()
 {
 	std::vector<Widget*> checkedChildren;
 	for (auto& child : m_children)

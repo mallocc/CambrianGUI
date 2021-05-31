@@ -147,7 +147,7 @@ namespace gui
 		{
 			if (colorName[0] == '#')
 			{
-				color = hex2rgb(colorName);
+				color = hex2Color(colorName);
 				return true;
 			}
 			else
@@ -157,7 +157,7 @@ namespace gui
 					std::string tmp;
 					if (readJSON(i, colorName, tmp))
 					{
-						color = hex2rgb(tmp);
+						color = hex2Color(tmp);
 						return true;
 					}
 				}
@@ -165,7 +165,7 @@ namespace gui
 		}
 		else
 		{
-			color = hex2rgb("#ffffff");
+			color = hex2Color("#ffffff");
 			return true;
 		}
 		color = { 0,0,0 };

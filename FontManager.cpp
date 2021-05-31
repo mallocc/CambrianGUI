@@ -436,7 +436,7 @@ gui::coord_t Font::textMetrics(std::string text, float scale, float lineHeight, 
 			maxWidth = i.width;
 	}
 
-	return {maxWidth, layout.size() * (1+size) * lineHeight};
+	return {maxWidth, layout.size() * (1+size) * lineHeight * 1.15f};
 }
 
 inline int getIndex(int x, int y, int width)

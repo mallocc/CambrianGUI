@@ -144,7 +144,7 @@ void gui::Layout::revalidate()
 	}
 
 	auto visibleChildren = getVisibleChildren();
-	for (auto widget : visibleChildren)
+	for (auto& widget : visibleChildren)
 	{
 		if (widget != nullptr)
 			widget->revalidate();

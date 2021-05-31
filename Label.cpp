@@ -9,30 +9,32 @@ void gui::Label::draw(float tx, float ty, bool editMode)
 	tx += X(); ty += Y();
 
 	// Draw title
-	glColor4f(textColor.r, textColor.g, textColor.b, getOpacity());
+	glColor4f(textColor.r, textColor.g, textColor.b, textColor.a);
 
 	auto font = displayFont;
 	auto metrics = font->textMetrics(text, 1.0f);
 
-	float newWidth = metrics.x + padding * 2.0f;
-	float newHeight = metrics.y + padding * 2.0f;
+	float newWidth = W();
+	float newHeight = H();
 
 	glPushMatrix();
 	glTranslatef(std::round(tx), std::round(ty), 0);
 	// centered
-	if (isCentered())
+	if (center)
 	{
 		font->renderText(
 			text,
-			getOffsetX() + newWidth / 2.0f - metrics.x / 2.0f,
-			getOffsetY() + newHeight / 2.0f - metrics.y / 2.0f, 1., bold, italic, 1);
+			getOffsetX() + newWidth/2.0f -metrics.x / 2.0f,
+			getOffsetY() + newHeight/2.0f -metrics.y / 2.0f, 1., bold, italic);
 	}
 	else
 	{
+		newWidth = metrics.x + padding * 2.0f;
+		newHeight = metrics.y + padding * 2.0f;
 		font->renderText(
 			text,
 			getOffsetX() + padding,
-			getOffsetY() + padding, 1., bold, italic, 0);
+			getOffsetY() + padding, 1., bold, italic);
 	}
 	glPopMatrix();
 
@@ -93,6 +95,8 @@ void gui::Label::revalidate()
 	textColor.g += (targetTextColor.g - textColor.g) * getTransitionSpeed();
 	textColor.b += (targetTextColor.b - textColor.b) * getTransitionSpeed();
 
+	Widget::revalidate();
+
 	if (revalidateSize)
 	{
 		auto font = displayFont;
@@ -109,7 +113,6 @@ void gui::Label::revalidate()
 		if (H() == 0)
 			setH(metrics.y + padding * 2.0f);
 	}
-	Widget::revalidate();
 }
 
 gui::Label::Label(GUI* gui)

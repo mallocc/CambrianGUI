@@ -43,8 +43,8 @@ namespace gui
 
 		float getTotalWeightOfChildren();
 
-		virtual std::vector<Widget*>& getCheckedChildren();
-		std::vector<Widget*>& getVisibleChildren();
+		virtual std::vector<Widget*> getCheckedChildren();
+		std::vector<Widget*> getVisibleChildren();
 		virtual int32_t getChildIndex(Widget* child);
 		std::vector<Widget*>& getRadioChildren();
 		std::vector<Widget*>& getChildren();

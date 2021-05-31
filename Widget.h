@@ -296,5 +296,13 @@ public: \
 		Widget* m_radioParent = nullptr;
 		std::string m_cursor = "";
 		ShaderProperties m_shaderProperties;
+
+
+		Color m_borderColor = black;
+		Color m_targetBorderColor = m_borderColor;
+		float m_borderWidth = 1.0f;
+		float m_roundedRadius = 5.0f;
+
+		std::string m_shape = "image";
 	};
 }

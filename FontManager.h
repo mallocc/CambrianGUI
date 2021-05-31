@@ -78,7 +78,7 @@ namespace gui
 		void layoutText(std::string text, float scale, float textSpacing, gui::coord_t bdims, std::vector<LineInfo>* layout);
 		void renderText(std::string text, float x, float y, float scale, bool bold = 0, bool italic = 0, int justify = 0, float lineHeight = 1, float textSpacing = 1., coord_t bdims = { 0,0 });
 		void renderTextUnicode(std::wstring text, float x, float y, float scale);
-		coord_t textMetrics(std::string text, float scale, float lineHeight = 1.2, float textSpacing = 1, coord_t bdims = { 0,0 });
+		coord_t textMetrics(std::string text, float scale, float lineHeight = 1, float textSpacing = 1, coord_t bdims = { 0,0 });
 		GUI* guiPtr;
 	};
 
