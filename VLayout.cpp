@@ -37,15 +37,16 @@ void gui::VLayout::revalidate()
 			float miny = getGUI()->h;
 			for (Widget* widget : visibleChildren)
 			{
-				if (!widget->isOmitFromLayout())
-				{
-					maxx = std::max(maxx, (float)widget->X() + (float)widget->W());
-					maxy = std::max(maxy, (float)widget->Y() + (float)widget->H());
-					minx = std::min(minx, (float)widget->X());
-					miny = std::min(miny, (float)widget->Y());
-					maxw = std::max(maxw, (float)widget->W());
-					maxh = std::max(maxh, (float)widget->H());
-				}
+				if (widget != nullptr)
+					if (!widget->isOmitFromLayout())
+					{
+						maxx = std::max(maxx, (float)widget->X() + (float)widget->W());
+						maxy = std::max(maxy, (float)widget->Y() + (float)widget->H());
+						minx = std::min(minx, (float)widget->X());
+						miny = std::min(miny, (float)widget->Y());
+						maxw = std::max(maxw, (float)widget->W());
+						maxh = std::max(maxh, (float)widget->H());
+					}
 			}
 			if (isExpand(ExpandFlags::EXPAND_PREFERED_WIDTH))
 				newWidth = (isAlign(AlignFlags::ALIGN_FLAGS_COLLAPSE) ? maxw : std::fabs(maxx - minx)) + totalPadding;
@@ -56,7 +57,8 @@ void gui::VLayout::revalidate()
 		{
 			float size = 0.0f;
 			for (Widget* widget : visibleChildren)
-				size += widget->H();
+				if (widget != nullptr)
+					size += widget->H();
 			float sizeOfContents = (isAlign(AlignFlags::ALIGN_FLAGS_COLLAPSE) ? maxh : size + totalSpacing) + totalPadding;
 			float midx = newWidth / 2.0f;
 			float midy = newHeight / 2.0f;
@@ -92,33 +94,36 @@ void gui::VLayout::revalidate()
 
 				for (auto& child : visibleChildren)
 				{
-					float x = getPadding();
-					if (isAlign(AlignFlags::ALIGN_FLAGS_RIGHT))
+					if (child != nullptr)
 					{
-						x = newWidth - child->W() - getPadding();
-					}
-					else if (isAlign(AlignFlags::ALIGN_FLAGS_LEFT))
-					{
-						x = getPadding();
-					}
-					else if (isAlign(AlignFlags::ALIGN_FLAGS_CENTER))
-					{
-						x = midx - child->W() / 2.0f;
-					}
+						float x = getPadding();
+						if (isAlign(AlignFlags::ALIGN_FLAGS_RIGHT))
+						{
+							x = newWidth - child->W() - getPadding();
+						}
+						else if (isAlign(AlignFlags::ALIGN_FLAGS_LEFT))
+						{
+							x = getPadding();
+						}
+						else if (isAlign(AlignFlags::ALIGN_FLAGS_CENTER))
+						{
+							x = midx - child->W() / 2.0f;
+						}
 
-					if (getAlignFlags() & AlignFlags::ALIGN_FLAGS_X_MASK)
-						child->setX(x, FORCE);
+						if (getAlignFlags() & AlignFlags::ALIGN_FLAGS_X_MASK)
+							child->setX(x, FORCE);
 
-					if (getAlignFlags() & AlignFlags::ALIGN_FLAGS_Y_MASK)
-						child->setY(y - (child->isCentered() ? (child->H() / 2.0f) : 0.0f), FORCE);
+						if (getAlignFlags() & AlignFlags::ALIGN_FLAGS_Y_MASK)
+							child->setY(y - (child->isCentered() ? (child->H() / 2.0f) : 0.0f), FORCE);
 
-					if (!isAlign(AlignFlags::ALIGN_FLAGS_COLLAPSE))
-					{
-						y += child->H();
-						if (isAlign(AlignFlags::ALIGN_FLAGS_SPACED))
-						y += dEmptySpace;
-						if (!isAlign(AlignFlags::ALIGN_FLAGS_SPACED))
-							y += getSpacing();
+						if (!isAlign(AlignFlags::ALIGN_FLAGS_COLLAPSE))
+						{
+							y += child->H();
+							if (isAlign(AlignFlags::ALIGN_FLAGS_SPACED))
+								y += dEmptySpace;
+							if (!isAlign(AlignFlags::ALIGN_FLAGS_SPACED))
+								y += getSpacing();
+						}
 					}
 				}
 			}
@@ -147,12 +152,13 @@ float gui::VLayout::getPreferedHeight(Widget* child)
 		float miny = getGUI()->h;
 		for (Widget* widget : visibleChildren)
 		{
-			if (!widget->isOmitFromLayout())
-			{
-				maxy = std::max(maxy, (float)widget->Y() + (float)widget->H());
-				miny = std::min(miny, (float)widget->Y());
-				maxh = std::max(maxh, (float)widget->H());
-			}
+			if (widget != nullptr)
+				if (!widget->isOmitFromLayout())
+				{
+					maxy = std::max(maxy, (float)widget->Y() + (float)widget->H());
+					miny = std::min(miny, (float)widget->Y());
+					maxh = std::max(maxh, (float)widget->H());
+				}
 		}
 
 		if (isAlign(AlignFlags::ALIGN_FLAGS_COLLAPSE))
@@ -164,7 +170,7 @@ float gui::VLayout::getPreferedHeight(Widget* child)
 		int inflatedChildren = 1;
 		float size = 0.0f;
 		for (auto& c : getVisibleChildren())
-			if (!c->isOmitFromLayout() && c != child)
+			if (c != nullptr && !c->isOmitFromLayout() && c != child)
 			{
 				bool inflated = false;
 				widget_as(Layout, layoutWidget, child)
@@ -180,7 +186,7 @@ float gui::VLayout::getPreferedHeight(Widget* child)
 					++inflatedChildren;
 			}
 		float sumOfHeights = size + totalSpacing;
-		
+
 		return ((newHeight - totalPadding) - sumOfHeights) / (float)inflatedChildren;
 	}
 

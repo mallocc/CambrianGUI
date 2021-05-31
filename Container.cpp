@@ -33,7 +33,7 @@ void Container::clearChildren()
 			Container* container = dynamic_cast<Container*>(c);
 			if (container != nullptr)
 				container->clearChildren();
-			getGUI()->getWidgetManager()->removeWidget(c->getId());
+			getGUI()->removeWidget(c->getId());
 		}
 	}
 	m_children.clear();
@@ -43,8 +43,9 @@ std::vector<Widget*>& Container::getVisibleChildren()
 {
 	std::vector<Widget*> visibleChildren;
 	for (Widget* c : m_children)
-		if (c->isVisible())
-			visibleChildren.push_back(c);
+		if (c != nullptr)
+			if (c->isVisible())
+				visibleChildren.push_back(c);
 	return visibleChildren;
 }
 
@@ -79,7 +80,9 @@ Widget* Container::onMouseEvent(MouseEventData mouseEventData, bool process, boo
 		{
 			for (Widget* widget : visibleChildren)
 			{
-				Widget* handledWidget = widget->onMouseEvent(mouseEventData, process, focus);
+				Widget* handledWidget = nullptr;
+				if (widget != nullptr)
+					handledWidget = widget->onMouseEvent(mouseEventData, process, focus);
 				if (m_lastLocalWidgetHandled == nullptr)
 				{
 					m_lastLocalWidgetHandled = handledWidget;
@@ -112,7 +115,9 @@ Widget* Container::onMouseEvent(MouseEventData mouseEventData, bool process, boo
 		{
 			for (Widget* widget : visibleChildren)
 			{
-				Widget* handledWidget = widget->onMouseEvent(mouseEventData, process, focus);
+				Widget* handledWidget = nullptr;
+				if (widget != nullptr)
+					handledWidget = widget->onMouseEvent(mouseEventData, process, focus);
 				if (lastLocalWidgetHandled == nullptr)
 				{
 					lastLocalWidgetHandled = handledWidget;
@@ -143,7 +148,8 @@ bool Container::onLeaveEvent(MouseEventData mouseEventData, bool process)
 	std::vector<Widget*> visibleChildren = getVisibleChildren();
 	for (Widget* widget : visibleChildren)
 	{
-		widget->onLeaveEvent(mouseEventData, process);
+		if (widget != nullptr)
+			widget->onLeaveEvent(mouseEventData, process);
 	}
 	return true;
 }
@@ -155,7 +161,8 @@ Widget* Container::onKeyEvent(KeyEventData keyEventData)
 	// Handle children widgets
 	for (Widget* widget : visibleChildren)
 	{
-		widgetHandled = widget->onKeyEvent(keyEventData);
+		if (widget != nullptr)
+			widgetHandled = widget->onKeyEvent(keyEventData);
 		if (widgetHandled != nullptr)
 		{
 			return widgetHandled;
@@ -173,11 +180,11 @@ void Container::draw(float tx, float ty, bool editMode)
 	Widget::draw(tx, ty, false);
 	tx += X(); ty += Y();
 
-	std::vector<Widget*> visibleChildren = getVisibleChildren();
-	for (int i = visibleChildren.size() - 1; i >= 0; --i)
+	auto visibleChildren = getVisibleChildren();	
+	for (auto itor = visibleChildren.rbegin(); itor != visibleChildren.rend(); ++itor)
 	{
-		if (visibleChildren[i] != nullptr)
-			visibleChildren[i]->draw(tx, ty, editMode);
+		if (*itor != nullptr)
+			(*itor)->draw(tx, ty, editMode);
 	}
 
 	bool widgetHandledDown = false;
@@ -240,7 +247,8 @@ nlohmann::json Container::toJson()
 
 	for (Widget* widget : m_children)
 	{
-		j["children"].push_back(widget->toJson());
+		if (widget != nullptr)
+			j["children"].push_back(widget->toJson());
 	}
 
 	return j;
@@ -253,7 +261,8 @@ void Container::revalidate()
 	std::vector<Widget*> visibleChildren = getVisibleChildren();
 	for (Widget* widget : visibleChildren)
 	{
-		widget->revalidate();
+		if (widget != nullptr)
+			widget->revalidate();
 	}
 }
 
@@ -267,13 +276,16 @@ Widget* gui::Container::searchForAllWidgets(std::function<Widget* (Widget*)> sea
 	Widget* foundWidget = search(this);
 	for (auto& widget : m_children)
 	{
-		widget_as(Container, container, widget)
+		if (widget != nullptr)
 		{
-			container->searchForAllWidgets(search);
-		}
+			widget_as(Container, container, widget)
+			{
+				container->searchForAllWidgets(search);
+			}
 		else
 		{
 			foundWidget = search(widget);
+		}
 		}
 	}
 	return foundWidget;
@@ -284,13 +296,16 @@ void gui::Container::getForAllWidgets(std::function<nlohmann::json(Widget*, nloh
 	get(this, data);
 	for (auto& widget : m_children)
 	{
-		widget_as(Container, container, widget)
+		if (widget != nullptr)
 		{
-			container->getForAllWidgets(get, data);
-		}
+			widget_as(Container, container, widget)
+			{
+				container->getForAllWidgets(get, data);
+			}
 		else
 		{
 			get(widget, data);
+		}
 		}
 	}
 }
@@ -308,8 +323,9 @@ float gui::Container::getTotalWeightOfChildren()
 	float total = 0.0f;
 	for (auto& child : m_children)
 	{
-		if (!child->isOmitFromLayout())
-			total += child->getWeight();
+		if (child != nullptr)
+			if (!child->isOmitFromLayout())
+				total += child->getWeight();
 	}
 	return total;
 }
@@ -339,13 +355,16 @@ void gui::Container::setForAllWidgets(std::function<void(Widget*)> set)
 	set(this);
 	for (auto& widget : m_children)
 	{
-		widget_as(Container, container, widget)
+		if (widget != nullptr)
 		{
-			container->setForAllWidgets(set);
-		}
-		else
-		{
-			set(widget);
+			widget_as(Container, container, widget)
+			{
+				container->setForAllWidgets(set);
+			}
+			else
+			{
+				set(widget);
+			}
 		}
 	}
 }

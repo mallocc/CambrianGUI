@@ -143,8 +143,8 @@ void gui::Layout::revalidate()
 		}
 	}
 
-	std::vector<Widget*> visibleChildren = getVisibleChildren();
-	for (auto& widget : visibleChildren)
+	auto visibleChildren = getVisibleChildren();
+	for (auto widget : visibleChildren)
 	{
 		if (widget != nullptr)
 			widget->revalidate();
@@ -165,14 +165,14 @@ void gui::Layout::expand()
 		float miny = getGUI()->h;
 		for (Widget* widget : visibleChildren)
 		{
-			if (widget!=nullptr)
-			if (!widget->isOmitFromLayout())
-			{
-				maxx = std::max(maxx, (float)widget->X() + (float)widget->W());
-				maxy = std::max(maxy, (float)widget->Y() + (float)widget->H());
-				minx = std::min(minx, (float)widget->X());
-				miny = std::min(miny, (float)widget->Y());
-			}
+			if (widget != nullptr)
+				if (!widget->isOmitFromLayout())
+				{
+					maxx = std::max(maxx, (float)widget->X() + (float)widget->W());
+					maxy = std::max(maxy, (float)widget->Y() + (float)widget->H());
+					minx = std::min(minx, (float)widget->X());
+					miny = std::min(miny, (float)widget->Y());
+				}
 		}
 		if (isExpand(ExpandFlags::EXPAND_PREFERED_WIDTH))
 			setW(std::fabs(maxx - minx) + totalPadding, FORCE);

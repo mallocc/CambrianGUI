@@ -60,7 +60,7 @@ namespace gui
 	>	if (WIDGET_SYMBOL != nullptr)
 */
 #define create_widget(WIDGET_SYMBOL, JSON_SYMBOL) \
-		gui::Widget* WIDGET_SYMBOL = getGUI()->getWidgetManager()->createWidget(JSON_SYMBOL); \
+		gui::Widget* WIDGET_SYMBOL = getGUI()->createWidget(JSON_SYMBOL); \
 		if (WIDGET_SYMBOL != nullptr)
 /**
 Create a new scope when creating a new widget as specific type.
@@ -69,7 +69,7 @@ create_widget_as(TYPE_SYMBOL, WIDGET_SYMBOL, JSON_SYMBOL)
 	>	if (WIDGET_SYMBOL != nullptr)
 */
 #define create_widget_as(TYPE_SYMBOL, WIDGET_SYMBOL, JSON_SYMBOL) \
-		gui::TYPE_SYMBOL* WIDGET_SYMBOL = dynamic_cast<gui::TYPE_SYMBOL*>(getGUI()->getWidgetManager()->createWidget(JSON_SYMBOL)); \
+		gui::TYPE_SYMBOL* WIDGET_SYMBOL = dynamic_cast<gui::TYPE_SYMBOL*>(getGUI()->createWidget(JSON_SYMBOL)); \
 		if (WIDGET_SYMBOL != nullptr)
 
 /**
@@ -79,7 +79,7 @@ create_widget_as(TYPE_SYMBOL, WIDGET_SYMBOL, JSON_SYMBOL)
 	>	if (WIDGET_SYMBOL != nullptr)
 */
 #define find_widget(WIDGET_SYMBOL, ID_SYMBOL) \
-		gui::Widget* WIDGET_SYMBOL = getGUI()->getWidgetManager()->findWidget(ID_SYMBOL); \
+		gui::Widget* WIDGET_SYMBOL = getGUI()->findWidget(ID_SYMBOL); \
 		if (WIDGET_SYMBOL != nullptr)
 /**
 	Create a new scope when getting widget of specific type.

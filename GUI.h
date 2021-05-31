@@ -6,12 +6,14 @@
 #include "WidgetManager.h"
 #include "ShaderManager.h"
 #include "FontManager.h"
-
+#include <mutex>
+#include <queue>
 namespace gui
 {
 	extern const std::map<std::string, LPSTR> cursors;
 
 	typedef std::function<void(GUI*, Widget*)> TriggerCallback;
+	typedef std::function<void(void)> WorkerCallback;
 
 	class GUI
 	{
@@ -19,7 +21,8 @@ namespace gui
 		GUI(int32_t w, int32_t h);
 
 		GUI* getGUI();
-
+		gui::Widget* createWidget(nlohmann::json j);
+		bool removeWidget(std::string id);
 		void resize(float w, float h);
 		virtual void draw();
 		virtual void onMouseEvent(MouseEventData mouseEventData);
@@ -80,6 +83,10 @@ namespace gui
 		HCURSOR hCursor;
 
 		Widget* lastHandledWidget = nullptr;
+
+		void runWorkerThread();
+
+		void runWorker(WorkerCallback workerCallback);
 	private:
 		Configuration* config = nullptr;
 		WidgetManager* widgetManager = nullptr;
@@ -98,6 +105,9 @@ namespace gui
 
 		std::map<std::string, TriggerCallback> triggerCallbacks;
 
+		std::mutex m_mutex;
+
+		std::queue<WorkerCallback> m_workerQueue;
 	};
 
 }

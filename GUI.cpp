@@ -61,6 +61,8 @@ void GUI::draw()
 	{
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+		const std::lock_guard<std::mutex> lock(m_mutex);
+
 		// Draw children
 		Widget* rootWidget = widgetManager->getRootWidget();
 		if (rootWidget != nullptr && rootWidget->isVisible())
@@ -94,18 +96,6 @@ void GUI::draw()
 			floatingLabelWidget->revalidate();
 			floatingLabelWidget->draw(0, 0);
 		}
-
-		//Widget* dropdownListWidget = widgetManager->getDropDownListWidget();
-		//if (dropdownListWidget != nullptr && dropdownListWidget->visible)
-		//{
-		//	dropdownListWidget->revalidate();
-		//	dropdownListWidget->draw(0, 0);
-		//}
-
-		//if (editedWidgetInfoLabel != nullptr && editMode)
-		//{
-		//	editedWidgetInfoLabel->draw(oldMouseEventData.x, oldMouseEventData.y);
-		//}
 	}
 	frameCount++;
 }
@@ -153,6 +143,7 @@ void GUI::onMouseEvent(MouseEventData mouseEventData)
 				{
 					dropdownListWidget->getParent()->onMouseEvent(mouseEventData, true);
 				}
+
 				// If the dropdown wasnt clicked but something else was: close the dropdown
 				if (!(dropdownListWidget->onOverEvent(mouseEventData, false) &&
 					!dropdownListWidget->onClickEvent(mouseEventData, false)) &&
@@ -160,7 +151,6 @@ void GUI::onMouseEvent(MouseEventData mouseEventData)
 				{
 					closeDropdownIntent();
 				}
-			
 			}
 			else // If there is no currnet dropdown open, carry on as usual
 			{
@@ -312,6 +302,8 @@ void GUI::init(std::string configOverridePath, bool firstLoad_)
 	{
 		std::cout << "unknown exception" << std::endl;
 	}*/
+
+	runWorkerThread();
 }
 
 void gui::GUI::loadDimensions(std::string configOverridePath)
@@ -587,4 +579,41 @@ void gui::GUI::hideHintLabel()
 void gui::GUI::registerTriggerCallback(std::string triggerName, TriggerCallback function)
 {
 	triggerCallbacks[triggerName] = function;
+}
+
+gui::Widget* gui::GUI::createWidget(nlohmann::json j)
+{
+	return getWidgetManager()->createWidget(j);
+}
+bool gui::GUI::removeWidget(std::string id)
+{
+	return getWidgetManager()->removeWidget(id);
+}
+
+void gui::GUI::runWorkerThread()
+{
+	std::thread thread([=]()
+		{
+			while (true)
+			{
+				if (!m_workerQueue.empty())
+				{
+					auto& workerCallback = m_workerQueue.front();
+					const std::lock_guard<std::mutex> lock(m_mutex);
+					workerCallback();
+					m_workerQueue.pop();
+				}
+				else
+				{
+					std::this_thread::sleep_for(std::chrono::milliseconds(1));
+				}
+			}
+		});
+	thread.detach();
+}
+
+
+void gui::GUI::runWorker(WorkerCallback workerCallback)
+{
+	m_workerQueue.push(workerCallback);
 }
