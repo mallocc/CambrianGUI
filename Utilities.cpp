@@ -138,14 +138,14 @@ std::string DLLPath() {
 	return std::string(buffer);
 }
 
-bool checkJSON(nlohmann::json j, std::string fieldName)
+bool checkJSON(const nlohmann::json& j, std::string fieldName)
 {
 	//std::cout << "Looking for " << fieldName << std::endl;
 	//std::cout << j.dump(4) << std::endl; 
 	return !j.empty() && j.contains(fieldName);
 }
 
-bool readJSONAsString(nlohmann::json j, std::string fieldName, std::string& field, bool debugPrint)
+bool readJSONAsString(const nlohmann::json& j, std::string fieldName, std::string& field, bool debugPrint)
 {
 	if (debugPrint)
 	{

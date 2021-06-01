@@ -13,10 +13,10 @@ extern void outputToDebugFile(std::string in);
 extern HMODULE GetCurrentModule();
 extern std::string ExePath();
 extern std::string DLLPath();
-extern bool checkJSON(nlohmann::json j, std::string fieldName);
+extern bool checkJSON(const nlohmann::json& j, std::string fieldName);
 
 template <typename TYPE>
-inline bool readJSON(nlohmann::json j, std::string fieldName, TYPE& field, bool debugPrint = false)
+inline bool readJSON(const nlohmann::json& j, std::string fieldName, TYPE& field, bool debugPrint = false)
 {
 	if (checkJSON(j, fieldName))
 	{
@@ -33,7 +33,7 @@ inline bool readJSON(nlohmann::json j, std::string fieldName, TYPE& field, bool 
 	return false;
 }
 
-extern bool readJSONAsString(nlohmann::json j, std::string fieldName, std::string& field, bool debugPrint = false);
+extern bool readJSONAsString(const nlohmann::json& j, std::string fieldName, std::string& field, bool debugPrint = false);
 
 extern void printGlob(nlohmann::json& j1);
 
