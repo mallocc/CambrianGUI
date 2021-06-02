@@ -279,8 +279,6 @@ public: \
 		nlohmann::json m_onUncheckedExternalJson;
 		nlohmann::json m_meta;
 		Color m_color = { 1, 1, 1 };
-		Color m_colorStart = { 1, 1, 1 };
-		Color m_colorEnd = { 1, 1, 1 };
 		Color m_targetColor = m_color;
 		bool m_checkOnClick = false;
 		bool m_down = false;
@@ -298,11 +296,17 @@ public: \
 		ShaderProperties m_shaderProperties;
 
 
+		std::string m_shape = "image";
 		Color m_borderColor = black;
 		Color m_targetBorderColor = m_borderColor;
 		float m_borderWidth = 1.0f;
 		float m_roundedRadius = 5.0f;
 
-		std::string m_shape = "image";
+		std::string m_gradient = "none";
+		Color m_colorStart = { 1, 1, 1 };
+		Color m_targetColorStart = { 1, 1, 1 };
+		Color m_colorEnd = { 1, 1, 1 };
+		Color m_targetColorEnd = { 1, 1, 1 };
+
 	};
 }

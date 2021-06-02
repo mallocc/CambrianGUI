@@ -253,147 +253,200 @@ void gui::Widget::draw(float tx, float ty, bool editMode)
 
 	if (m_shape == "rect")
 	{
-		glColor4f(m_color.r, m_color.g, m_color.b, m_color.a);
-
-		glPushMatrix();
-
-		glTranslatef(tx, ty, 0);
-		glScalef(W(), H(), 1);
-
-		glBegin(GL_QUADS);
+		bool gradIsVert = m_gradient == "vertical";
+		bool gradIsHori = m_gradient == "horizontal";
+		if (m_roundedRadius > 0.0f)
 		{
-			glVertex2f(0, 0);
-			glVertex2f(1, 0);
-			glVertex2f(1, 1);
-			glVertex2f(0, 1);
-		}
-		glEnd();
-
-		glColor4f(m_borderColor.r, m_borderColor.g, m_borderColor.b, m_borderColor.a);
-
-		glLineWidth(m_borderWidth);
-		glBegin(GL_LINE_LOOP);
-		{
-			glVertex2f(0, 0);
-			glVertex2f(1, 0);
-			glVertex2f(1, 1);
-			glVertex2f(0, 1);
-		}
-		glEnd();
-		glLineWidth(1.0f);
-
-		glPopMatrix();
-	}
-
-	if (m_shape == "rounded")
-	{
-		if (m_color.a > 0.0f)
-		{
-			glPushMatrix();
+			if (m_color.a > 0.0f)
 			{
-				glColor4f(m_color.r, m_color.g, m_color.b, m_color.a);
-				glTranslatef(tx, ty, 0);
 
-				glBegin(GL_POLYGON);
+				glPushMatrix();
 				{
-					glVertex2f(m_roundedRadius, 0);
-					glVertex2f(W() - m_roundedRadius, 0);
 
-					constexpr float quarterCircle = 3.14159f / 2.0f;
-					constexpr float inc = quarterCircle / 8;
+					glTranslatef(tx, ty, 0);
 
-					float offsetRad = quarterCircle * 3.0f;
-					for (float rad = offsetRad; rad <= quarterCircle + offsetRad; rad += inc)
-						glVertex2f(
-							cos(rad) * m_roundedRadius + W() - m_roundedRadius,
-							sin(rad) * m_roundedRadius + m_roundedRadius);
+					glBegin(GL_POLYGON);
+					{
+						glColor4f(m_color.r, m_color.g, m_color.b, m_color.a);
 
-					glVertex2f(W(), m_roundedRadius);
-					glVertex2f(W(), H() - m_roundedRadius);
+						//top
+						if (gradIsVert || gradIsHori)
+							glColor4f(m_colorStart.r, m_colorStart.g, m_colorStart.b, m_colorStart.a);
+						glVertex2f(m_roundedRadius, 0);
 
-					offsetRad = 0.0f;
-					for (float rad = offsetRad + quarterCircle; rad > 0.0f; rad -= inc)
-						glVertex2f(
-							sin(rad) * m_roundedRadius + W() - m_roundedRadius,
-							cos(rad) * m_roundedRadius + H() - m_roundedRadius);
+						if (gradIsHori)
+							glColor4f(m_colorEnd.r, m_colorEnd.g, m_colorEnd.b, m_colorEnd.a);
+						glVertex2f(W() - m_roundedRadius, 0);
 
-					glVertex2f(W() - m_roundedRadius, H());
-					glVertex2f(m_roundedRadius, H());
+						constexpr float quarterCircle = 3.14159f / 2.0f;
+						constexpr float inc = quarterCircle / 8;
 
-					offsetRad = quarterCircle * 3.0f;
-					for (float rad = offsetRad + quarterCircle; rad > offsetRad; rad -= inc)
-						glVertex2f(
-							sin(rad) * m_roundedRadius + m_roundedRadius,
-							cos(rad) * m_roundedRadius + H() - m_roundedRadius);
+						// top right
 
-					glVertex2f(0, H() - m_roundedRadius);
-					glVertex2f(0, m_roundedRadius);
+						float offsetRad = quarterCircle * 3.0f;
+						for (float rad = offsetRad; rad <= quarterCircle + offsetRad; rad += inc)
+							glVertex2f(
+								cos(rad) * m_roundedRadius + W() - m_roundedRadius,
+								sin(rad) * m_roundedRadius + m_roundedRadius);
 
-					offsetRad = quarterCircle * 2.0f;
-					for (float rad = offsetRad + quarterCircle; rad > offsetRad; rad -= inc)
-						glVertex2f(
-							sin(rad) * m_roundedRadius + m_roundedRadius,
-							cos(rad) * m_roundedRadius + m_roundedRadius);
+						// right
+						if (gradIsHori)
+							glColor4f(m_colorEnd.r, m_colorEnd.g, m_colorEnd.b, m_colorEnd.a);
+						if (gradIsVert)
+							glColor4f(m_colorStart.r, m_colorStart.g, m_colorStart.b, m_colorStart.a);
+						glVertex2f(W(), m_roundedRadius);
+						if (gradIsVert)
+							glColor4f(m_colorEnd.r, m_colorEnd.g, m_colorEnd.b, m_colorEnd.a);
+						glVertex2f(W(), H() - m_roundedRadius);
+
+						// bottom right
+						offsetRad = 0.0f;
+						for (float rad = offsetRad + quarterCircle; rad > 0.0f; rad -= inc)
+							glVertex2f(
+								sin(rad) * m_roundedRadius + W() - m_roundedRadius,
+								cos(rad) * m_roundedRadius + H() - m_roundedRadius);
+
+						// bottom
+						if (gradIsVert)
+							glColor4f(m_colorEnd.r, m_colorEnd.g, m_colorEnd.b, m_colorEnd.a);
+						if (gradIsHori)
+							glColor4f(m_colorEnd.r, m_colorEnd.g, m_colorEnd.b, m_colorEnd.a);
+						glVertex2f(W() - m_roundedRadius, H());
+						if (gradIsHori)
+							glColor4f(m_colorStart.r, m_colorStart.g, m_colorStart.b, m_colorStart.a);
+						glVertex2f(m_roundedRadius, H());
+
+						// bottom left
+
+						offsetRad = quarterCircle * 3.0f;
+						for (float rad = offsetRad + quarterCircle; rad > offsetRad; rad -= inc)
+							glVertex2f(
+								sin(rad) * m_roundedRadius + m_roundedRadius,
+								cos(rad) * m_roundedRadius + H() - m_roundedRadius);
+
+						// left
+						if (gradIsHori)
+							glColor4f(m_colorStart.r, m_colorStart.g, m_colorStart.b, m_colorStart.a);
+						if (gradIsVert)
+							glColor4f(m_colorEnd.r, m_colorEnd.g, m_colorEnd.b, m_colorEnd.a);
+						glVertex2f(0, H() - m_roundedRadius);
+						if (gradIsVert)
+							glColor4f(m_colorStart.r, m_colorStart.g, m_colorStart.b, m_colorStart.a);
+						glVertex2f(0, m_roundedRadius);
+
+						// top left
+
+						offsetRad = quarterCircle * 2.0f;
+						for (float rad = offsetRad + quarterCircle; rad > offsetRad; rad -= inc)
+							glVertex2f(
+								sin(rad) * m_roundedRadius + m_roundedRadius,
+								cos(rad) * m_roundedRadius + m_roundedRadius);
+					}
+					glEnd();
 				}
-				glEnd();
+				glPopMatrix();
 			}
-			glPopMatrix();
-		}
 
-		if (m_borderColor.a > 0.0f)
-		{
-			glPushMatrix();
+			if (m_borderColor.a > 0.0f)
 			{
-				glColor4f(m_borderColor.r, m_borderColor.g, m_borderColor.b, m_borderColor.a);
-				glLineWidth(m_borderWidth);
-
-				glTranslatef(tx, ty, 0);
-
-				glBegin(GL_LINE_LOOP);
+				glPushMatrix();
 				{
-					glVertex2f(m_roundedRadius, 0);
-					glVertex2f(W() - m_roundedRadius, 0);
+					glColor4f(m_borderColor.r, m_borderColor.g, m_borderColor.b, m_borderColor.a);
+					glLineWidth(m_borderWidth);
 
-					constexpr float quarterCircle = 3.14159f / 2.0f;
-					constexpr float inc = quarterCircle / 8;
+					glTranslatef(tx, ty, 0);
 
-					float offsetRad = quarterCircle * 3.0f;
-					for (float rad = offsetRad; rad <= quarterCircle + offsetRad; rad += inc)
-						glVertex2f(
-							cos(rad) * m_roundedRadius + W() - m_roundedRadius,
-							sin(rad) * m_roundedRadius + m_roundedRadius);
+					glBegin(GL_LINE_LOOP);
+					{
+						glVertex2f(m_roundedRadius, 0);
+						glVertex2f(W() - m_roundedRadius, 0);
 
-					glVertex2f(W(), m_roundedRadius);
-					glVertex2f(W(), H() - m_roundedRadius);
+						constexpr float quarterCircle = 3.14159f / 2.0f;
+						constexpr float inc = quarterCircle / 8;
 
-					offsetRad = 0.0f;
-					for (float rad = offsetRad + quarterCircle; rad > 0.0f; rad -= inc)
-						glVertex2f(
-							sin(rad) * m_roundedRadius + W() - m_roundedRadius,
-							cos(rad) * m_roundedRadius + H() - m_roundedRadius);
+						float offsetRad = quarterCircle * 3.0f;
+						for (float rad = offsetRad; rad <= quarterCircle + offsetRad; rad += inc)
+							glVertex2f(
+								cos(rad) * m_roundedRadius + W() - m_roundedRadius,
+								sin(rad) * m_roundedRadius + m_roundedRadius);
 
-					glVertex2f(W() - m_roundedRadius, H());
-					glVertex2f(m_roundedRadius, H());
+						glVertex2f(W(), m_roundedRadius);
+						glVertex2f(W(), H() - m_roundedRadius);
 
-					offsetRad = quarterCircle * 3.0f;
-					for (float rad = offsetRad + quarterCircle; rad > offsetRad; rad -= inc)
-						glVertex2f(
-							sin(rad) * m_roundedRadius + m_roundedRadius,
-							cos(rad) * m_roundedRadius + H() - m_roundedRadius);
+						offsetRad = 0.0f;
+						for (float rad = offsetRad + quarterCircle; rad > 0.0f; rad -= inc)
+							glVertex2f(
+								sin(rad) * m_roundedRadius + W() - m_roundedRadius,
+								cos(rad) * m_roundedRadius + H() - m_roundedRadius);
 
-					glVertex2f(0, H() - m_roundedRadius);
-					glVertex2f(0, m_roundedRadius);
+						glVertex2f(W() - m_roundedRadius, H());
+						glVertex2f(m_roundedRadius, H());
 
-					offsetRad = quarterCircle * 2.0f;
-					for (float rad = offsetRad + quarterCircle; rad > offsetRad; rad -= inc)
-						glVertex2f(
-							sin(rad) * m_roundedRadius + m_roundedRadius,
-							cos(rad) * m_roundedRadius + m_roundedRadius);
+						offsetRad = quarterCircle * 3.0f;
+						for (float rad = offsetRad + quarterCircle; rad > offsetRad; rad -= inc)
+							glVertex2f(
+								sin(rad) * m_roundedRadius + m_roundedRadius,
+								cos(rad) * m_roundedRadius + H() - m_roundedRadius);
+
+						glVertex2f(0, H() - m_roundedRadius);
+						glVertex2f(0, m_roundedRadius);
+
+						offsetRad = quarterCircle * 2.0f;
+						for (float rad = offsetRad + quarterCircle; rad > offsetRad; rad -= inc)
+							glVertex2f(
+								sin(rad) * m_roundedRadius + m_roundedRadius,
+								cos(rad) * m_roundedRadius + m_roundedRadius);
+					}
+					glEnd();
+
+					glLineWidth(1.0f);
 				}
-				glEnd();
-
-				glLineWidth(1.0f);
+				glPopMatrix();
 			}
+		}
+		else
+		{
+			glColor4f(m_color.r, m_color.g, m_color.b, m_color.a);
+
+			glPushMatrix();
+
+			glTranslatef(tx, ty, 0);
+			glScalef(W(), H(), 1);
+
+			glBegin(GL_QUADS);
+			{
+				if (gradIsVert || gradIsHori)
+					glColor4f(m_colorStart.r, m_colorStart.g, m_colorStart.b, m_colorStart.a);
+				glVertex2f(0, 0);
+				if (gradIsVert)
+					glColor4f(m_colorStart.r, m_colorStart.g, m_colorStart.b, m_colorStart.a);
+				if (gradIsHori)
+					glColor4f(m_colorEnd.r, m_colorEnd.g, m_colorEnd.b, m_colorEnd.a);
+				glVertex2f(1, 0);
+				if (gradIsHori || gradIsVert)
+					glColor4f(m_colorEnd.r, m_colorEnd.g, m_colorEnd.b, m_colorEnd.a);
+				glVertex2f(1, 1);
+				if (gradIsHori)
+					glColor4f(m_colorStart.r, m_colorStart.g, m_colorStart.b, m_colorStart.a);
+				if (gradIsVert)
+					glColor4f(m_colorEnd.r, m_colorEnd.g, m_colorEnd.b, m_colorEnd.a);
+				glVertex2f(0, 1);
+			}
+			glEnd();
+
+			glColor4f(m_borderColor.r, m_borderColor.g, m_borderColor.b, m_borderColor.a);
+
+			glLineWidth(m_borderWidth);
+			glBegin(GL_LINE_LOOP);
+			{
+				glVertex2f(0, 0);
+				glVertex2f(1, 0);
+				glVertex2f(1, 1);
+				glVertex2f(0, 1);
+			}
+			glEnd();
+			glLineWidth(1.0f);
+
 			glPopMatrix();
 		}
 	}
@@ -497,7 +550,9 @@ void gui::Widget::revalidate()
 	}
 
 	lerpColor(m_targetColor, m_color, m_transitionSpeed);
-	lerpColor(m_borderColor, m_borderColor, m_transitionSpeed);
+	lerpColor(m_targetBorderColor, m_borderColor, m_transitionSpeed);
+	lerpColor(m_targetColorStart, m_colorStart, m_transitionSpeed);
+	lerpColor(m_targetColorEnd, m_colorEnd, m_transitionSpeed);
 
 }
 
@@ -550,14 +605,15 @@ bool gui::Widget::init(const nlohmann::json& j, bool ignoreType)
 			fields["background"] = textureConfigItem(m_background);
 			fields["shader-properties"] = shaderPropertiesConfigItem(m_shaderProperties);
 			fields["color"] = colorConfigItem(m_targetColor, "#0000");
-			fields["color-start"] = colorConfigItem(m_colorStart, "#0000");
-			fields["color-end"] = colorConfigItem(m_colorEnd, "#0000");
+			fields["color-start"] = colorConfigItem(m_targetColorStart, "#0000");
+			fields["color-end"] = colorConfigItem(m_targetColorEnd, "#0000");
 			fields["background-tiled"] = m_backgroundTiled;
 			fields["omit"] = m_layoutOmit;
 			fields["border-color"] = colorConfigItem(m_targetBorderColor, "#0000");
 			fields["border-width"] = { m_borderWidth, "1" };
 			fields["shape"] = m_shape;
-			fields["radius"] = { m_roundedRadius, "10" };
+			fields["radius"] = { m_roundedRadius, "0" };
+			fields["gradient"] = { m_gradient, "none" };
 		}
 		fields.load(j);
 
@@ -573,6 +629,8 @@ bool gui::Widget::init(const nlohmann::json& j, bool ignoreType)
 		m_rotation = m_rotationTarget;
 		m_color = m_targetColor;
 		m_borderColor = m_targetBorderColor;
+		m_colorStart = m_targetColorStart;
+		m_colorEnd = m_targetColorEnd;
 
 		if (m_scaled)
 		{
