@@ -14,7 +14,7 @@ GLuint ShaderManager::getShader(std::string name)
 	{
 		std::string preName = name;
 		//name = "";
-
+#define PRODUCTION_RELEASE
 #ifdef PRODUCTION_RELEASE
 		std::string vertex_name = std::string(name + "_v.glsl");
 		std::string fragment_name = std::string(name + "_f.glsl");

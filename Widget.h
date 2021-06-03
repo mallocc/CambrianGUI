@@ -308,5 +308,10 @@ public: \
 		Color m_colorEnd = { 1, 1, 1 };
 		Color m_targetColorEnd = { 1, 1, 1 };
 
+		float m_depth = 0.0f;
+		float m_targetDepth = 0.0f;
+		Color m_shadowColor = { 1, 1, 1 };
+		Color m_targetShadowColor = { 1, 1, 1 };
+
 	};
 }

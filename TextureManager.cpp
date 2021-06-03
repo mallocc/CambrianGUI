@@ -35,7 +35,7 @@ Texture *TextureManager::loadTexturePNG(const char *fname)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		std::cout << "Loaded Texture: " << fname << " (" << x << ", " << y << ", " << n << ")" << std::endl;
+		std::cout << "Loaded Texture: " << fname << " (" << x << ", " << y << ", " << n << ")" << " texId: " << textureId << std::endl;
 		Texture* nt = new Texture();
 		nt->channels = n;
 		nt->data = data;

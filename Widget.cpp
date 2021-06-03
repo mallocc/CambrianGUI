@@ -206,6 +206,43 @@ void gui::Widget::draw(float tx, float ty, bool editMode)
 	}
 #endif
 
+	if (m_depth > 0.0f)
+	{
+
+		GLuint prog = getGUI()->getShaderManger()->getShader("assets/shaders/boxblur");
+
+		glUseProgram(prog);
+		glUniform2f(glGetUniformLocation(prog, "pos"), tx, ty);
+		glUniform2f(glGetUniformLocation(prog, "size"), W(), H());
+		glUniform2f(glGetUniformLocation(prog, "guisize"), getGUI()->w, getGUI()->h);
+		glUniform1f(glGetUniformLocation(prog, "radius"), m_roundedRadius / std::max(W(),H()) / 2.0f);
+		glUniform1f(glGetUniformLocation(prog, "depth"), m_depth);
+		glUniform4f(glGetUniformLocation(prog, "color_map"), m_shadowColor.r, m_shadowColor.g, m_shadowColor.b, m_shadowColor.a);
+		glActiveTexture(GL_TEXTURE0 + 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		glPushMatrix();
+		//glTranslatef(tx, ty, 0);
+
+		glBegin(GL_QUADS);
+		glTexCoord2f(0, 0);
+		glVertex2f(0, 0);
+		glTexCoord2f(1, 0);
+		glVertex2f(getGUI()->w, 0);
+		glTexCoord2f(1, 1);
+		glVertex2f(getGUI()->w, getGUI()->h);
+		glTexCoord2f(0, 1);
+		glVertex2f(0, getGUI()->h);
+		glEnd();
+
+		glEnd();
+		glPopMatrix();
+
+		glUseProgram(0);
+		glActiveTexture(GL_TEXTURE0);
+		glDisable(GL_TEXTURE_2D);
+	}
+
 	if (m_shape == "image")
 		if (m_background != nullptr)
 		{
@@ -517,7 +554,6 @@ void gui::Widget::draw(float tx, float ty, bool editMode)
 		glLineWidth(1);
 	}
 
-	glColor4f(1, 1, 1, 1);
 }
 
 void gui::Widget::revalidate()
@@ -553,7 +589,9 @@ void gui::Widget::revalidate()
 	lerpColor(m_targetBorderColor, m_borderColor, m_transitionSpeed);
 	lerpColor(m_targetColorStart, m_colorStart, m_transitionSpeed);
 	lerpColor(m_targetColorEnd, m_colorEnd, m_transitionSpeed);
+	lerpColor(m_targetShadowColor, m_shadowColor, m_transitionSpeed);
 
+	m_depth += (m_targetDepth - m_depth) * m_transitionSpeed;
 }
 
 bool gui::Widget::init(const nlohmann::json& j, bool ignoreType)
@@ -603,7 +641,7 @@ bool gui::Widget::init(const nlohmann::json& j, bool ignoreType)
 			fields["checkable"] = m_checkable;
 			fields["radio"] = m_radio;
 			fields["background"] = textureConfigItem(m_background);
-			fields["shader-properties"] = shaderPropertiesConfigItem(m_shaderProperties);
+			fields["shader"] = shaderPropertiesConfigItem(m_shaderProperties);
 			fields["color"] = colorConfigItem(m_targetColor, "#0000");
 			fields["color-start"] = colorConfigItem(m_targetColorStart, "#0000");
 			fields["color-end"] = colorConfigItem(m_targetColorEnd, "#0000");
@@ -614,6 +652,8 @@ bool gui::Widget::init(const nlohmann::json& j, bool ignoreType)
 			fields["shape"] = m_shape;
 			fields["radius"] = { m_roundedRadius, "0" };
 			fields["gradient"] = { m_gradient, "none" };
+			fields["depth"] = m_targetDepth;
+			fields["shadow-color"] = colorConfigItem(m_targetShadowColor, "#000");
 		}
 		fields.load(j);
 
@@ -631,7 +671,8 @@ bool gui::Widget::init(const nlohmann::json& j, bool ignoreType)
 		m_borderColor = m_targetBorderColor;
 		m_colorStart = m_targetColorStart;
 		m_colorEnd = m_targetColorEnd;
-
+		m_shadowColor = m_targetShadowColor;
+		m_depth = m_targetDepth;
 		if (m_scaled)
 		{
 			if (m_background != nullptr)
