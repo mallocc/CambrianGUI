@@ -281,6 +281,62 @@ void GUI::init(std::string configOverridePath, bool firstLoad_)
 		//std::string tmp;
 		//bool success = true;
 
+
+#ifdef USE_FBO
+		{
+			//Generate the framebuffer ID
+			if (m_frameBufferHandle != 0)
+				glDeleteFramebuffers(1, &m_frameBufferHandle);
+			if (m_textureHandle != 0)
+				glDeleteTextures(1, &m_textureHandle);
+			glGenFramebuffers(1, &m_frameBufferHandle);// Always check that our framebuffer is ok
+			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+				std::cout << "Failed to generate frame buffer.";
+
+			//Bind it while we configure it
+			glBindFramebuffer(GL_FRAMEBUFFER, m_frameBufferHandle);
+			//Generation of the texture
+			glGenTextures(1, &m_textureHandle);
+			//Bind it
+			glBindTexture(GL_TEXTURE_2D, m_textureHandle);
+
+			//Actually create a space
+			glTexImage2D(GL_TEXTURE_2D,
+				0,
+				GL_RGBA,
+				w,
+				h,
+				0,
+				GL_RGBA,
+				GL_UNSIGNED_BYTE,
+				NULL);
+
+			//Wrapping
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+			//Set it as a framebuffer texture
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_textureHandle, 0);
+
+			//Creating render object
+			glGenRenderbuffers(1, &m_renderHandle);
+			//Bind it
+			glBindRenderbuffer(GL_RENDERBUFFER, m_renderHandle);
+			//Configure it
+			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_renderHandle);
+			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+				std::cout << "Failed to generate frame buffer.";
+			//Back to the default framebuffer
+			glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		}
+#endif
+
 		find_widget_as(Label, buildDateLabel, "builddatelabel")
 		{
 			buildDateLabel->text = "Build Date: " + std::string(__DATE__) + " @ " + std::string(__TIME__);

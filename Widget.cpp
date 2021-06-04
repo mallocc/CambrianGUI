@@ -8,6 +8,31 @@
 
 using gui::Widget;
 
+namespace
+{
+#ifdef USE_FBO
+	struct ScopedFBO
+	{
+		float w, h;
+		ScopedFBO(float w, float h, GLuint fboId) : w(w), h(h)
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, fboId);
+			glViewport(0, 0, w, h);
+			glClearColor(0, 0, 0, 0);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		}
+		~ScopedFBO()
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, NULL);
+			glViewport(0, 0, w, h);/*
+			glClearColor(0, 0, 0, 0);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);*/
+		}
+	};
+#endif
+}
+
+
 inline float fmodFixed(float a, float b)
 {
 	return fmod(fmod(a, b) + b, b);
@@ -206,354 +231,395 @@ void gui::Widget::draw(float tx, float ty, bool editMode)
 	}
 #endif
 
-	if (m_depth > 0.0f)
+
 	{
-
-		GLuint prog = getGUI()->getShaderManger()->getShader("assets/shaders/boxblur");
-
-		glUseProgram(prog);
-		glUniform2f(glGetUniformLocation(prog, "pos"), tx, ty);
-		glUniform2f(glGetUniformLocation(prog, "size"), W(), H());
-		glUniform2f(glGetUniformLocation(prog, "guisize"), getGUI()->w, getGUI()->h);
-		glUniform1f(glGetUniformLocation(prog, "radius"), m_roundedRadius / std::max(W(),H()) / 2.0f);
-		glUniform1f(glGetUniformLocation(prog, "depth"), m_depth);
-		glUniform4f(glGetUniformLocation(prog, "color_map"), m_shadowColor.r, m_shadowColor.g, m_shadowColor.b, m_shadowColor.a);
-		glActiveTexture(GL_TEXTURE0 + 0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		glPushMatrix();
-		//glTranslatef(tx, ty, 0);
-
-		glBegin(GL_QUADS);
-		glTexCoord2f(0, 0);
-		glVertex2f(0, 0);
-		glTexCoord2f(1, 0);
-		glVertex2f(getGUI()->w, 0);
-		glTexCoord2f(1, 1);
-		glVertex2f(getGUI()->w, getGUI()->h);
-		glTexCoord2f(0, 1);
-		glVertex2f(0, getGUI()->h);
-		glEnd();
-
-		glEnd();
-		glPopMatrix();
-
-		glUseProgram(0);
-		glActiveTexture(GL_TEXTURE0);
-		glDisable(GL_TEXTURE_2D);
-	}
-
-	if (m_shape == "image")
-		if (m_background != nullptr)
+#ifdef USE_FBO
+		ScopedFBO fbo(getGUI()->w, getGUI()->h, getGUI()->m_frameBufferHandle);
+#endif
+		// DRAW STUFF
 		{
-			glEnable(GL_TEXTURE_2D);
-			glEnable(GL_BLEND);
-			if (m_blendMode == "screen")
+			if (m_depth > 0.0f)
 			{
-				glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
-			}
-			else
-			{
-				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			}
-			glBindTexture(GL_TEXTURE_2D, m_background->id);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glColor4f(m_color.r, m_color.g, m_color.b, m_opacity *
-				((m_background != m_backgroundTransition) ? m_backgroundTransitionValue : 1.0f));
-			glPushMatrix();
-			glTranslatef(tx, ty, 0);
-			glTranslatef(m_w / 2.0f, m_h / 2.0f, 0);
-			glRotatef(m_rotation, 0, 0, 1);
-			glTranslatef(-m_w / 2.0f, -m_h / 2.0f, 0);
-			glScalef(m_w, m_h, 1);
-			glBegin(GL_QUADS);
-			{
+
+				GLuint prog = getGUI()->getShaderManger()->getShader("assets/shaders/boxblur");
+
+				glUseProgram(prog);
+				glUniform2f(glGetUniformLocation(prog, "pos"), tx, ty);
+				glUniform2f(glGetUniformLocation(prog, "size"), W(), H());
+				glUniform2f(glGetUniformLocation(prog, "guisize"), getGUI()->w, getGUI()->h);
+				glUniform1f(glGetUniformLocation(prog, "radius"), m_roundedRadius / std::max(W(), H()) / 2.0f);
+				glUniform1f(glGetUniformLocation(prog, "depth"), m_depth);
+				glUniform4f(glGetUniformLocation(prog, "color_map"), m_shadowColor.r, m_shadowColor.g, m_shadowColor.b, m_shadowColor.a);
+				glActiveTexture(GL_TEXTURE0 + 0);
+				glBindTexture(GL_TEXTURE_2D, 0);
+
+				glPushMatrix();
+				//glTranslatef(tx, ty, 0);
+
+				glBegin(GL_QUADS);
 				glTexCoord2f(0, 0);
 				glVertex2f(0, 0);
 				glTexCoord2f(1, 0);
-				glVertex2f(1, 0);
+				glVertex2f(getGUI()->w, 0);
 				glTexCoord2f(1, 1);
-				glVertex2f(1, 1);
+				glVertex2f(getGUI()->w, getGUI()->h);
 				glTexCoord2f(0, 1);
-				glVertex2f(0, 1);
+				glVertex2f(0, getGUI()->h);
+				glEnd();
+
+				glEnd();
+				glPopMatrix();
+
+				glUseProgram(0);
+				glActiveTexture(GL_TEXTURE0);
+				glDisable(GL_TEXTURE_2D);
 			}
-			glEnd();
-			glPopMatrix();
 
-			glBindTexture(GL_TEXTURE_2D, NULL);
-			glDisable(GL_TEXTURE_2D);
-			glDisable(GL_BLEND);
-		}
-
-	if (m_shape == "rect")
-	{
-		bool gradIsVert = m_gradient == "vertical";
-		bool gradIsHori = m_gradient == "horizontal";
-		if (m_roundedRadius > 0.0f)
-		{
-			if (m_color.a > 0.0f)
-			{
-
-				glPushMatrix();
+			if (m_shape == "image")
+				if (m_background != nullptr)
 				{
+					glEnable(GL_TEXTURE_2D);
+					glEnable(GL_BLEND);
+					if (m_blendMode == "screen")
+					{
+						glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
+					}
+					else
+					{
+						glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+					}
+					glBindTexture(GL_TEXTURE_2D, m_background->id);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+					glColor4f(m_color.r, m_color.g, m_color.b, m_opacity *
+						((m_background != m_backgroundTransition) ? m_backgroundTransitionValue : 1.0f));
+					glPushMatrix();
+					glTranslatef(tx, ty, 0);
+					glTranslatef(m_w / 2.0f, m_h / 2.0f, 0);
+					glRotatef(m_rotation, 0, 0, 1);
+					glTranslatef(-m_w / 2.0f, -m_h / 2.0f, 0);
+					glScalef(m_w, m_h, 1);
+					glBegin(GL_QUADS);
+					{
+						glTexCoord2f(0, 0);
+						glVertex2f(0, 0);
+						glTexCoord2f(1, 0);
+						glVertex2f(1, 0);
+						glTexCoord2f(1, 1);
+						glVertex2f(1, 1);
+						glTexCoord2f(0, 1);
+						glVertex2f(0, 1);
+					}
+					glEnd();
+					glPopMatrix();
+
+					glBindTexture(GL_TEXTURE_2D, NULL);
+					glDisable(GL_TEXTURE_2D);
+					glDisable(GL_BLEND);
+				}
+
+			if (m_shape == "rect")
+			{
+				bool gradIsVert = m_gradient == "vertical";
+				bool gradIsHori = m_gradient == "horizontal";
+				if (m_roundedRadius > 0.0f)
+				{
+					if (m_color.a > 0.0f)
+					{
+
+						glPushMatrix();
+						{
+
+							glTranslatef(tx, ty, 0);
+
+							glBegin(GL_POLYGON);
+							{
+								glColor4f(m_color.r, m_color.g, m_color.b, m_color.a);
+
+								//top
+								if (gradIsVert || gradIsHori)
+									glColor4f(m_colorStart.r, m_colorStart.g, m_colorStart.b, m_colorStart.a);
+								glVertex2f(m_roundedRadius, 0);
+
+								if (gradIsHori)
+									glColor4f(m_colorEnd.r, m_colorEnd.g, m_colorEnd.b, m_colorEnd.a);
+								glVertex2f(W() - m_roundedRadius, 0);
+
+								constexpr float quarterCircle = 3.14159f / 2.0f;
+								constexpr float inc = quarterCircle / 8;
+
+								// top right
+
+								float offsetRad = quarterCircle * 3.0f;
+								for (float rad = offsetRad; rad <= quarterCircle + offsetRad; rad += inc)
+									glVertex2f(
+										cos(rad) * m_roundedRadius + W() - m_roundedRadius,
+										sin(rad) * m_roundedRadius + m_roundedRadius);
+
+								// right
+								if (gradIsHori)
+									glColor4f(m_colorEnd.r, m_colorEnd.g, m_colorEnd.b, m_colorEnd.a);
+								if (gradIsVert)
+									glColor4f(m_colorStart.r, m_colorStart.g, m_colorStart.b, m_colorStart.a);
+								glVertex2f(W(), m_roundedRadius);
+								if (gradIsVert)
+									glColor4f(m_colorEnd.r, m_colorEnd.g, m_colorEnd.b, m_colorEnd.a);
+								glVertex2f(W(), H() - m_roundedRadius);
+
+								// bottom right
+								offsetRad = 0.0f;
+								for (float rad = offsetRad + quarterCircle; rad > 0.0f; rad -= inc)
+									glVertex2f(
+										sin(rad) * m_roundedRadius + W() - m_roundedRadius,
+										cos(rad) * m_roundedRadius + H() - m_roundedRadius);
+
+								// bottom
+								if (gradIsVert)
+									glColor4f(m_colorEnd.r, m_colorEnd.g, m_colorEnd.b, m_colorEnd.a);
+								if (gradIsHori)
+									glColor4f(m_colorEnd.r, m_colorEnd.g, m_colorEnd.b, m_colorEnd.a);
+								glVertex2f(W() - m_roundedRadius, H());
+								if (gradIsHori)
+									glColor4f(m_colorStart.r, m_colorStart.g, m_colorStart.b, m_colorStart.a);
+								glVertex2f(m_roundedRadius, H());
+
+								// bottom left
+
+								offsetRad = quarterCircle * 3.0f;
+								for (float rad = offsetRad + quarterCircle; rad > offsetRad; rad -= inc)
+									glVertex2f(
+										sin(rad) * m_roundedRadius + m_roundedRadius,
+										cos(rad) * m_roundedRadius + H() - m_roundedRadius);
+
+								// left
+								if (gradIsHori)
+									glColor4f(m_colorStart.r, m_colorStart.g, m_colorStart.b, m_colorStart.a);
+								if (gradIsVert)
+									glColor4f(m_colorEnd.r, m_colorEnd.g, m_colorEnd.b, m_colorEnd.a);
+								glVertex2f(0, H() - m_roundedRadius);
+								if (gradIsVert)
+									glColor4f(m_colorStart.r, m_colorStart.g, m_colorStart.b, m_colorStart.a);
+								glVertex2f(0, m_roundedRadius);
+
+								// top left
+
+								offsetRad = quarterCircle * 2.0f;
+								for (float rad = offsetRad + quarterCircle; rad > offsetRad; rad -= inc)
+									glVertex2f(
+										sin(rad) * m_roundedRadius + m_roundedRadius,
+										cos(rad) * m_roundedRadius + m_roundedRadius);
+							}
+							glEnd();
+						}
+						glPopMatrix();
+					}
+
+					if (m_borderColor.a > 0.0f)
+					{
+						glPushMatrix();
+						{
+							glColor4f(m_borderColor.r, m_borderColor.g, m_borderColor.b, m_borderColor.a);
+							glLineWidth(m_borderWidth);
+
+							glTranslatef(tx, ty, 0);
+
+							glBegin(GL_LINE_LOOP);
+							{
+								glVertex2f(m_roundedRadius, 0);
+								glVertex2f(W() - m_roundedRadius, 0);
+
+								constexpr float quarterCircle = 3.14159f / 2.0f;
+								constexpr float inc = quarterCircle / 8;
+
+								float offsetRad = quarterCircle * 3.0f;
+								for (float rad = offsetRad; rad <= quarterCircle + offsetRad; rad += inc)
+									glVertex2f(
+										cos(rad) * m_roundedRadius + W() - m_roundedRadius,
+										sin(rad) * m_roundedRadius + m_roundedRadius);
+
+								glVertex2f(W(), m_roundedRadius);
+								glVertex2f(W(), H() - m_roundedRadius);
+
+								offsetRad = 0.0f;
+								for (float rad = offsetRad + quarterCircle; rad > 0.0f; rad -= inc)
+									glVertex2f(
+										sin(rad) * m_roundedRadius + W() - m_roundedRadius,
+										cos(rad) * m_roundedRadius + H() - m_roundedRadius);
+
+								glVertex2f(W() - m_roundedRadius, H());
+								glVertex2f(m_roundedRadius, H());
+
+								offsetRad = quarterCircle * 3.0f;
+								for (float rad = offsetRad + quarterCircle; rad > offsetRad; rad -= inc)
+									glVertex2f(
+										sin(rad) * m_roundedRadius + m_roundedRadius,
+										cos(rad) * m_roundedRadius + H() - m_roundedRadius);
+
+								glVertex2f(0, H() - m_roundedRadius);
+								glVertex2f(0, m_roundedRadius);
+
+								offsetRad = quarterCircle * 2.0f;
+								for (float rad = offsetRad + quarterCircle; rad > offsetRad; rad -= inc)
+									glVertex2f(
+										sin(rad) * m_roundedRadius + m_roundedRadius,
+										cos(rad) * m_roundedRadius + m_roundedRadius);
+							}
+							glEnd();
+
+							glLineWidth(1.0f);
+						}
+						glPopMatrix();
+					}
+				}
+				else
+				{
+					glColor4f(m_color.r, m_color.g, m_color.b, m_color.a);
+
+					glPushMatrix();
 
 					glTranslatef(tx, ty, 0);
+					glScalef(W(), H(), 1);
 
-					glBegin(GL_POLYGON);
+					glBegin(GL_QUADS);
 					{
-						glColor4f(m_color.r, m_color.g, m_color.b, m_color.a);
-
-						//top
 						if (gradIsVert || gradIsHori)
 							glColor4f(m_colorStart.r, m_colorStart.g, m_colorStart.b, m_colorStart.a);
-						glVertex2f(m_roundedRadius, 0);
-
-						if (gradIsHori)
-							glColor4f(m_colorEnd.r, m_colorEnd.g, m_colorEnd.b, m_colorEnd.a);
-						glVertex2f(W() - m_roundedRadius, 0);
-
-						constexpr float quarterCircle = 3.14159f / 2.0f;
-						constexpr float inc = quarterCircle / 8;
-
-						// top right
-
-						float offsetRad = quarterCircle * 3.0f;
-						for (float rad = offsetRad; rad <= quarterCircle + offsetRad; rad += inc)
-							glVertex2f(
-								cos(rad) * m_roundedRadius + W() - m_roundedRadius,
-								sin(rad) * m_roundedRadius + m_roundedRadius);
-
-						// right
-						if (gradIsHori)
-							glColor4f(m_colorEnd.r, m_colorEnd.g, m_colorEnd.b, m_colorEnd.a);
+						glVertex2f(0, 0);
 						if (gradIsVert)
 							glColor4f(m_colorStart.r, m_colorStart.g, m_colorStart.b, m_colorStart.a);
-						glVertex2f(W(), m_roundedRadius);
-						if (gradIsVert)
-							glColor4f(m_colorEnd.r, m_colorEnd.g, m_colorEnd.b, m_colorEnd.a);
-						glVertex2f(W(), H() - m_roundedRadius);
-
-						// bottom right
-						offsetRad = 0.0f;
-						for (float rad = offsetRad + quarterCircle; rad > 0.0f; rad -= inc)
-							glVertex2f(
-								sin(rad) * m_roundedRadius + W() - m_roundedRadius,
-								cos(rad) * m_roundedRadius + H() - m_roundedRadius);
-
-						// bottom
-						if (gradIsVert)
-							glColor4f(m_colorEnd.r, m_colorEnd.g, m_colorEnd.b, m_colorEnd.a);
 						if (gradIsHori)
 							glColor4f(m_colorEnd.r, m_colorEnd.g, m_colorEnd.b, m_colorEnd.a);
-						glVertex2f(W() - m_roundedRadius, H());
-						if (gradIsHori)
-							glColor4f(m_colorStart.r, m_colorStart.g, m_colorStart.b, m_colorStart.a);
-						glVertex2f(m_roundedRadius, H());
-
-						// bottom left
-
-						offsetRad = quarterCircle * 3.0f;
-						for (float rad = offsetRad + quarterCircle; rad > offsetRad; rad -= inc)
-							glVertex2f(
-								sin(rad) * m_roundedRadius + m_roundedRadius,
-								cos(rad) * m_roundedRadius + H() - m_roundedRadius);
-
-						// left
+						glVertex2f(1, 0);
+						if (gradIsHori || gradIsVert)
+							glColor4f(m_colorEnd.r, m_colorEnd.g, m_colorEnd.b, m_colorEnd.a);
+						glVertex2f(1, 1);
 						if (gradIsHori)
 							glColor4f(m_colorStart.r, m_colorStart.g, m_colorStart.b, m_colorStart.a);
 						if (gradIsVert)
 							glColor4f(m_colorEnd.r, m_colorEnd.g, m_colorEnd.b, m_colorEnd.a);
-						glVertex2f(0, H() - m_roundedRadius);
-						if (gradIsVert)
-							glColor4f(m_colorStart.r, m_colorStart.g, m_colorStart.b, m_colorStart.a);
-						glVertex2f(0, m_roundedRadius);
-
-						// top left
-
-						offsetRad = quarterCircle * 2.0f;
-						for (float rad = offsetRad + quarterCircle; rad > offsetRad; rad -= inc)
-							glVertex2f(
-								sin(rad) * m_roundedRadius + m_roundedRadius,
-								cos(rad) * m_roundedRadius + m_roundedRadius);
+						glVertex2f(0, 1);
 					}
 					glEnd();
-				}
-				glPopMatrix();
-			}
 
-			if (m_borderColor.a > 0.0f)
-			{
-				glPushMatrix();
-				{
 					glColor4f(m_borderColor.r, m_borderColor.g, m_borderColor.b, m_borderColor.a);
+
 					glLineWidth(m_borderWidth);
-
-					glTranslatef(tx, ty, 0);
-
 					glBegin(GL_LINE_LOOP);
 					{
-						glVertex2f(m_roundedRadius, 0);
-						glVertex2f(W() - m_roundedRadius, 0);
-
-						constexpr float quarterCircle = 3.14159f / 2.0f;
-						constexpr float inc = quarterCircle / 8;
-
-						float offsetRad = quarterCircle * 3.0f;
-						for (float rad = offsetRad; rad <= quarterCircle + offsetRad; rad += inc)
-							glVertex2f(
-								cos(rad) * m_roundedRadius + W() - m_roundedRadius,
-								sin(rad) * m_roundedRadius + m_roundedRadius);
-
-						glVertex2f(W(), m_roundedRadius);
-						glVertex2f(W(), H() - m_roundedRadius);
-
-						offsetRad = 0.0f;
-						for (float rad = offsetRad + quarterCircle; rad > 0.0f; rad -= inc)
-							glVertex2f(
-								sin(rad) * m_roundedRadius + W() - m_roundedRadius,
-								cos(rad) * m_roundedRadius + H() - m_roundedRadius);
-
-						glVertex2f(W() - m_roundedRadius, H());
-						glVertex2f(m_roundedRadius, H());
-
-						offsetRad = quarterCircle * 3.0f;
-						for (float rad = offsetRad + quarterCircle; rad > offsetRad; rad -= inc)
-							glVertex2f(
-								sin(rad) * m_roundedRadius + m_roundedRadius,
-								cos(rad) * m_roundedRadius + H() - m_roundedRadius);
-
-						glVertex2f(0, H() - m_roundedRadius);
-						glVertex2f(0, m_roundedRadius);
-
-						offsetRad = quarterCircle * 2.0f;
-						for (float rad = offsetRad + quarterCircle; rad > offsetRad; rad -= inc)
-							glVertex2f(
-								sin(rad) * m_roundedRadius + m_roundedRadius,
-								cos(rad) * m_roundedRadius + m_roundedRadius);
+						glVertex2f(0, 0);
+						glVertex2f(1, 0);
+						glVertex2f(1, 1);
+						glVertex2f(0, 1);
 					}
 					glEnd();
-
 					glLineWidth(1.0f);
+
+					glPopMatrix();
 				}
+			}
+
+			if (m_background != m_backgroundTransition)
+				if (m_backgroundTransition != nullptr)
+				{
+					glEnable(GL_TEXTURE_2D);
+					glEnable(GL_BLEND);
+					if (m_blendMode == "screen")
+					{
+						glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
+					}
+					else
+					{
+						glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+					}
+					glBindTexture(GL_TEXTURE_2D, m_backgroundTransition->id);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+					glColor4f(m_color.r, m_color.g, m_color.b, m_opacity * (1.0f - m_backgroundTransitionValue));
+					glPushMatrix();
+					glTranslatef(tx, ty, 0);
+					glRotatef(m_rotation, 0, 0, 1);
+					glScalef(m_w, m_h, 1);
+					glBegin(GL_QUADS);
+					{
+						glTexCoord2f(0, 0);
+						glVertex2f(0, 0);
+						glTexCoord2f(1, 0);
+						glVertex2f(1, 0);
+						glTexCoord2f(1, 1);
+						glVertex2f(1, 1);
+						glTexCoord2f(0, 1);
+						glVertex2f(0, 1);
+					}
+					glEnd();
+					glPopMatrix();
+
+					glBindTexture(GL_TEXTURE_2D, NULL);
+					glDisable(GL_TEXTURE_2D);
+					glDisable(GL_BLEND);
+				}
+
+			if (m_debugMode == DebugMode::DBG_BOUNDS)// && gui->editedWidget == this)
+			{
+				glLineWidth(2);
+				if (m_over)
+					glColor3f(0, 1, 0);
+				else
+					glColor3f(1, 0, 0);
+
+				glPushMatrix();
+				glTranslatef(tx, ty, 0);
+				glScalef(m_w, m_h, 1);
+				glBegin(GL_LINE_LOOP);
+				{
+					glVertex2f(0, 0);
+					glVertex2f(1, 0);
+					glVertex2f(1, 1);
+					glVertex2f(0, 1);
+				}
+				glEnd();
 				glPopMatrix();
+				glLineWidth(1);
 			}
-		}
-		else
-		{
-			glColor4f(m_color.r, m_color.g, m_color.b, m_color.a);
-
-			glPushMatrix();
-
-			glTranslatef(tx, ty, 0);
-			glScalef(W(), H(), 1);
-
-			glBegin(GL_QUADS);
-			{
-				if (gradIsVert || gradIsHori)
-					glColor4f(m_colorStart.r, m_colorStart.g, m_colorStart.b, m_colorStart.a);
-				glVertex2f(0, 0);
-				if (gradIsVert)
-					glColor4f(m_colorStart.r, m_colorStart.g, m_colorStart.b, m_colorStart.a);
-				if (gradIsHori)
-					glColor4f(m_colorEnd.r, m_colorEnd.g, m_colorEnd.b, m_colorEnd.a);
-				glVertex2f(1, 0);
-				if (gradIsHori || gradIsVert)
-					glColor4f(m_colorEnd.r, m_colorEnd.g, m_colorEnd.b, m_colorEnd.a);
-				glVertex2f(1, 1);
-				if (gradIsHori)
-					glColor4f(m_colorStart.r, m_colorStart.g, m_colorStart.b, m_colorStart.a);
-				if (gradIsVert)
-					glColor4f(m_colorEnd.r, m_colorEnd.g, m_colorEnd.b, m_colorEnd.a);
-				glVertex2f(0, 1);
-			}
-			glEnd();
-
-			glColor4f(m_borderColor.r, m_borderColor.g, m_borderColor.b, m_borderColor.a);
-
-			glLineWidth(m_borderWidth);
-			glBegin(GL_LINE_LOOP);
-			{
-				glVertex2f(0, 0);
-				glVertex2f(1, 0);
-				glVertex2f(1, 1);
-				glVertex2f(0, 1);
-			}
-			glEnd();
-			glLineWidth(1.0f);
-
-			glPopMatrix();
 		}
 	}
 
-	if (m_background != m_backgroundTransition)
-		if (m_backgroundTransition != nullptr)
-		{
-			glEnable(GL_TEXTURE_2D);
-			glEnable(GL_BLEND);
-			if (m_blendMode == "screen")
-			{
-				glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
-			}
-			else
-			{
-				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			}
-			glBindTexture(GL_TEXTURE_2D, m_backgroundTransition->id);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-			glColor4f(m_color.r, m_color.g, m_color.b, m_opacity * (1.0f - m_backgroundTransitionValue));
-			glPushMatrix();
-			glTranslatef(tx, ty, 0);
-			glRotatef(m_rotation, 0, 0, 1);
-			glScalef(m_w, m_h, 1);
-			glBegin(GL_QUADS);
-			{
-				glTexCoord2f(0, 0);
-				glVertex2f(0, 0);
-				glTexCoord2f(1, 0);
-				glVertex2f(1, 0);
-				glTexCoord2f(1, 1);
-				glVertex2f(1, 1);
-				glTexCoord2f(0, 1);
-				glVertex2f(0, 1);
-			}
-			glEnd();
-			glPopMatrix();
-
-			glBindTexture(GL_TEXTURE_2D, NULL);
-			glDisable(GL_TEXTURE_2D);
-			glDisable(GL_BLEND);
-		}
-
-	if (m_debugMode == DebugMode::DBG_BOUNDS)// && gui->editedWidget == this)
+#ifdef USE_FBO
 	{
-		glLineWidth(2);
-		if (m_over)
-			glColor3f(0, 1, 0);
-		else
-			glColor3f(1, 0, 0);
-
+		glEnable(GL_TEXTURE_2D);
+		glEnable(GL_BLEND); glDisable(GL_DEPTH_TEST);
+		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+		glBindTexture(GL_TEXTURE_2D, 17);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glPushMatrix();
-		glTranslatef(tx, ty, 0);
-		glScalef(m_w, m_h, 1);
-		glBegin(GL_LINE_LOOP);
+		glTranslatef(0, getGUI()->h, 0);
+		glScalef(getGUI()->w, -getGUI()->h, 0);
+		glBegin(GL_QUADS);
 		{
+			glTexCoord2f(0, 0);
 			glVertex2f(0, 0);
+			glTexCoord2f(1, 0);
 			glVertex2f(1, 0);
+			glTexCoord2f(1, 1);
 			glVertex2f(1, 1);
+			glTexCoord2f(0, 1);
 			glVertex2f(0, 1);
 		}
 		glEnd();
 		glPopMatrix();
-		glLineWidth(1);
-	}
 
+		glBindTexture(GL_TEXTURE_2D, NULL);
+		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_BLEND);
+	}
+#endif
 }
 
 void gui::Widget::revalidate()
@@ -690,6 +756,7 @@ bool gui::Widget::init(const nlohmann::json& j, bool ignoreType)
 		{
 			m_config.load(m_onUncheckedJson, true);
 		}
+
 	}
 	else
 	{

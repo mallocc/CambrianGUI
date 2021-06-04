@@ -15,6 +15,8 @@ namespace gui
 	typedef std::function<void(GUI*, Widget*)> TriggerCallback;
 	typedef std::function<void(void)> WorkerCallback;
 
+
+
 	class GUI
 	{
 	public:
@@ -87,6 +89,13 @@ namespace gui
 		void runWorkerThread();
 
 		void runWorker(WorkerCallback workerCallback);
+
+#ifdef USE_FBO
+		GLuint m_frameBufferHandle = NULL;
+		GLuint m_textureHandle = NULL;
+		GLuint m_renderHandle = NULL;
+#endif
+		
 	private:
 		Configuration* config = nullptr;
 		WidgetManager* widgetManager = nullptr;
@@ -108,6 +117,7 @@ namespace gui
 		std::mutex m_mutex;
 
 		std::queue<WorkerCallback> m_workerQueue;
+
 	};
 
 }

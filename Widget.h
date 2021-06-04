@@ -312,6 +312,5 @@ public: \
 		float m_targetDepth = 0.0f;
 		Color m_shadowColor = { 1, 1, 1 };
 		Color m_targetShadowColor = { 1, 1, 1 };
-
 	};
 }
