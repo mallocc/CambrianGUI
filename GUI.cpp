@@ -90,12 +90,19 @@ void GUI::draw()
 			}
 		}
 
-		Widget* floatingLabelWidget = widgetManager->getFloatingLabelWidget();
-		if (floatingLabelWidget != nullptr && floatingLabelWidget->isVisible())
-		{
-			floatingLabelWidget->revalidate();
-			floatingLabelWidget->draw(0, 0);
-		}
+		//Widget* dlWidget = widgetManager->getDropDownListWidget();
+		//if (dlWidget != nullptr && dlWidget->isVisible())
+		//{
+		//	dlWidget->revalidate();
+		//	dlWidget->draw(0, 0);
+		//}
+
+		//Widget* floatingLabelWidget = widgetManager->getFloatingLabelWidget();
+		//if (floatingLabelWidget != nullptr && floatingLabelWidget->isVisible())
+		//{
+		//	floatingLabelWidget->revalidate();
+		//	floatingLabelWidget->draw(0, 0);
+		//}
 	}
 	frameCount++;
 }
@@ -536,6 +543,8 @@ void gui::GUI::openDropdownIntent(Widget* parent, nlohmann::json j, intentcallba
 		dropdownListWidget->setParent(parent);
 		dropdownListWidget->initList(j);
 		dropdownListWidget->onSelection = selectionCallback;
+		dropdownListWidget->setExpandFlags(EXPAND_RESET);
+		dropdownListWidget->setExpandFlags(EXPAND_PREFERED);
 		widgetManager->bringToFront(dropdownListWidget);
 	}
 	else
@@ -556,6 +565,8 @@ void gui::GUI::openRightClickIntent(nlohmann::json j, intentcallback_t selection
 		dropdownListWidget->setX(oldMouseEventData.x);
 		dropdownListWidget->setY(oldMouseEventData.y);
 		dropdownListWidget->onSelection = selectionCallback;
+		dropdownListWidget->setExpandFlags(EXPAND_RESET);
+		dropdownListWidget->setExpandFlags(EXPAND_PREFERED_HEIGHT);
 		widgetManager->bringToFront(dropdownListWidget);
 	}
 	else

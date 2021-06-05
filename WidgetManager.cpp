@@ -328,9 +328,10 @@ void gui::WidgetManager::createFloatingLabelWidget()
 		{
 			floatingLabelWidget->revalidate();
 			floatingLabelWidget->hide();
-			Layout* widget = dynamic_cast<Layout*>(rootWidget);
+			Layout* widget = dynamic_cast<Layout*>(findWidget("mainlayout"));
 			if (widget)
 				widget->addChild(floatingLabelWidget);
+			bringToFront(floatingLabelWidget);
 		}
 	}
 	else
@@ -349,7 +350,7 @@ void gui::WidgetManager::createDropDownListWidget()
 		{
 			dropDownListWidget->revalidate();
 			dropDownListWidget->hide();
-			Layout* widget = dynamic_cast<Layout*>(rootWidget);
+			Layout* widget = dynamic_cast<Layout*>(findWidget("mainlayout"));
 			if (widget)
 			{
 				widget->addChild(dropDownListWidget);

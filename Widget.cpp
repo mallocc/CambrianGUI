@@ -238,16 +238,17 @@ void gui::Widget::draw(float tx, float ty, bool editMode)
 #endif
 		// DRAW STUFF
 		{
-			if (m_depth > 0.0f)
+			if (m_depth > 0.001f)
 			{
 
 				GLuint prog = getGUI()->getShaderManger()->getShader("assets/shaders/boxblur");
-
+				float largerSide = std::max(W(), H());
 				glUseProgram(prog);
+				//glUniform2f(glGetUniformLocation(prog, "pos"), tx + largerSide * m_depth * 10, ty + largerSide * m_depth * 10);
 				glUniform2f(glGetUniformLocation(prog, "pos"), tx, ty);
 				glUniform2f(glGetUniformLocation(prog, "size"), W(), H());
 				glUniform2f(glGetUniformLocation(prog, "guisize"), getGUI()->w, getGUI()->h);
-				glUniform1f(glGetUniformLocation(prog, "radius"), m_roundedRadius / std::max(W(), H()) / 2.0f);
+				glUniform1f(glGetUniformLocation(prog, "radius"), m_roundedRadius / largerSide / 2.0f);
 				glUniform1f(glGetUniformLocation(prog, "depth"), m_depth);
 				glUniform4f(glGetUniformLocation(prog, "color_map"), m_shadowColor.r, m_shadowColor.g, m_shadowColor.b, m_shadowColor.a);
 				glActiveTexture(GL_TEXTURE0 + 0);
@@ -326,7 +327,7 @@ void gui::Widget::draw(float tx, float ty, bool editMode)
 				bool gradIsHori = m_gradient == "horizontal";
 				if (m_roundedRadius > 0.0f)
 				{
-					if (m_color.a > 0.0f)
+					//if (m_color.a > 0.0f)
 					{
 
 						glPushMatrix();
@@ -416,7 +417,7 @@ void gui::Widget::draw(float tx, float ty, bool editMode)
 						glPopMatrix();
 					}
 
-					if (m_borderColor.a > 0.0f)
+					//if (m_borderColor.a > 0.0f)
 					{
 						glPushMatrix();
 						{
@@ -636,10 +637,14 @@ void gui::Widget::revalidate()
 	m_rotation += (m_rotationTarget - m_rotation) * m_transitionSpeed;
 	fmodFixed(m_rotation, 360.0f);
 
-	m_x += (m_xTarget - m_x) * m_transitionSpeed;
-	m_y += (m_yTarget - m_y) * m_transitionSpeed;
-	m_w += (m_wTarget - m_w) * m_transitionSpeed;
-	m_h += (m_hTarget - m_h) * m_transitionSpeed;
+	if (std::fabs(m_xTarget - m_x) > 0.1f)
+		m_x += (m_xTarget - m_x) * m_transitionSpeed;
+	if (std::fabs(m_yTarget - m_y) > 0.1f)
+		m_y += (m_yTarget - m_y) * m_transitionSpeed;
+	if (std::fabs(m_wTarget - m_w) > 0.1f)
+		m_w += (m_wTarget - m_w) * m_transitionSpeed;
+	if (std::fabs(m_hTarget - m_h) > 0.1f)
+		m_h += (m_hTarget - m_h) * m_transitionSpeed;
 
 	if (m_background != m_backgroundTransition)
 	{
