@@ -1,6 +1,8 @@
 #include "Configuration.h"
 #include "GUI.h"
 
+#define DEBUG
+
 namespace gui
 {
 	Configuration::Configuration(AssetPacker::fileImageMap_t* filesys)
@@ -12,47 +14,65 @@ namespace gui
 
 	bool Configuration::loadConfig(std::string filename, GUI& gui)
 	{
+		bool success = false;
+		
 		std::cout << "Loading config: " << filename << std::endl;
 
-		std::string str(filesys[filename].data, filesys[filename].size);
-		nlohmann::json j = nlohmann::json::parse(str);
-
-		findIncludes(j);
-
-		bool success = true;
-
-		success &= readJSON(j, "w", w);
-		success &= readJSON(j, "h", h);
-
-		if (success &= checkJSON(j, "colors"))
+		try
 		{
-			colors = j.at("colors");
-		}
+#ifdef DEBUG
+			std::ifstream t(ExePath() + "\\..\\..\\GUIEditor\\" + filename);
+			std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+#else
+			std::string str(filesys[filename].data, filesys[filename].size);
+#endif
+			nlohmann::json j = nlohmann::json::parse(str);
 
-		if (gui.getFontManager() != nullptr)
-		{
-			std::string fontPath = "assets/fonts/Open_Sans/OpenSans-Regular.ttf";
-			gui.getFontManager()->defaultFont = new Font(&(gui.getFontManager()->ft), fontPath, "OpenSans@24", 24, &gui);
+			findIncludes(j);
 
-			if (success &= checkJSON(j, "fonts"))
+			success = true;
+
+			success &= readJSON(j, "w", w);
+			success &= readJSON(j, "h", h);
+
+			if (success &= checkJSON(j, "colors"))
 			{
-				fonts = j.at("fonts");
-				for (auto& i : fonts)
+				colors = j.at("colors");
+			}
+
+			if (gui.getFontManager() != nullptr)
+			{
+				std::string fontPath = "assets/fonts/Open_Sans/OpenSans-Regular.ttf";
+				gui.getFontManager()->defaultFont = new Font(&(gui.getFontManager()->ft), fontPath, "OpenSans@24", 24, &gui);
+
+				if (success &= checkJSON(j, "fonts"))
 				{
-					if (!gui.getFontManager()->fonts.contains(i["name"]));
+					fonts = j.at("fonts");
+					for (auto& i : fonts)
+					{
+						if (!gui.getFontManager()->fonts.contains(i["name"]));
 						gui.getFontManager()->addFont(i["name"], i["font"], i["size"], i["weight"], i["outline"]);
+					}
 				}
 			}
+
+
+			if (success &= checkJSON(j, "classes"))
+			{
+				classes = j.at("classes");
+			}
+
+			if (success)
+				config = j;
+
 		}
-
-
-		if (success &= checkJSON(j, "classes"))
+		catch (nlohmann::json::exception e)
 		{
-			classes = j.at("classes");
+			std::cout << e.what() << std::endl;
 		}
-
-		if (success)
-			config = j;
+		catch (...)
+		{
+		}
 
 		return success;
 	}
@@ -60,7 +80,12 @@ namespace gui
 	void Configuration::loadInclude(nlohmann::json& j, std::string filename)
 	{
 		filename = "assets/" + filename;
+#ifdef DEBUG
+		std::ifstream t(ExePath() + "\\..\\..\\GUIEditor\\" + filename);
+		std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+#else
 		std::string str(filesys[filename].data, filesys[filename].size);
+#endif
 		nlohmann::json includeJson = nlohmann::json::parse(str);
 		mergeJsonObjects(j, includeJson);
 	}

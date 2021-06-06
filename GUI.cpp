@@ -39,7 +39,8 @@ namespace gui
 		{"sizenwse", IDC_SIZENWSE},
 		{"sizewe", IDC_SIZEWE},
 		{"wait", IDC_WAIT},
-		{"no", IDC_NO}
+		{"no", IDC_NO},
+		{"arrow", IDC_ARROW}
 	};
 }
 
@@ -129,7 +130,7 @@ SplitTimer::Timer* gui::GUI::getTimer()
 
 void GUI::onMouseEvent(MouseEventData mouseEventData)
 {
-	//std::cout << mouseEventData.x << " " << mouseEventData.y << " left: " << mouseEventData.leftDown << " middle: " << mouseEventData.middleDown << " right: " << mouseEventData.rightDown << std::endl;
+	std::cout << mouseEventData.x << " " << mouseEventData.y << " left: " << mouseEventData.leftDown << " middle: " << mouseEventData.middleDown << " right: " << mouseEventData.rightDown << std::endl;
 
 	// Look for a new focused widget in UI
 	if (focusedWidget == nullptr)
@@ -169,12 +170,13 @@ void GUI::onMouseEvent(MouseEventData mouseEventData)
 	}
 	else // Theres already a widget being focuced/interacted with, so only process it and freeze disable everything else
 	{
-		focusedWidget->onMouseEvent(mouseEventData, /*!editMode*/ true, true);
+		focusedWidget->onMouseEvent(mouseEventData, true, true);
 	}
 
 	// Reset focused widget when mouse released
 	if ((!mouseEventData.leftDown) && focusedWidget != nullptr)
 	{
+		std::cout << "Defocus handle" << std::endl;
 		focusedWidget = nullptr;
 	}
 
@@ -467,6 +469,7 @@ GUI::GUI(int32_t w, int32_t h)
 	registerTriggerCallback("show_credits", [&](GUI* gui, Widget*) { gui->displayCredits = true; });
 	registerTriggerCallback("hide_credits", [&](GUI* gui, Widget*) { gui->displayCredits = false; });
 	registerTriggerCallback("test", [&](GUI*, Widget* from) { std::cout << "Triggered from widget: " << from->getId() << std::endl; });
+	registerTriggerCallback("print", [&](GUI*, Widget* from) { std::cout << "Triggered from widget: " << from->toJson().dump(2) << std::endl; });
 }
 
 GUI* gui::GUI::getGUI()

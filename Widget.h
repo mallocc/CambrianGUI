@@ -109,6 +109,9 @@ public: \
 		float getBackgroundTransitionValue();
 		std::string getType();
 
+		virtual float depth();
+		float getTargetDepth();
+
 
 
 
@@ -270,6 +273,7 @@ public: \
 		nlohmann::json m_onOverJson;
 		nlohmann::json m_onLeaveJson;
 		nlohmann::json m_onClickJson;
+		nlohmann::json m_onDoubleClickJson;
 		nlohmann::json m_onReleaseJson;
 		nlohmann::json m_onCheckedJson;
 		nlohmann::json m_onUncheckedJson;

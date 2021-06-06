@@ -240,7 +240,9 @@ void gui::Widget::draw(float tx, float ty, bool editMode)
 		{
 			if (m_depth > 0.001f)
 			{
-
+				glEnable(GL_TEXTURE_2D);
+				glEnable(GL_BLEND);
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 				GLuint prog = getGUI()->getShaderManger()->getShader("assets/shaders/boxblur");
 				float largerSide = std::max(W(), H());
 				glUseProgram(prog);
@@ -254,10 +256,11 @@ void gui::Widget::draw(float tx, float ty, bool editMode)
 				glActiveTexture(GL_TEXTURE0 + 0);
 				glBindTexture(GL_TEXTURE_2D, 0);
 
+				glColor4f(0, 0, 0, 0);
 				glPushMatrix();
 				//glTranslatef(tx, ty, 0);
 
-				glBegin(GL_QUADS);
+				glBegin(GL_POLYGON);
 				glTexCoord2f(0, 0);
 				glVertex2f(0, 0);
 				glTexCoord2f(1, 0);
@@ -274,55 +277,13 @@ void gui::Widget::draw(float tx, float ty, bool editMode)
 				glUseProgram(0);
 				glActiveTexture(GL_TEXTURE0);
 				glDisable(GL_TEXTURE_2D);
+				glDisable(GL_BLEND);
 			}
-
-			if (m_shape == "image")
-				if (m_background != nullptr)
-				{
-					glEnable(GL_TEXTURE_2D);
-					glEnable(GL_BLEND);
-					if (m_blendMode == "screen")
-					{
-						glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
-					}
-					else
-					{
-						glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-					}
-					glBindTexture(GL_TEXTURE_2D, m_background->id);
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-					glColor4f(m_color.r, m_color.g, m_color.b, m_opacity *
-						((m_background != m_backgroundTransition) ? m_backgroundTransitionValue : 1.0f));
-					glPushMatrix();
-					glTranslatef(tx, ty, 0);
-					glTranslatef(m_w / 2.0f, m_h / 2.0f, 0);
-					glRotatef(m_rotation, 0, 0, 1);
-					glTranslatef(-m_w / 2.0f, -m_h / 2.0f, 0);
-					glScalef(m_w, m_h, 1);
-					glBegin(GL_QUADS);
-					{
-						glTexCoord2f(0, 0);
-						glVertex2f(0, 0);
-						glTexCoord2f(1, 0);
-						glVertex2f(1, 0);
-						glTexCoord2f(1, 1);
-						glVertex2f(1, 1);
-						glTexCoord2f(0, 1);
-						glVertex2f(0, 1);
-					}
-					glEnd();
-					glPopMatrix();
-
-					glBindTexture(GL_TEXTURE_2D, NULL);
-					glDisable(GL_TEXTURE_2D);
-					glDisable(GL_BLEND);
-				}
 
 			if (m_shape == "rect")
 			{
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+				glEnable(GL_BLEND);
 				bool gradIsVert = m_gradient == "vertical";
 				bool gradIsHori = m_gradient == "horizontal";
 				if (m_roundedRadius > 0.0f)
@@ -519,6 +480,51 @@ void gui::Widget::draw(float tx, float ty, bool editMode)
 
 					glPopMatrix();
 				}
+				glDisable(GL_BLEND);
+			}
+	
+			//if (m_shape == "image")
+			if (m_background != nullptr)
+			{
+				glEnable(GL_TEXTURE_2D);
+				glEnable(GL_BLEND);
+				if (m_blendMode == "screen")
+				{
+					glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
+				}
+				else
+				{
+					glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+				}
+				glBindTexture(GL_TEXTURE_2D, m_background->id);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glColor4f(m_color.r, m_color.g, m_color.b, m_opacity *
+					((m_background != m_backgroundTransition) ? m_backgroundTransitionValue : 1.0f));
+				glPushMatrix();
+				glTranslatef(tx, ty, 0);
+				glTranslatef(m_w / 2.0f, m_h / 2.0f, 0);
+				glRotatef(m_rotation, 0, 0, 1);
+				glTranslatef(-m_w / 2.0f, -m_h / 2.0f, 0);
+				glScalef(m_w, m_h, 1);
+				glBegin(GL_QUADS);
+				{
+					glTexCoord2f(0, 0);
+					glVertex2f(0, 0);
+					glTexCoord2f(1, 0);
+					glVertex2f(1, 0);
+					glTexCoord2f(1, 1);
+					glVertex2f(1, 1);
+					glTexCoord2f(0, 1);
+					glVertex2f(0, 1);
+				}
+				glEnd();
+				glPopMatrix();
+
+				glBindTexture(GL_TEXTURE_2D, NULL);
+				glDisable(GL_TEXTURE_2D);
 			}
 
 			if (m_background != m_backgroundTransition)
@@ -563,7 +569,7 @@ void gui::Widget::draw(float tx, float ty, bool editMode)
 					glDisable(GL_TEXTURE_2D);
 					glDisable(GL_BLEND);
 				}
-
+			
 			if (m_debugMode == DebugMode::DBG_BOUNDS)// && gui->editedWidget == this)
 			{
 				glLineWidth(2);
@@ -700,6 +706,7 @@ bool gui::Widget::init(const nlohmann::json& j, bool ignoreType)
 			fields["on-leave"] = m_onLeaveJson;
 			fields["on-release"] = m_onReleaseJson;
 			fields["on-click"] = m_onClickJson;
+			fields["on-double-click"] = m_onDoubleClickJson;
 			fields["on-checked"] = m_onCheckedJson;
 			fields["on-unchecked"] = m_onUncheckedJson;
 			fields["on-click-external"] = m_onClickExternalJson;
@@ -730,8 +737,9 @@ bool gui::Widget::init(const nlohmann::json& j, bool ignoreType)
 
 		m_config += fields;
 
-		if (m_background != nullptr)
-			m_shape = "image";
+		//if (m_background != nullptr)
+		//	m_shape = "image";
+
 		m_backgroundTransition = m_background;
 		m_x = m_xTarget;
 		m_y = m_yTarget;
@@ -744,6 +752,10 @@ bool gui::Widget::init(const nlohmann::json& j, bool ignoreType)
 		m_colorEnd = m_targetColorEnd;
 		m_shadowColor = m_targetShadowColor;
 		m_depth = m_targetDepth;
+
+		m_onOverJson["cursor"] = getCursor();
+		m_onReleaseJson["cursor"] = getCursor();
+			 
 		if (m_scaled)
 		{
 			if (m_background != nullptr)
@@ -855,6 +867,10 @@ bool gui::Widget::onDoubleClickEvent(MouseEventData mouseEventData, bool process
 		if (elapsed < GetDoubleClickTime())
 		{
 			// Do stuff for double click
+			//m_config.load(m_onDoubleClickJson, true);
+			//m_gui->getWidgetManager()->handleDynamicJson(m_onDoubleClickJson, m_id);
+			m_gui->fireTriggers(m_onDoubleClickJson, this);
+
 			m_oldClickTime = {};
 			return true;
 		}
@@ -902,6 +918,8 @@ bool gui::Widget::onReleaseEvent(MouseEventData mouseEventData, bool process)
 				}
 
 			m_gui->getWidgetManager()->handleDynamicJson(m_onReleaseExternalJson, m_id);
+
+			m_gui->fireTriggers(m_onReleaseExternalJson, this);
 		}
 		return true;
 	}
@@ -936,7 +954,7 @@ bool gui::Widget::onLeaveEvent(MouseEventData mouseEventData, bool process)
 	getContextPosition(tx, ty);
 
 	// if over component
-	if (mouseEventData.x < tx || mouseEventData.x > tx + m_w ||
+	if (m_over && mouseEventData.x < tx || mouseEventData.x > tx + m_w ||
 		mouseEventData.y < ty || mouseEventData.y > ty + m_h)
 	{
 		if (process)
@@ -1499,6 +1517,16 @@ float gui::Widget::getBackgroundTransitionValue()
 std::string gui::Widget::getType()
 {
 	return m_type;
+}
+
+float gui::Widget::depth()
+{
+	return this->m_depth;
+}
+
+float gui::Widget::getTargetDepth()
+{
+	return this->m_targetDepth;
 }
 
 void gui::Widget::setVisible(bool visible)

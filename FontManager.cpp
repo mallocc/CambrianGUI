@@ -241,186 +241,192 @@ void Font::layoutText(std::string text, float scale, float textSpacing, gui::coo
 
 void Font::renderText(std::string text_, float x, float y, float scale, bool bold, bool italic, int justify, float lineHeight, float textSpacing, coord_t bdims)
 {
-	/*glBegin(GL_LINES);
-	glVertex2f(x, y-size);
-	glVertex2f(x, y+100);
-	glEnd();*/
-
-	//glDisable(GL_MULTISAMPLE);
-	//SplitTimer::Timer t;
-	//t.reset();
-	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glBindTexture(GL_TEXTURE_2D, fontAtlas->textureID);
-	glBegin(GL_QUADS);
-
-	std::vector<LineInfo> layout;
-
-
-	layoutText(text_, scale, textSpacing, bdims, &layout);
-
-	int currentLine = 0;
-	float initialX = x;
-	float initialY = y;
-	int italicState = 0;
-	int boldState = 0;
-	int underlineState = 0;
-	bool underlineSwitched = 0;
-
-	std::vector<line_t> underline;
-
-	float lastAdvance = 0;
-
-	for (int q = 0; q < layout.size(); ++q)
+	if (fontAtlas)
 	{
-		float width = layout[q].width;
-		std::string text = layout[q].text;
-		currentLine = q;
-		x = initialX;
+		/*glBegin(GL_LINES);
+		glVertex2f(x, y-size);
+		glVertex2f(x, y+100);
+		glEnd();*/
 
-		if (justify == 1)
-			x -= (width - bdims.x) * .5;
-		if (justify == 2)
-			x -= width - bdims.x;
+		//glDisable(GL_MULTISAMPLE);
+		//SplitTimer::Timer t;
+		//t.reset();
+		glEnable(GL_TEXTURE_2D);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBindTexture(GL_TEXTURE_2D, fontAtlas->textureID);
+		glBegin(GL_QUADS);
+
+		std::vector<LineInfo> layout;
 
 
-		y = initialY + (q+1) * size * lineHeight;
+		layoutText(text_, scale, textSpacing, bdims, &layout);
 
-		for (int c = 0; c < text.length(); ++c)
+		int currentLine = 0;
+		float initialX = x;
+		float initialY = y;
+		int italicState = 0;
+		int boldState = 0;
+		int underlineState = 0;
+		bool underlineSwitched = 0;
+
+		std::vector<line_t> underline;
+
+		float lastAdvance = 0;
+
+		for (int q = 0; q < layout.size(); ++q)
 		{
-			if (c < text.length() - 1)
+			float width = layout[q].width;
+			std::string text = layout[q].text;
+			currentLine = q;
+			x = initialX;
+
+			if (justify == 1)
+				x -= (width - bdims.x) * .5;
+			if (justify == 2)
+				x -= width - bdims.x;
+
+
+			y = initialY + (q + 1) * size * lineHeight;
+
+			for (int c = 0; c < text.length(); ++c)
 			{
-				if (c < text.length() - 2)
+				if (c < text.length() - 1)
 				{
-					if (text[c + 1] == '_' && text[c + 2] == '_')
+					if (c < text.length() - 2)
 					{
+						if (text[c + 1] == '_' && text[c + 2] == '_')
+						{
+							underlineSwitched = true;
+						}
+					}
+					if (text[c] == '*' && text[c + 1] == '*')
+					{
+						boldState = !boldState;
+						c++;
+						continue;
+					}
+
+					if (text[c] == '#' && text[c + 1] == '#')
+					{
+						italicState = !italicState;
+						c++;
+						continue;
+					}
+
+
+					if (text[c] == '_' && text[c + 1] == '_')
+					{
+						underlineState = !underlineState;
 						underlineSwitched = true;
+						c++;
+						continue;
 					}
 				}
-				if (text[c] == '*' && text[c + 1] == '*')
+
+				int faceIndex = (boldState || bold) + ((italicState || italic) * 2);
+
+				Character ch = characters[text[c] + 0x4000 * faceIndex];
+
+				float xpos = x + ch.Bearing[0] * scale;
+				float ypos = y - (ch.Bearing[1]) * scale;
+
+				float w = ch.Size[0] * scale;
+				float h = ch.Size[1] * scale;
+
+				float advance = (float)(ch.Advance >> 6) * scale * textSpacing;
+
+				float italicSkew = w * .2 * (italicState || italic);
+
+				italicSkew = 0;
+
+				float vertices[6][4] = {
+					{ xpos + italicSkew,     ypos ,    ch.ae.x[0], ch.ae.y[0] },
+					{ xpos + italicSkew + w, ypos,     ch.ae.x[1], ch.ae.y[0] },
+					{ xpos + w, ypos + h, ch.ae.x[1], ch.ae.y[1] },
+					{ xpos,     ypos + h, ch.ae.x[0], ch.ae.y[1] }
+				};
+
+				if (underlineState)
 				{
-					boldState = !boldState;
-					c++;
-					continue;
+					underline.push_back({ {xpos - lastAdvance * .51f * !underlineSwitched, y + 2.f}, {xpos + w + advance * .51f * !underlineSwitched, y + 2.f} });
+					underlineSwitched = false;
 				}
 
-				if (text[c] == '#' && text[c + 1] == '#')
+				for (int i = 0; i < 4; i++)
 				{
-					italicState = !italicState;
-					c++;
-					continue;
+					glTexCoord2f(vertices[i][2], vertices[i][3]);
+					glVertex2f(std::roundf(vertices[i][0]), std::roundf(vertices[i][1]));
 				}
 
-
-				if (text[c] == '_' && text[c + 1] == '_')
-				{
-					underlineState = !underlineState;
-					underlineSwitched = true;
-					c++;
-					continue;
-				}
+				x += std::roundf(advance);
+				lastAdvance = advance;
 			}
+		}
+		glEnd();
+		glDisable(GL_TEXTURE_2D);
+		//glBindVertexArray(0);
+		glBindTexture(GL_TEXTURE_2D, 0);
 
-			int faceIndex = (boldState || bold) + ((italicState || italic) * 2);
+		glLineWidth(1);
 
-			Character ch = characters[text[c] + 0x4000 * faceIndex];
+		if (underline.size())
+		{
+			glBegin(GL_LINES);
+			for (auto& i : underline)
+			{
+				glVertex2f(i.first.x, i.first.y);
+				glVertex2f(i.second.x, i.second.y);
+			}
+			glEnd();
+		}
+		//t.split("Finished rendering text: " + text.substr(0, 10), SplitTimer::defaultSplitPrint);
+		//glEnable(GL_MULTISAMPLE);
+	}
+}
+
+void gui::Font::renderTextUnicode(std::wstring text, float x, float y, float scale)
+{
+	if (fontAtlas)
+	{
+		glEnable(GL_TEXTURE_2D);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBindTexture(GL_TEXTURE_2D, fontAtlas->textureID);
+		glBegin(GL_QUADS);
+
+		for (auto& c : text)
+		{
+			Character ch = characters[c];
 
 			float xpos = x + ch.Bearing[0] * scale;
 			float ypos = y - (ch.Bearing[1]) * scale;
 
 			float w = ch.Size[0] * scale;
 			float h = ch.Size[1] * scale;
-
-			float advance = (float)(ch.Advance >> 6) * scale * textSpacing;
-
-			float italicSkew = w * .2 * (italicState || italic);
-
-			italicSkew = 0;
-
+			// Update VBO for each character
 			float vertices[6][4] = {
-				{ xpos + italicSkew,     ypos ,    ch.ae.x[0], ch.ae.y[0] },
-				{ xpos + italicSkew + w, ypos,     ch.ae.x[1], ch.ae.y[0] },
+				{ xpos,     ypos ,    ch.ae.x[0], ch.ae.y[0] },
+				{ xpos + w, ypos,     ch.ae.x[1], ch.ae.y[0] },
 				{ xpos + w, ypos + h, ch.ae.x[1], ch.ae.y[1] },
 				{ xpos,     ypos + h, ch.ae.x[0], ch.ae.y[1] }
 			};
-
-			if (underlineState)
-			{
-				underline.push_back({ {xpos - lastAdvance * .51f * !underlineSwitched, y + 2.f}, {xpos + w + advance * .51f * !underlineSwitched, y + 2.f} });
-				underlineSwitched = false;
-			}
+			// Render glyph texture over quad
 
 			for (int i = 0; i < 4; i++)
 			{
 				glTexCoord2f(vertices[i][2], vertices[i][3]);
-				glVertex2f(std::roundf(vertices[i][0]), std::roundf(vertices[i][1]));
+				glVertex2f(vertices[i][0], vertices[i][1]);
 			}
 
-			x += std::roundf(advance);
-			lastAdvance = advance;
-		}
-	}
-	glEnd();
-	glDisable(GL_TEXTURE_2D);
-	//glBindVertexArray(0);
-	glBindTexture(GL_TEXTURE_2D, 0);
 
-	glLineWidth(1);
-
-	if (underline.size())
-	{
-		glBegin(GL_LINES);
-		for (auto& i : underline)
-		{
-			glVertex2f(i.first.x, i.first.y);
-			glVertex2f(i.second.x, i.second.y);
+			x += (ch.Advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
 		}
 		glEnd();
+		glDisable(GL_TEXTURE_2D);
+		//glBindVertexArray(0);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
-	//t.split("Finished rendering text: " + text.substr(0, 10), SplitTimer::defaultSplitPrint);
-	//glEnable(GL_MULTISAMPLE);
-}
-
-void gui::Font::renderTextUnicode(std::wstring text, float x, float y, float scale)
-{
-	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glBindTexture(GL_TEXTURE_2D, fontAtlas->textureID);
-	glBegin(GL_QUADS);
-
-	for (auto& c : text)
-	{
-		Character ch = characters[c];
-
-		float xpos = x + ch.Bearing[0] * scale;
-		float ypos = y - (ch.Bearing[1]) * scale;
-
-		float w = ch.Size[0] * scale;
-		float h = ch.Size[1] * scale;
-		// Update VBO for each character
-		float vertices[6][4] = {
-			{ xpos,     ypos ,    ch.ae.x[0], ch.ae.y[0] },
-			{ xpos + w, ypos,     ch.ae.x[1], ch.ae.y[0] },
-			{ xpos + w, ypos + h, ch.ae.x[1], ch.ae.y[1] },
-			{ xpos,     ypos + h, ch.ae.x[0], ch.ae.y[1] }
-		};
-		// Render glyph texture over quad
-
-		for (int i = 0; i < 4; i++)
-		{
-			glTexCoord2f(vertices[i][2], vertices[i][3]);
-			glVertex2f(vertices[i][0], vertices[i][1]);
-		}
-
-
-		x += (ch.Advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
-	}
-	glEnd();
-	glDisable(GL_TEXTURE_2D);
-	//glBindVertexArray(0);
-	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 gui::coord_t Font::textMetrics(std::string text, float scale, float lineHeight, float textSpacing, coord_t bdims)

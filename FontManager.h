@@ -55,7 +55,7 @@ namespace gui
 		int cursorY = 0;
 		int maxY = 0;
 		int tallestGlyphHeight = 0;
-		GLuint textureID;
+		GLuint textureID = NULL;
 	};
 
 	struct LineInfo
@@ -69,7 +69,7 @@ namespace gui
 	{
 		Font(FT_Library *ft, std::string fontPath, std::string fontName, int size, GUI* guiPtr, float weight = 0.f, bool outline = 0);
 
-		FontAtlas* fontAtlas;
+		FontAtlas* fontAtlas = nullptr;
 
 		std::map<uint32_t, Character> characters;
 		std::string fontPath;
