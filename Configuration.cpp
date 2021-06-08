@@ -21,7 +21,7 @@ namespace gui
 		try
 		{
 #ifdef DEBUG
-			std::ifstream t(ExePath() + "\\..\\..\\GUIEditor\\" + filename);
+			std::ifstream t(ExePath() + "\\..\\..\\Vst_Plugins\\" + filename);
 			std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
 #else
 			std::string str(filesys[filename].data, filesys[filename].size);
@@ -81,7 +81,7 @@ namespace gui
 	{
 		filename = "assets/" + filename;
 #ifdef DEBUG
-		std::ifstream t(ExePath() + "\\..\\..\\GUIEditor\\" + filename);
+		std::ifstream t(ExePath() + "\\..\\..\\Vst_Plugins\\" + filename);
 		std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
 #else
 		std::string str(filesys[filename].data, filesys[filename].size);

@@ -130,7 +130,9 @@ SplitTimer::Timer* gui::GUI::getTimer()
 
 void GUI::onMouseEvent(MouseEventData mouseEventData)
 {
-	std::cout << mouseEventData.x << " " << mouseEventData.y << " left: " << mouseEventData.leftDown << " middle: " << mouseEventData.middleDown << " right: " << mouseEventData.rightDown << std::endl;
+	//std::cout << mouseEventData.x << " " << mouseEventData.y << " left: " << mouseEventData.leftDown << " middle: " << mouseEventData.middleDown << " right: " << mouseEventData.rightDown << std::endl;
+
+	setCursor("arrow");
 
 	// Look for a new focused widget in UI
 	if (focusedWidget == nullptr)
@@ -176,7 +178,7 @@ void GUI::onMouseEvent(MouseEventData mouseEventData)
 	// Reset focused widget when mouse released
 	if ((!mouseEventData.leftDown) && focusedWidget != nullptr)
 	{
-		std::cout << "Defocus handle" << std::endl;
+		//std::cout << "Defocus handle" << std::endl;
 		focusedWidget = nullptr;
 	}
 
