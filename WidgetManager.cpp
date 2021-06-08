@@ -5,6 +5,21 @@
 #include "DropdownList.h"
 
 #include <sstream>
+#include <regex>
+
+namespace
+{
+	std::string replaceString(std::string subject, const std::string& search,
+		const std::string& replace) {
+		size_t pos = 0;
+		while ((pos = subject.find(search, pos)) != std::string::npos) {
+			subject.replace(pos, search.length(), replace);
+			pos += replace.length();
+		}
+		return subject;
+	}
+}
+
 
 gui::WidgetManager::WidgetManager(GUI* gui, Configuration* config)
 	: gui(gui),
@@ -62,13 +77,13 @@ gui::Widget* gui::WidgetManager::createWidget(nlohmann::json j)
 		*/
 
 		localVariables_t localVariables;
-
-		for (auto& search : j.items())
+		for (auto search : j.items())
 		{
 			if (Configuration::isLocalVariable(search.key()))
 			{
-				if (readJSON(j, "id", tmp))
-					localVariables[tmp + "-" + search.key()] = search.value();
+				std::string id;
+				if (readJSON(j, "id", id))
+					localVariables[id + "-" + search.key()] = search.value();
 			}
 			else if (Configuration::isVariable(search.key()))
 			{
