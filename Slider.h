@@ -1,22 +1,20 @@
 #pragma once
 
-#include "Widget.h"
+#include "Layout.h"
 
 namespace gui
 {
-	class Slider : public WidgetType<Slider>, public Widget
+	class Slider : public WidgetType<Slider>, public Layout
 	{
 		DEFINE_WIDGET_TYPE("slider");
 	public:
 		Slider(GUI* gui);
 
-		virtual void draw(float tx, float ty, bool editMode = false) override;
 		virtual bool init(const nlohmann::json& j, bool ignoreType = false) override;
 		float getValToRatio();
 		float getRatioToVal(float ratio);
-		virtual Widget* onKeyEvent(KeyEventData keyEventData) override;
 		virtual bool onMiddleClickEvent(MouseEventData mouseEventData, bool process) override;
-		virtual bool onDownEvent(MouseEventData mouseEventData, bool process) override;
+		virtual bool onClickEvent(MouseEventData mouseEventData, bool process) override;
 
 		virtual bool isVertical();
 		virtual bool isHorizontal();
@@ -39,9 +37,13 @@ namespace gui
 
 		inline std::string roundNumber(float number);
 
-
+		virtual void revalidateSlider(MouseEventData mouseEventData);
+		virtual void showFloatingLabel(MouseEventData mouseEventData);
+		virtual void setSliderPosition();
 	private:
-		Texture* m_foreground = nullptr;
+		nlohmann::json m_sliderJson;
+		Widget* m_slider = nullptr;
+
 		float m_defaultVal = 0.0f;
 		float m_val = 0.0f;
 		float m_initialVal = 0.0f;
