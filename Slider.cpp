@@ -26,7 +26,8 @@ void gui::Slider::revalidateSlider(MouseEventData mouseEventData)
 
 		if (m_vertical)
 		{
-			setValue(getRatioToVal(1.0f - (mouseEventData.y - ty - m_slider->H() / 2.0f) / (float)(H() - m_slider->H())));
+			//setValue(getRatioToVal(1.0f - (mouseEventData.y - ty - m_slider->H() / 2.0f) / (float)(H() - m_slider->H())));
+			setValue(getRatioToVal((mouseEventData.y - ty - m_slider->H() / 2.0f) / (float)(H() - m_slider->H())));
 			setValue(std::min(m_maxVal, std::max(m_minVal, getValue())));
 		}
 		else
@@ -67,13 +68,19 @@ void gui::Slider::setSliderPosition()
 	if (m_vertical)
 	{
 		m_slider->setX(0, FORCE);
-		m_slider->setY((1.0f - getValToRatio()) * (H() - m_slider->H()), FORCE);
+		//m_slider->setY((1.0f - getValToRatio()) * (H() - m_slider->H()), FORCE);
+		m_slider->setY((getValToRatio()) * (H() - m_slider->H()), FORCE);
 	}
 	else
 	{
 		m_slider->setX(getValToRatio() * (W() - m_slider->W()), FORCE);
 		m_slider->setY(0, FORCE);
 	}
+}
+
+gui::Widget* gui::Slider::getSlider()
+{
+	return m_slider;
 }
 
 bool gui::Slider::init(const nlohmann::json& j, bool ignoreType)
@@ -114,6 +121,8 @@ bool gui::Slider::init(const nlohmann::json& j, bool ignoreType)
 				};
 				addChild(sliderWidget);
 			}
+
+			setSliderPosition();
 		}
 	}
 	return true;

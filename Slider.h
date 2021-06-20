@@ -40,6 +40,8 @@ namespace gui
 		virtual void revalidateSlider(MouseEventData mouseEventData);
 		virtual void showFloatingLabel(MouseEventData mouseEventData);
 		virtual void setSliderPosition();
+
+		virtual Widget* getSlider();
 	private:
 		nlohmann::json m_sliderJson;
 		Widget* m_slider = nullptr;
